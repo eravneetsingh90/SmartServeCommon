@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Entities;
 
@@ -9,19 +10,19 @@ namespace SmartServe.API.Test.Controllers
 	[Route("[controller]")]
 	public class TestController : ControllerBase
 	{
-		private readonly SmartServeDbContext _db;
+		private readonly ProductStore _product;
 		private readonly ILogger<TestController> _logger;
 
-		public TestController(ILogger<TestController> logger, SmartServeDbContext db)
+		public TestController(ILogger<TestController> logger, ProductStore product)
 		{
 			_logger = logger;
-			_db = db;
+			_product = product;
 		}
 
 		[HttpGet(Name = "get-all-product")]
 		public async Task<IEnumerable<Product>> GetAllProduct()
 		{
-			var products = await _db.products.AsNoTracking().ToListAsync();
+			var products = await _product.GetAllAsync();
 			return products;
 		}
 	}

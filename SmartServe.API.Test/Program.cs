@@ -1,15 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SmartServe.EFCore.Db;
+﻿using SmartServe.Domain.Dependencies;
+using SmartServe.EFCore.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext
-builder.Services.AddDbContext<SmartServeDbContext>(options =>
-	options.UseNpgsql(
-		builder.Configuration.GetConnectionString("SmartServeDb")
-	)
-);
+// Register DbContext
+builder.Services.UseEFCore(builder.Configuration);
 
+
+builder.Services.UseSmartServeStores();
 // Add services to the container.
 
 builder.Services.AddControllers();
