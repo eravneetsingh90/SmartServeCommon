@@ -114,9 +114,9 @@ public partial class SmartServeDbContext : DbContext
 
     public virtual DbSet<unit_conversion> unit_conversions { get; set; }
 
-    public virtual DbSet<user> users { get; set; }
+    public virtual DbSet<user_auth> users { get; set; }
 
-    public virtual DbSet<user1> users1 { get; set; }
+    public virtual DbSet<User> users1 { get; set; }
 
     public virtual DbSet<vector_index> vector_indexes { get; set; }
 
@@ -132,6 +132,10 @@ public partial class SmartServeDbContext : DbContext
 		{
 			entity.HasKey(e => e.product_id).HasName("products_pkey");
 
+		});
+		modelBuilder.Entity<User>(entity =>
+		{
+			entity.HasKey(e => e.user_id).HasName("users_pkey");
 		});
 	}
 	/*

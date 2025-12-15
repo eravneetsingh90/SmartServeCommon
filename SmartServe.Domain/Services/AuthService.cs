@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Services
 			_userStore = userStore;
 		}
 
-		public async Task<user1?> LoginAsync(string username, string pin)
+		public async Task<User?> LoginAsync(string username, string pin)
 		{
 			if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pin))
 				return null;

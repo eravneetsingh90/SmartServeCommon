@@ -11,19 +11,39 @@ namespace SmartServe.API.Test.Controllers
 	public class TestController : ControllerBase
 	{
 		private readonly ProductStore _product;
+		private readonly UserStore _user;
 		private readonly ILogger<TestController> _logger;
 
-		public TestController(ILogger<TestController> logger, ProductStore product)
+		public TestController(ILogger<TestController> logger, ProductStore product, UserStore user)
 		{
 			_logger = logger;
 			_product = product;
+			_user = user;
 		}
 
-		[HttpGet(Name = "get-all-product")]
+		[HttpGet]
+		[Route("get-all-product")]
 		public async Task<IEnumerable<Product>> GetAllProduct()
 		{
 			var products = await _product.GetAllAsync();
 			return products;
+		}
+		[HttpGet]
+		[Route("get-all-user")]
+		public async Task<IEnumerable<User>> GetAllUser()
+		{
+			var users = await _user.GetAllAsync();
+			return users;
+
+		}
+
+		[HttpGet]
+		[Route("get-active-user")]
+		public async Task<User> GetActiveUser(string username)
+		{
+			var user = await _user.GetActiveUserByUsernameAsync(username);
+			return user;
+
 		}
 	}
 }
