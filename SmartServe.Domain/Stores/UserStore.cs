@@ -13,11 +13,11 @@ namespace SmartServe.Domain.Stores
 
 		public async Task<User?> GetActiveUserByUsernameAsync(string username)
 		{
-			var result = await _db.users1
+			var result = await _db.Users
 				.AsNoTracking()
 				.FirstOrDefaultAsync(u =>
-					u.name == username &&
-					u.is_active);
+					u.Name == username &&
+					u.IsActive == true);
 			return result;
 		}
 	}

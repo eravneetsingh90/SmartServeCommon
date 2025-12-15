@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartServe.EFCore.Entities;
 
-[Table("stock")]
-public partial class stock
+public partial class Stock
 {
-    [Key]
-    public int ingredient_id { get; set; }
+    public int IngredientId { get; set; }
 
-    [Precision(12, 2)]
-    public decimal current_qty { get; set; }
+    public decimal CurrentQty { get; set; }
 
-    //[ForeignKey("ingredient_id")]
-    //[InverseProperty("stock")]
-    //public virtual ingredient ingredient { get; set; } = null!;
+    public virtual Ingredient Ingredient { get; set; } = null!;
 }

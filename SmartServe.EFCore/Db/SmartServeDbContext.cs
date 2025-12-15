@@ -16,775 +16,674 @@ public partial class SmartServeDbContext : DbContext
     {
     }
 
-    public virtual DbSet<AuditLogEntry> audit_log_entries { get; set; }
+	public virtual DbSet<Brand> Brands { get; set; }
 
-    public virtual DbSet<brand> brands { get; set; }
+	public virtual DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<bucket> buckets { get; set; }
+	public virtual DbSet<Flavor> Flavors { get; set; }
 
-    public virtual DbSet<BucketsAnalytic> buckets_analytics { get; set; }
+	public virtual DbSet<Ingredient> Ingredients { get; set; }
 
-    public virtual DbSet<buckets_vector> buckets_vectors { get; set; }
+	public virtual DbSet<IngredientAlias> IngredientAliases { get; set; }
 
-    public virtual DbSet<category> categories { get; set; }
+	public virtual DbSet<Kot> Kots { get; set; }
 
-    public virtual DbSet<flavor> flavors { get; set; }
+	public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<FlowState> flow_states { get; set; }
+	public virtual DbSet<OrderItem> OrderItems { get; set; }
 
-    public virtual DbSet<identity> identities { get; set; }
+	public virtual DbSet<Payment> Payments { get; set; }
 
-    public virtual DbSet<ingredient> ingredients { get; set; }
+	public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<IngredientAlias> ingredient_aliases { get; set; }
+	public virtual DbSet<ProductRecipe> ProductRecipes { get; set; }
 
-    public virtual DbSet<instance> instances { get; set; }
+	public virtual DbSet<PurchaseBill> PurchaseBills { get; set; }
 
-    public virtual DbSet<kot> kots { get; set; }
+	public virtual DbSet<PurchaseBillParsedItem> PurchaseBillParsedItems { get; set; }
 
-    public virtual DbSet<MfaAmrClaim> mfa_amr_claims { get; set; }
+	public virtual DbSet<PurchaseItem> PurchaseItems { get; set; }
 
-    public virtual DbSet<MFAChallenge> mfa_challenges { get; set; }
+	public virtual DbSet<RestaurantTable> RestaurantTables { get; set; }
 
-    public virtual DbSet<mfa_factor> mfa_factors { get; set; }
+	public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<migration> migrations { get; set; }
+	public virtual DbSet<ServingType> ServingTypes { get; set; }
 
-    public virtual DbSet<OauthAuthorization> oauth_authorizations { get; set; }
+	public virtual DbSet<Stock> Stocks { get; set; }
 
-    public virtual DbSet<oauth_client> oauth_clients { get; set; }
+	public virtual DbSet<StockAdjustment> StockAdjustments { get; set; }
 
-    public virtual DbSet<oauth_client_state> oauth_client_states { get; set; }
+	public virtual DbSet<StockTransaction> StockTransactions { get; set; }
 
-    public virtual DbSet<OauthConsent> oauth_consents { get; set; }
+	public virtual DbSet<TableStatus> TableStatuses { get; set; }
 
-    public virtual DbSet<object2> objects { get; set; }
+	public virtual DbSet<UnitConversion> UnitConversions { get; set; }
 
-    public virtual DbSet<OneTimeToken> one_time_tokens { get; set; }
+	public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<order> orders { get; set; }
+	public virtual DbSet<Vendor> Vendors { get; set; }
 
-    public virtual DbSet<OrderItem> order_items { get; set; }
+	//protected override void OnModelCreating(ModelBuilder modelBuilder)
+	//   {
+	//	modelBuilder.Entity<Product>(entity =>
+	//	{
+	//		entity.HasKey(e => e.product_id).HasName("products_pkey");
 
-    public virtual DbSet<payment> payments { get; set; }
+	//	});
+	//	modelBuilder.Entity<User>(entity =>
+	//	{
+	//		entity.HasKey(e => e.user_id).HasName("users_pkey");
+	//	});
+	//}
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder
+			.HasPostgresEnum("auth", "aal_level", new[] { "aal1", "aal2", "aal3" })
+			.HasPostgresEnum("auth", "code_challenge_method", new[] { "s256", "plain" })
+			.HasPostgresEnum("auth", "factor_status", new[] { "unverified", "verified" })
+			.HasPostgresEnum("auth", "factor_type", new[] { "totp", "webauthn", "phone" })
+			.HasPostgresEnum("auth", "oauth_authorization_status", new[] { "pending", "approved", "denied", "expired" })
+			.HasPostgresEnum("auth", "oauth_client_type", new[] { "public", "confidential" })
+			.HasPostgresEnum("auth", "oauth_registration_type", new[] { "dynamic", "manual" })
+			.HasPostgresEnum("auth", "oauth_response_type", new[] { "code" })
+			.HasPostgresEnum("auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" })
+			.HasPostgresEnum("realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" })
+			.HasPostgresEnum("realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" })
+			.HasPostgresEnum("storage", "buckettype", new[] { "STANDARD", "ANALYTICS", "VECTOR" })
+			.HasPostgresExtension("extensions", "pg_stat_statements")
+			.HasPostgresExtension("extensions", "pgcrypto")
+			.HasPostgresExtension("extensions", "uuid-ossp")
+			.HasPostgresExtension("graphql", "pg_graphql")
+			.HasPostgresExtension("vault", "supabase_vault");
 
-    public virtual DbSet<prefix> prefixes { get; set; }
+		modelBuilder.Entity<Brand>(entity =>
+		{
+			entity.HasKey(e => e.BrandId).HasName("brands_pkey");
 
-    public virtual DbSet<Product> products { get; set; }
+			entity.ToTable("brands");
 
-    public virtual DbSet<ProductRecipe> product_recipes { get; set; }
+			entity.HasIndex(e => e.Name, "brands_name_key").IsUnique();
 
-    public virtual DbSet<purchase_bill> purchase_bills { get; set; }
+			entity.Property(e => e.BrandId).HasColumnName("brand_id");
+			entity.Property(e => e.Name)
+				.HasMaxLength(100)
+				.HasColumnName("name");
+		});
 
-    public virtual DbSet<purchase_bill_parsed_item> purchase_bill_parsed_items { get; set; }
+		modelBuilder.Entity<Category>(entity =>
+		{
+			entity.HasKey(e => e.CategoryId).HasName("categories_pkey");
 
-    public virtual DbSet<purchase_item> purchase_items { get; set; }
+			entity.ToTable("categories");
 
-    public virtual DbSet<refresh_token> refresh_tokens { get; set; }
+			entity.HasIndex(e => e.Name, "categories_name_key").IsUnique();
 
-    public virtual DbSet<role> roles { get; set; }
+			entity.Property(e => e.CategoryId).HasColumnName("category_id");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.Name)
+				.HasMaxLength(100)
+				.HasColumnName("name");
+		});
 
-    public virtual DbSet<s3_multipart_upload> s3_multipart_uploads { get; set; }
+		modelBuilder.Entity<Flavor>(entity =>
+		{
+			entity.HasKey(e => e.FlavorId).HasName("flavors_pkey");
 
-    public virtual DbSet<s3_multipart_uploads_part> s3_multipart_uploads_parts { get; set; }
+			entity.ToTable("flavors");
 
-    public virtual DbSet<saml_provider> saml_providers { get; set; }
+			entity.HasIndex(e => e.Name, "flavors_name_key").IsUnique();
 
-    public virtual DbSet<saml_relay_state> saml_relay_states { get; set; }
+			entity.Property(e => e.FlavorId).HasColumnName("flavor_id");
+			entity.Property(e => e.Name)
+				.HasMaxLength(100)
+				.HasColumnName("name");
+		});
 
-    public virtual DbSet<schema_migration> schema_migrations { get; set; }
+		modelBuilder.Entity<Ingredient>(entity =>
+		{
+			entity.HasKey(e => e.IngredientId).HasName("ingredients_pkey");
 
-    public virtual DbSet<schema_migration1> schema_migrations1 { get; set; }
+			entity.ToTable("ingredients");
 
-    public virtual DbSet<serving_type> serving_types { get; set; }
+			entity.HasIndex(e => e.Name, "ingredients_name_key").IsUnique();
 
-    public virtual DbSet<session> sessions { get; set; }
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+			entity.Property(e => e.BaseUnit)
+				.HasMaxLength(20)
+				.HasColumnName("base_unit");
+			entity.Property(e => e.IdealVariancePercent)
+				.HasPrecision(5, 2)
+				.HasDefaultValueSql("8.0")
+				.HasColumnName("ideal_variance_percent");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.Name)
+				.HasMaxLength(150)
+				.HasColumnName("name");
+		});
 
-    public virtual DbSet<sso_domain> sso_domains { get; set; }
+		modelBuilder.Entity<IngredientAlias>(entity =>
+		{
+			entity.HasKey(e => e.AliasId).HasName("ingredient_aliases_pkey");
 
-    public virtual DbSet<sso_provider> sso_providers { get; set; }
+			entity.ToTable("ingredient_aliases");
 
-    public virtual DbSet<stock> stocks { get; set; }
+			entity.Property(e => e.AliasId).HasColumnName("alias_id");
+			entity.Property(e => e.AliasName)
+				.HasMaxLength(150)
+				.HasColumnName("alias_name");
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
 
-    public virtual DbSet<stock_adjustment> stock_adjustments { get; set; }
+			entity.HasOne(d => d.Ingredient).WithMany(p => p.IngredientAliases)
+				.HasForeignKey(d => d.IngredientId)
+				.OnDelete(DeleteBehavior.Cascade)
+				.HasConstraintName("ingredient_aliases_ingredient_id_fkey");
+		});
 
-    public virtual DbSet<stock_transaction> stock_transactions { get; set; }
+		modelBuilder.Entity<Kot>(entity =>
+		{
+			entity.HasKey(e => e.KotId).HasName("kot_pkey");
 
-    public virtual DbSet<subscription> subscriptions { get; set; }
+			entity.ToTable("kot");
 
-    public virtual DbSet<unit_conversion> unit_conversions { get; set; }
+			entity.HasIndex(e => e.OrderId, "kot_order_id_key").IsUnique();
 
-    public virtual DbSet<user_auth> users { get; set; }
+			entity.Property(e => e.KotId).HasColumnName("kot_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.OrderId).HasColumnName("order_id");
+			entity.Property(e => e.Printed)
+				.HasDefaultValue(false)
+				.HasColumnName("printed");
+			entity.Property(e => e.Status)
+				.HasMaxLength(20)
+				.HasColumnName("status");
 
-    public virtual DbSet<User> users1 { get; set; }
+			entity.HasOne(d => d.Order).WithOne(p => p.Kot)
+				.HasForeignKey<Kot>(d => d.OrderId)
+				.OnDelete(DeleteBehavior.Cascade)
+				.HasConstraintName("kot_order_id_fkey");
+		});
 
-    public virtual DbSet<vector_index> vector_indexes { get; set; }
+		modelBuilder.Entity<Order>(entity =>
+		{
+			entity.HasKey(e => e.OrderId).HasName("orders_pkey");
 
-    public virtual DbSet<vendor> vendors { get; set; }
+			entity.ToTable("orders");
 
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    //        => optionsBuilder.UseNpgsql("Host=aws-1-ap-south-1.pooler.supabase.com;Database=postgres;Username=postgres.wuadxvnovhplslorqwng;Password=Golumolu@1990;SSL Mode=Require;Trust Server Certificate=true");
+			entity.HasIndex(e => e.CreatedAt, "idx_orders_created_at");
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+			entity.HasIndex(e => e.OrderNumber, "orders_order_number_key").IsUnique();
+
+			entity.Property(e => e.OrderId).HasColumnName("order_id");
+			entity.Property(e => e.ClosedAt)
+				.HasColumnType("timestamp without time zone")
+				.HasColumnName("closed_at");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnType("timestamp without time zone")
+				.HasColumnName("created_at");
+			entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.OrderNumber)
+				.HasMaxLength(20)
+				.HasColumnName("order_number");
+			entity.Property(e => e.OrderType)
+				.HasMaxLength(20)
+				.HasColumnName("order_type");
+			entity.Property(e => e.Status)
+				.HasMaxLength(20)
+				.HasColumnName("status");
+			entity.Property(e => e.StatusId).HasColumnName("status_id");
+			entity.Property(e => e.TableId).HasColumnName("table_id");
+			entity.Property(e => e.TotalAmount)
+				.HasPrecision(10, 2)
+				.HasDefaultValueSql("0")
+				.HasColumnName("total_amount");
+
+			entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Orders)
+				.HasForeignKey(d => d.CreatedBy)
+				.HasConstraintName("orders_created_by_fkey");
+
+			entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Orders)
+				.HasForeignKey(d => d.StatusId)
+				.HasConstraintName("orders_status_id_fkey");
+
+			entity.HasOne(d => d.Table).WithMany(p => p.Orders)
+				.HasForeignKey(d => d.TableId)
+				.HasConstraintName("orders_table_id_fkey");
+		});
+
+		modelBuilder.Entity<OrderItem>(entity =>
+		{
+			entity.HasKey(e => e.OrderItemId).HasName("order_items_pkey");
+
+			entity.ToTable("order_items");
+
+			entity.HasIndex(e => e.OrderId, "idx_order_items_order_id");
+
+			entity.HasIndex(e => e.ProductId, "idx_order_items_product_id");
+
+			entity.Property(e => e.OrderItemId).HasColumnName("order_item_id");
+			entity.Property(e => e.Notes).HasColumnName("notes");
+			entity.Property(e => e.OrderId).HasColumnName("order_id");
+			entity.Property(e => e.PriceSnapshot)
+				.HasPrecision(10, 2)
+				.HasColumnName("price_snapshot");
+			entity.Property(e => e.ProductId).HasColumnName("product_id");
+			entity.Property(e => e.Quantity).HasColumnName("quantity");
+
+			entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
+				.HasForeignKey(d => d.OrderId)
+				.HasConstraintName("order_items_order_id_fkey");
+
+			entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
+				.HasForeignKey(d => d.ProductId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("order_items_product_id_fkey");
+		});
+
+		modelBuilder.Entity<Payment>(entity =>
+		{
+			entity.HasKey(e => e.PaymentId).HasName("payments_pkey");
+
+			entity.ToTable("payments");
+
+			entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+			entity.Property(e => e.Amount)
+				.HasPrecision(10, 2)
+				.HasColumnName("amount");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.Mode)
+				.HasMaxLength(20)
+				.HasColumnName("mode");
+			entity.Property(e => e.OrderId).HasColumnName("order_id");
+			entity.Property(e => e.Status)
+				.HasMaxLength(20)
+				.HasColumnName("status");
+
+			entity.HasOne(d => d.Order).WithMany(p => p.Payments)
+				.HasForeignKey(d => d.OrderId)
+				.OnDelete(DeleteBehavior.Cascade)
+				.HasConstraintName("payments_order_id_fkey");
+		});
+
 		modelBuilder.Entity<Product>(entity =>
 		{
-			entity.HasKey(e => e.product_id).HasName("products_pkey");
+			entity.HasKey(e => e.ProductId).HasName("products_pkey");
 
+			entity.ToTable("products");
+
+			entity.HasIndex(e => e.CategoryId, "idx_products_category");
+
+			entity.HasIndex(e => e.FlavorId, "idx_products_flavor");
+
+			entity.Property(e => e.ProductId).HasColumnName("product_id");
+			entity.Property(e => e.BrandId).HasColumnName("brand_id");
+			entity.Property(e => e.CategoryId).HasColumnName("category_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.FlavorId).HasColumnName("flavor_id");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.Name)
+				.HasMaxLength(150)
+				.HasColumnName("name");
+			entity.Property(e => e.Price)
+				.HasPrecision(10, 2)
+				.HasColumnName("price");
+			entity.Property(e => e.ServingTypeId).HasColumnName("serving_type_id");
+
+			entity.HasOne(d => d.Brand).WithMany(p => p.Products)
+				.HasForeignKey(d => d.BrandId)
+				.HasConstraintName("products_brand_id_fkey");
+
+			entity.HasOne(d => d.Category).WithMany(p => p.Products)
+				.HasForeignKey(d => d.CategoryId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("products_category_id_fkey");
+
+			entity.HasOne(d => d.Flavor).WithMany(p => p.Products)
+				.HasForeignKey(d => d.FlavorId)
+				.HasConstraintName("products_flavor_id_fkey");
+
+			entity.HasOne(d => d.ServingType).WithMany(p => p.Products)
+				.HasForeignKey(d => d.ServingTypeId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("products_serving_type_id_fkey");
 		});
+
+		modelBuilder.Entity<ProductRecipe>(entity =>
+		{
+			entity.HasKey(e => new { e.ProductId, e.IngredientId }).HasName("product_recipes_pkey");
+
+			entity.ToTable("product_recipes");
+
+			entity.Property(e => e.ProductId).HasColumnName("product_id");
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+			entity.Property(e => e.QtyRequired)
+				.HasPrecision(10, 2)
+				.HasColumnName("qty_required");
+
+			entity.HasOne(d => d.Ingredient).WithMany(p => p.ProductRecipes)
+				.HasForeignKey(d => d.IngredientId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("product_recipes_ingredient_id_fkey");
+
+			entity.HasOne(d => d.Product).WithMany(p => p.ProductRecipes)
+				.HasForeignKey(d => d.ProductId)
+				.HasConstraintName("product_recipes_product_id_fkey");
+		});
+
+		modelBuilder.Entity<PurchaseBill>(entity =>
+		{
+			entity.HasKey(e => e.PurchaseBillId).HasName("purchase_bills_pkey");
+
+			entity.ToTable("purchase_bills");
+
+			entity.HasIndex(e => e.VendorId, "idx_purchase_bill_vendor");
+
+			entity.Property(e => e.PurchaseBillId).HasColumnName("purchase_bill_id");
+			entity.Property(e => e.BillDate).HasColumnName("bill_date");
+			entity.Property(e => e.BillNumber)
+				.HasMaxLength(50)
+				.HasColumnName("bill_number");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.ImageUrl).HasColumnName("image_url");
+			entity.Property(e => e.OcrStatus)
+				.HasMaxLength(20)
+				.HasColumnName("ocr_status");
+			entity.Property(e => e.TotalAmount)
+				.HasPrecision(10, 2)
+				.HasColumnName("total_amount");
+			entity.Property(e => e.VendorId).HasColumnName("vendor_id");
+
+			entity.HasOne(d => d.Vendor).WithMany(p => p.PurchaseBills)
+				.HasForeignKey(d => d.VendorId)
+				.HasConstraintName("purchase_bills_vendor_id_fkey");
+		});
+
+		modelBuilder.Entity<PurchaseBillParsedItem>(entity =>
+		{
+			entity.HasKey(e => e.ParsedItemId).HasName("purchase_bill_parsed_items_pkey");
+
+			entity.ToTable("purchase_bill_parsed_items");
+
+			entity.Property(e => e.ParsedItemId).HasColumnName("parsed_item_id");
+			entity.Property(e => e.ConfidenceScore)
+				.HasPrecision(5, 2)
+				.HasColumnName("confidence_score");
+			entity.Property(e => e.ExtractedName)
+				.HasMaxLength(200)
+				.HasColumnName("extracted_name");
+			entity.Property(e => e.PurchaseBillId).HasColumnName("purchase_bill_id");
+			entity.Property(e => e.Quantity)
+				.HasPrecision(10, 2)
+				.HasColumnName("quantity");
+			entity.Property(e => e.RawItemText).HasColumnName("raw_item_text");
+			entity.Property(e => e.Unit)
+				.HasMaxLength(20)
+				.HasColumnName("unit");
+			entity.Property(e => e.UnitPrice)
+				.HasPrecision(10, 2)
+				.HasColumnName("unit_price");
+
+			entity.HasOne(d => d.PurchaseBill).WithMany(p => p.PurchaseBillParsedItems)
+				.HasForeignKey(d => d.PurchaseBillId)
+				.OnDelete(DeleteBehavior.Cascade)
+				.HasConstraintName("purchase_bill_parsed_items_purchase_bill_id_fkey");
+		});
+
+		modelBuilder.Entity<PurchaseItem>(entity =>
+		{
+			entity.HasKey(e => e.PurchaseItemId).HasName("purchase_items_pkey");
+
+			entity.ToTable("purchase_items");
+
+			entity.Property(e => e.PurchaseItemId).HasColumnName("purchase_item_id");
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+			entity.Property(e => e.PurchaseBillId).HasColumnName("purchase_bill_id");
+			entity.Property(e => e.Quantity)
+				.HasPrecision(10, 2)
+				.HasColumnName("quantity");
+			entity.Property(e => e.TotalAmount)
+				.HasPrecision(10, 2)
+				.HasColumnName("total_amount");
+			entity.Property(e => e.UnitPrice)
+				.HasPrecision(10, 2)
+				.HasColumnName("unit_price");
+
+			entity.HasOne(d => d.Ingredient).WithMany(p => p.PurchaseItems)
+				.HasForeignKey(d => d.IngredientId)
+				.HasConstraintName("purchase_items_ingredient_id_fkey");
+
+			entity.HasOne(d => d.PurchaseBill).WithMany(p => p.PurchaseItems)
+				.HasForeignKey(d => d.PurchaseBillId)
+				.OnDelete(DeleteBehavior.Cascade)
+				.HasConstraintName("purchase_items_purchase_bill_id_fkey");
+		});
+
+		modelBuilder.Entity<RestaurantTable>(entity =>
+		{
+			entity.HasKey(e => e.TableId).HasName("restaurant_tables_pkey");
+
+			entity.ToTable("restaurant_tables");
+
+			entity.Property(e => e.TableId).HasColumnName("table_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("CURRENT_TIMESTAMP")
+				.HasColumnType("timestamp without time zone")
+				.HasColumnName("created_at");
+			entity.Property(e => e.DisplayName)
+				.HasMaxLength(50)
+				.HasColumnName("display_name");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+		});
+
+		modelBuilder.Entity<Role>(entity =>
+		{
+			entity.HasKey(e => e.RoleId).HasName("roles_pkey");
+
+			entity.ToTable("roles");
+
+			entity.HasIndex(e => e.RoleName, "roles_role_name_key").IsUnique();
+
+			entity.Property(e => e.RoleId).HasColumnName("role_id");
+			entity.Property(e => e.RoleName)
+				.HasMaxLength(50)
+				.HasColumnName("role_name");
+		});
+
+		modelBuilder.Entity<ServingType>(entity =>
+		{
+			entity.HasKey(e => e.ServingTypeId).HasName("serving_types_pkey");
+
+			entity.ToTable("serving_types");
+
+			entity.HasIndex(e => e.Name, "serving_types_name_key").IsUnique();
+
+			entity.Property(e => e.ServingTypeId).HasColumnName("serving_type_id");
+			entity.Property(e => e.Name)
+				.HasMaxLength(50)
+				.HasColumnName("name");
+		});
+
+		modelBuilder.Entity<Stock>(entity =>
+		{
+			entity.HasKey(e => e.IngredientId).HasName("stock_pkey");
+
+			entity.ToTable("stock");
+
+			entity.Property(e => e.IngredientId)
+				.ValueGeneratedNever()
+				.HasColumnName("ingredient_id");
+			entity.Property(e => e.CurrentQty)
+				.HasPrecision(12, 2)
+				.HasColumnName("current_qty");
+
+			entity.HasOne(d => d.Ingredient).WithOne(p => p.Stock)
+				.HasForeignKey<Stock>(d => d.IngredientId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("stock_ingredient_id_fkey");
+		});
+
+		modelBuilder.Entity<StockAdjustment>(entity =>
+		{
+			entity.HasKey(e => e.AdjustmentId).HasName("stock_adjustments_pkey");
+
+			entity.ToTable("stock_adjustments");
+
+			entity.Property(e => e.AdjustmentId).HasColumnName("adjustment_id");
+			entity.Property(e => e.ActualQty)
+				.HasPrecision(10, 2)
+				.HasColumnName("actual_qty");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.ExpectedQty)
+				.HasPrecision(10, 2)
+				.HasColumnName("expected_qty");
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+			entity.Property(e => e.Reason)
+				.HasMaxLength(50)
+				.HasColumnName("reason");
+			entity.Property(e => e.VarianceQty)
+				.HasPrecision(10, 2)
+				.HasColumnName("variance_qty");
+
+			entity.HasOne(d => d.Ingredient).WithMany(p => p.StockAdjustments)
+				.HasForeignKey(d => d.IngredientId)
+				.HasConstraintName("stock_adjustments_ingredient_id_fkey");
+		});
+
+		modelBuilder.Entity<StockTransaction>(entity =>
+		{
+			entity.HasKey(e => e.StockTxnId).HasName("stock_transactions_pkey");
+
+			entity.ToTable("stock_transactions");
+
+			entity.HasIndex(e => e.IngredientId, "idx_stock_txn_ingredient");
+
+			entity.Property(e => e.StockTxnId).HasColumnName("stock_txn_id");
+			entity.Property(e => e.ChangeQty)
+				.HasPrecision(10, 2)
+				.HasColumnName("change_qty");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+			entity.Property(e => e.Reason)
+				.HasMaxLength(30)
+				.HasColumnName("reason");
+			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
+
+			entity.HasOne(d => d.Ingredient).WithMany(p => p.StockTransactions)
+				.HasForeignKey(d => d.IngredientId)
+				.HasConstraintName("stock_transactions_ingredient_id_fkey");
+		});
+
+		modelBuilder.Entity<TableStatus>(entity =>
+		{
+			entity.HasKey(e => e.StatusId).HasName("table_status_pkey");
+
+			entity.ToTable("table_status");
+
+			entity.HasIndex(e => e.StatusCode, "table_status_status_code_key").IsUnique();
+
+			entity.Property(e => e.StatusId).HasColumnName("status_id");
+			entity.Property(e => e.ColorHex)
+				.HasMaxLength(10)
+				.HasColumnName("color_hex");
+			entity.Property(e => e.StatusCode)
+				.HasMaxLength(30)
+				.HasColumnName("status_code");
+			entity.Property(e => e.StatusName)
+				.HasMaxLength(50)
+				.HasColumnName("status_name");
+		});
+
+		modelBuilder.Entity<UnitConversion>(entity =>
+		{
+			entity.HasKey(e => new { e.FromUnit, e.ToUnit }).HasName("unit_conversions_pkey");
+
+			entity.ToTable("unit_conversions");
+
+			entity.Property(e => e.FromUnit)
+				.HasMaxLength(20)
+				.HasColumnName("from_unit");
+			entity.Property(e => e.ToUnit)
+				.HasMaxLength(20)
+				.HasColumnName("to_unit");
+			entity.Property(e => e.ConversionFactor)
+				.HasPrecision(10, 4)
+				.HasColumnName("conversion_factor");
+		});
+
 		modelBuilder.Entity<User>(entity =>
 		{
-			entity.HasKey(e => e.user_id).HasName("users_pkey");
+			entity.HasKey(e => e.UserId).HasName("users_pkey");
+
+			entity.ToTable("users");
+
+			entity.Property(e => e.UserId).HasColumnName("user_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.Name)
+				.HasMaxLength(100)
+				.HasColumnName("name");
+			entity.Property(e => e.PinHash)
+				.HasMaxLength(255)
+				.HasColumnName("pin_hash");
+			entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+			entity.HasOne(d => d.Role).WithMany(p => p.Users)
+				.HasForeignKey(d => d.RoleId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("users_role_id_fkey");
 		});
+
+		modelBuilder.Entity<Vendor>(entity =>
+		{
+			entity.HasKey(e => e.VendorId).HasName("vendors_pkey");
+
+			entity.ToTable("vendors");
+
+			entity.Property(e => e.VendorId).HasColumnName("vendor_id");
+			entity.Property(e => e.GstNo)
+				.HasMaxLength(20)
+				.HasColumnName("gst_no");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.Name)
+				.HasMaxLength(150)
+				.HasColumnName("name");
+			entity.Property(e => e.Phone)
+				.HasMaxLength(20)
+				.HasColumnName("phone");
+		});
+
+		OnModelCreatingPartial(modelBuilder);
 	}
-	/*
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder
-            .HasPostgresEnum("auth", "aal_level", new[] { "aal1", "aal2", "aal3" })
-            .HasPostgresEnum("auth", "code_challenge_method", new[] { "s256", "plain" })
-            .HasPostgresEnum("auth", "factor_status", new[] { "unverified", "verified" })
-            .HasPostgresEnum("auth", "factor_type", new[] { "totp", "webauthn", "phone" })
-            .HasPostgresEnum("auth", "oauth_authorization_status", new[] { "pending", "approved", "denied", "expired" })
-            .HasPostgresEnum("auth", "oauth_client_type", new[] { "public", "confidential" })
-            .HasPostgresEnum("auth", "oauth_registration_type", new[] { "dynamic", "manual" })
-            .HasPostgresEnum("auth", "oauth_response_type", new[] { "code" })
-            .HasPostgresEnum("auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" })
-            .HasPostgresEnum("realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" })
-            .HasPostgresEnum("realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" })
-            .HasPostgresEnum("storage", "buckettype", new[] { "STANDARD", "ANALYTICS", "VECTOR" })
-            .HasPostgresExtension("extensions", "pg_stat_statements")
-            .HasPostgresExtension("extensions", "pgcrypto")
-            .HasPostgresExtension("extensions", "uuid-ossp")
-            .HasPostgresExtension("graphql", "pg_graphql")
-            .HasPostgresExtension("vault", "supabase_vault");
 
-        modelBuilder.Entity<AuditLogEntry>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("audit_log_entries_pkey");
-
-            entity.ToTable("audit_log_entries", "auth", tb => tb.HasComment("Auth: Audit trail for user actions."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.ip_address).HasDefaultValueSql("''::character varying");
-        });
-
-        modelBuilder.Entity<brand>(entity =>
-        {
-            entity.HasKey(e => e.brand_id).HasName("brands_pkey");
-        });
-
-        modelBuilder.Entity<bucket>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("buckets_pkey");
-
-            entity.Property(e => e._public).HasDefaultValue(false);
-            entity.Property(e => e.avif_autodetection).HasDefaultValue(false);
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.owner).HasComment("Field is deprecated, use owner_id instead");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-        });
-
-        modelBuilder.Entity<BucketsAnalytic>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("buckets_analytics_pkey");
-
-            entity.HasIndex(e => e.name, "buckets_analytics_unique_name_idx")
-                .IsUnique()
-                .HasFilter("(deleted_at IS NULL)");
-
-            entity.Property(e => e.id).HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.format).HasDefaultValueSql("'ICEBERG'::text");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-        });
-
-        modelBuilder.Entity<buckets_vector>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("buckets_vectors_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-        });
-
-        modelBuilder.Entity<category>(entity =>
-        {
-            entity.HasKey(e => e.category_id).HasName("categories_pkey");
-
-            entity.Property(e => e.is_active).HasDefaultValue(true);
-        });
-
-        modelBuilder.Entity<flavor>(entity =>
-        {
-            entity.HasKey(e => e.flavor_id).HasName("flavors_pkey");
-        });
-
-        modelBuilder.Entity<FlowState>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("flow_state_pkey");
-
-            entity.ToTable("flow_state", "auth", tb => tb.HasComment("stores metadata for pkce logins"));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-        });
-
-        modelBuilder.Entity<identity>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("identities_pkey");
-
-            entity.ToTable("identities", "auth", tb => tb.HasComment("Auth: Stores identities associated to a user."));
-
-            entity.HasIndex(e => e.email, "identities_email_idx").HasOperators(new[] { "text_pattern_ops" });
-
-            entity.Property(e => e.id).HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.email)
-                .HasComputedColumnSql("lower((identity_data ->> 'email'::text))", true)
-                .HasComment("Auth: Email is a generated column that references the optional email property in the identity_data");
-
-            //entity.HasOne(d => d.user).WithMany(p => p.identities).HasConstraintName("identities_user_id_fkey");
-        });
-
-        modelBuilder.Entity<ingredient>(entity =>
-        {
-            entity.HasKey(e => e.ingredient_id).HasName("ingredients_pkey");
-
-            entity.Property(e => e.ideal_variance_percent).HasDefaultValueSql("8.0");
-            entity.Property(e => e.is_active).HasDefaultValue(true);
-        });
-
-        modelBuilder.Entity<IngredientAlias>(entity =>
-        {
-            entity.HasKey(e => e.alias_id).HasName("ingredient_aliases_pkey");
-
-            //entity.HasOne(d => d.ingredient).WithMany(p => p.ingredient_aliases)
-            //    .OnDelete(DeleteBehavior.Cascade)
-            //    .HasConstraintName("ingredient_aliases_ingredient_id_fkey");
-        });
-
-        modelBuilder.Entity<instance>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("instances_pkey");
-
-            entity.ToTable("instances", "auth", tb => tb.HasComment("Auth: Manages users across multiple sites."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-        });
-
-        modelBuilder.Entity<kot>(entity =>
-        {
-            entity.HasKey(e => e.kot_id).HasName("kot_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.printed).HasDefaultValue(false);
-
-            //entity.HasOne(d => d.order).WithOne(p => p.kot)
-            //    .OnDelete(DeleteBehavior.Cascade)
-            //    .HasConstraintName("kot_order_id_fkey");
-        });
-
-        modelBuilder.Entity<MfaAmrClaim>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("amr_id_pk");
-
-            entity.ToTable("mfa_amr_claims", "auth", tb => tb.HasComment("auth: stores authenticator method reference claims for multi factor authentication"));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.session).WithMany(p => p.mfa_amr_claims).HasConstraintName("mfa_amr_claims_session_id_fkey");
-        });
-
-        modelBuilder.Entity<MFAChallenge>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("mfa_challenges_pkey");
-
-            entity.ToTable("mfa_challenges", "auth", tb => tb.HasComment("auth: stores metadata about challenge requests made"));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.factor).WithMany(p => p.mfa_challenges).HasConstraintName("mfa_challenges_auth_factor_id_fkey");
-        });
-
-        modelBuilder.Entity<mfa_factor>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("mfa_factors_pkey");
-
-            entity.ToTable("mfa_factors", "auth", tb => tb.HasComment("auth: stores metadata about factors"));
-
-            entity.HasIndex(e => new { e.friendly_name, e.user_id }, "mfa_factors_user_friendly_name_unique")
-                .IsUnique()
-                .HasFilter("(TRIM(BOTH FROM friendly_name) <> ''::text)");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.last_webauthn_challenge_data).HasComment("Stores the latest WebAuthn challenge data including attestation/assertion for customer verification");
-
-            entity.HasOne(d => d.user).WithMany(p => p.mfa_factors).HasConstraintName("mfa_factors_user_id_fkey");
-        });
-
-        modelBuilder.Entity<migration>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("migrations_pkey");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.executed_at).HasDefaultValueSql("CURRENT_TIMESTAMP");
-        });
-
-        modelBuilder.Entity<OauthAuthorization>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("oauth_authorizations_pkey");
-
-            entity.HasIndex(e => e.expires_at, "oauth_auth_pending_exp_idx").HasFilter("(status = 'pending'::auth.oauth_authorization_status)");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.expires_at).HasDefaultValueSql("(now() + '00:03:00'::interval)");
-
-            entity.HasOne(d => d.client).WithMany(p => p.oauth_authorizations).HasConstraintName("oauth_authorizations_client_id_fkey");
-
-            entity.HasOne(d => d.user).WithMany(p => p.oauth_authorizations)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("oauth_authorizations_user_id_fkey");
-        });
-
-        modelBuilder.Entity<oauth_client>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("oauth_clients_pkey");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-        });
-
-        modelBuilder.Entity<oauth_client_state>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("oauth_client_states_pkey");
-
-            entity.ToTable("oauth_client_states", "auth", tb => tb.HasComment("Stores OAuth states for third-party provider authentication flows where Supabase acts as the OAuth client."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-        });
-
-        modelBuilder.Entity<OauthConsent>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("oauth_consents_pkey");
-
-            entity.HasIndex(e => e.client_id, "oauth_consents_active_client_idx").HasFilter("(revoked_at IS NULL)");
-
-            entity.HasIndex(e => new { e.user_id, e.client_id }, "oauth_consents_active_user_client_idx").HasFilter("(revoked_at IS NULL)");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.granted_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.client).WithMany(p => p.oauth_consents).HasConstraintName("oauth_consents_client_id_fkey");
-
-            entity.HasOne(d => d.user).WithMany(p => p.oauth_consents).HasConstraintName("oauth_consents_user_id_fkey");
-        });
-
-        modelBuilder.Entity<object2>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("objects_pkey");
-
-            entity.HasIndex(e => new { e.name, e.bucket_id, e.level }, "idx_name_bucket_level_unique")
-                .IsUnique()
-                .UseCollation(new[] { "C", null, null });
-
-            entity.HasIndex(e => new { e.bucket_id, e.name }, "idx_objects_bucket_id_name").UseCollation(new[] { null, "C" });
-
-            entity.HasIndex(e => e.name, "name_prefix_search").HasOperators(new[] { "text_pattern_ops" });
-
-            entity.HasIndex(e => new { e.bucket_id, e.level, e.name }, "objects_bucket_id_level_idx")
-                .IsUnique()
-                .UseCollation(new[] { null, null, "C" });
-
-            entity.Property(e => e.id).HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.last_accessed_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.owner).HasComment("Field is deprecated, use owner_id instead");
-            entity.Property(e => e.path_tokens).HasComputedColumnSql("string_to_array(name, '/'::text)", true);
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-
-            //entity.HasOne(d => d.bucket).WithMany(p => p.objects2).HasConstraintName("objects_bucketId_fkey");
-        });
-
-        modelBuilder.Entity<OneTimeToken>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("one_time_tokens_pkey");
-
-            entity.HasIndex(e => e.relates_to, "one_time_tokens_relates_to_hash_idx").HasMethod("hash");
-
-            entity.HasIndex(e => e.token_hash, "one_time_tokens_token_hash_hash_idx").HasMethod("hash");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.user).WithMany(p => p.one_time_tokens).HasConstraintName("one_time_tokens_user_id_fkey");
-        });
-
-        modelBuilder.Entity<order>(entity =>
-        {
-            entity.HasKey(e => e.order_id).HasName("orders_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.created_byNavigation).WithMany(p => p.orders).HasConstraintName("orders_created_by_fkey");
-        });
-
-        modelBuilder.Entity<OrderItem>(entity =>
-        {
-            entity.HasKey(e => e.order_item_id).HasName("order_items_pkey");
-
-            entity.HasOne(d => d.order).WithMany(p => p.order_items).HasConstraintName("order_items_order_id_fkey");
-
-            entity.HasOne(d => d.product).WithMany(p => p.order_items)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("order_items_product_id_fkey");
-        });
-
-        modelBuilder.Entity<payment>(entity =>
-        {
-            entity.HasKey(e => e.payment_id).HasName("payments_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.order).WithMany(p => p.payments)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("payments_order_id_fkey");
-        });
-
-        modelBuilder.Entity<prefix>(entity =>
-        {
-            entity.HasKey(e => new { e.bucket_id, e.level, e.name }).HasName("prefixes_pkey");
-
-            entity.Property(e => e.level).HasComputedColumnSql("storage.get_level(name)", true);
-            entity.Property(e => e.name).UseCollation("C");
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-
-            //entity.HasOne(d => d.bucket).WithMany(p => p.prefixes)
-            //    .OnDelete(DeleteBehavior.ClientSetNull)
-            //    .HasConstraintName("prefixes_bucketId_fkey");
-        });
-
-        modelBuilder.Entity<Product>(entity =>
-        {
-            entity.HasKey(e => e.product_id).HasName("products_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.is_active).HasDefaultValue(true);
-
-            entity.HasOne(d => d.brand).WithMany(p => p.products).HasConstraintName("products_brand_id_fkey");
-
-            entity.HasOne(d => d.category).WithMany(p => p.products)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("products_category_id_fkey");
-
-            entity.HasOne(d => d.flavor).WithMany(p => p.products).HasConstraintName("products_flavor_id_fkey");
-
-            entity.HasOne(d => d.serving_type).WithMany(p => p.products)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("products_serving_type_id_fkey");
-        });
-
-        modelBuilder.Entity<ProductRecipe>(entity =>
-        {
-            entity.HasKey(e => new { e.product_id, e.ingredient_id }).HasName("product_recipes_pkey");
-
-            entity.HasOne(d => d.ingredient).WithMany(p => p.product_recipes)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("product_recipes_ingredient_id_fkey");
-
-            entity.HasOne(d => d.product).WithMany(p => p.product_recipes).HasConstraintName("product_recipes_product_id_fkey");
-        });
-
-        modelBuilder.Entity<purchase_bill>(entity =>
-        {
-            entity.HasKey(e => e.purchase_bill_id).HasName("purchase_bills_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.vendor).WithMany(p => p.purchase_bills).HasConstraintName("purchase_bills_vendor_id_fkey");
-        });
-
-        modelBuilder.Entity<purchase_bill_parsed_item>(entity =>
-        {
-            entity.HasKey(e => e.parsed_item_id).HasName("purchase_bill_parsed_items_pkey");
-
-            entity.HasOne(d => d.purchase_bill).WithMany(p => p.purchase_bill_parsed_items)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("purchase_bill_parsed_items_purchase_bill_id_fkey");
-        });
-
-        modelBuilder.Entity<purchase_item>(entity =>
-        {
-            entity.HasKey(e => e.purchase_item_id).HasName("purchase_items_pkey");
-
-            entity.HasOne(d => d.ingredient).WithMany(p => p.purchase_items).HasConstraintName("purchase_items_ingredient_id_fkey");
-
-            entity.HasOne(d => d.purchase_bill).WithMany(p => p.purchase_items)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("purchase_items_purchase_bill_id_fkey");
-        });
-
-        modelBuilder.Entity<refresh_token>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("refresh_tokens_pkey");
-
-            entity.ToTable("refresh_tokens", "auth", tb => tb.HasComment("Auth: Store of tokens used to refresh JWT tokens once they expire."));
-
-            entity.HasOne(d => d.session).WithMany(p => p.refresh_tokens)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("refresh_tokens_session_id_fkey");
-        });
-
-        modelBuilder.Entity<role>(entity =>
-        {
-            entity.HasKey(e => e.role_id).HasName("roles_pkey");
-        });
-
-        modelBuilder.Entity<s3_multipart_upload>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("s3_multipart_uploads_pkey");
-
-            entity.HasIndex(e => new { e.bucket_id, e.key, e.created_at }, "idx_multipart_uploads_list").UseCollation(new[] { null, "C", null });
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.in_progress_size).HasDefaultValue(0L);
-            entity.Property(e => e.key).UseCollation("C");
-
-            //entity.HasOne(d => d.bucket).WithMany(p => p.s3_multipart_uploads)
-            //    .OnDelete(DeleteBehavior.ClientSetNull)
-            //    .HasConstraintName("s3_multipart_uploads_bucket_id_fkey");
-        });
-
-        modelBuilder.Entity<s3_multipart_uploads_part>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("s3_multipart_uploads_parts_pkey");
-
-            entity.Property(e => e.id).HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.key).UseCollation("C");
-            entity.Property(e => e.size).HasDefaultValue(0L);
-
-            //entity.HasOne(d => d.bucket).WithMany(p => p.s3_multipart_uploads_parts)
-            //    .OnDelete(DeleteBehavior.ClientSetNull)
-            //    .HasConstraintName("s3_multipart_uploads_parts_bucket_id_fkey");
-
-            entity.HasOne(d => d.upload).WithMany(p => p.s3_multipart_uploads_parts).HasConstraintName("s3_multipart_uploads_parts_upload_id_fkey");
-        });
-
-        modelBuilder.Entity<saml_provider>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("saml_providers_pkey");
-
-            entity.ToTable("saml_providers", "auth", tb => tb.HasComment("Auth: Manages SAML Identity Provider connections."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.sso_provider).WithMany(p => p.saml_providers).HasConstraintName("saml_providers_sso_provider_id_fkey");
-        });
-
-        modelBuilder.Entity<saml_relay_state>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("saml_relay_states_pkey");
-
-            entity.ToTable("saml_relay_states", "auth", tb => tb.HasComment("Auth: Contains SAML Relay State information for each Service Provider initiated login."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.flow_state).WithMany(p => p.saml_relay_states)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("saml_relay_states_flow_state_id_fkey");
-
-            entity.HasOne(d => d.sso_provider).WithMany(p => p.saml_relay_states).HasConstraintName("saml_relay_states_sso_provider_id_fkey");
-        });
-
-        modelBuilder.Entity<schema_migration>(entity =>
-        {
-            entity.HasKey(e => e.version).HasName("schema_migrations_pkey");
-
-            entity.ToTable("schema_migrations", "auth", tb => tb.HasComment("Auth: Manages updates to the auth system."));
-        });
-
-        modelBuilder.Entity<schema_migration1>(entity =>
-        {
-            entity.HasKey(e => e.version).HasName("schema_migrations_pkey");
-
-            entity.Property(e => e.version).ValueGeneratedNever();
-        });
-
-        modelBuilder.Entity<serving_type>(entity =>
-        {
-            entity.HasKey(e => e.serving_type_id).HasName("serving_types_pkey");
-        });
-
-        modelBuilder.Entity<session>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("sessions_pkey");
-
-            entity.ToTable("sessions", "auth", tb => tb.HasComment("Auth: Stores session data associated to a user."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.not_after).HasComment("Auth: Not after is a nullable column that contains a timestamp after which the session should be regarded as expired.");
-            entity.Property(e => e.refresh_token_counter).HasComment("Holds the ID (counter) of the last issued refresh token.");
-            entity.Property(e => e.refresh_token_hmac_key).HasComment("Holds a HMAC-SHA256 key used to sign refresh tokens for this session.");
-
-            entity.HasOne(d => d.oauth_client).WithMany(p => p.sessions)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("sessions_oauth_client_id_fkey");
-
-            entity.HasOne(d => d.user).WithMany(p => p.sessions).HasConstraintName("sessions_user_id_fkey");
-        });
-
-        modelBuilder.Entity<sso_domain>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("sso_domains_pkey");
-
-            entity.ToTable("sso_domains", "auth", tb => tb.HasComment("Auth: Manages SSO email address domain mapping to an SSO Identity Provider."));
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.sso_provider).WithMany(p => p.sso_domains).HasConstraintName("sso_domains_sso_provider_id_fkey");
-        });
-
-        modelBuilder.Entity<sso_provider>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("sso_providers_pkey");
-
-            entity.ToTable("sso_providers", "auth", tb => tb.HasComment("Auth: Manages SSO identity provider information; see saml_providers for SAML."));
-
-            entity.HasIndex(e => e.resource_id, "sso_providers_resource_id_pattern_idx").HasOperators(new[] { "text_pattern_ops" });
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.resource_id).HasComment("Auth: Uniquely identifies a SSO provider according to a user-chosen resource ID (case insensitive), useful in infrastructure as code.");
-        });
-
-        modelBuilder.Entity<stock>(entity =>
-        {
-            entity.HasKey(e => e.ingredient_id).HasName("stock_pkey");
-
-            entity.Property(e => e.ingredient_id).ValueGeneratedNever();
-
-            entity.HasOne(d => d.ingredient).WithOne(p => p.stock)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("stock_ingredient_id_fkey");
-        });
-
-        modelBuilder.Entity<stock_adjustment>(entity =>
-        {
-            entity.HasKey(e => e.adjustment_id).HasName("stock_adjustments_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.ingredient).WithMany(p => p.stock_adjustments).HasConstraintName("stock_adjustments_ingredient_id_fkey");
-        });
-
-        modelBuilder.Entity<stock_transaction>(entity =>
-        {
-            entity.HasKey(e => e.stock_txn_id).HasName("stock_transactions_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.ingredient).WithMany(p => p.stock_transactions).HasConstraintName("stock_transactions_ingredient_id_fkey");
-        });
-
-        modelBuilder.Entity<subscription>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("pk_subscription");
-
-            entity.Property(e => e.id).UseIdentityAlwaysColumn();
-            entity.Property(e => e.created_at).HasDefaultValueSql("timezone('utc'::text, now())");
-        });
-
-        modelBuilder.Entity<unit_conversion>(entity =>
-        {
-            entity.HasKey(e => new { e.from_unit, e.to_unit }).HasName("unit_conversions_pkey");
-        });
-
-        modelBuilder.Entity<user>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("users_pkey");
-
-            entity.ToTable("users", "auth", tb => tb.HasComment("Auth: Stores user login data within a secure schema."));
-
-            entity.HasIndex(e => e.confirmation_token, "confirmation_token_idx")
-                .IsUnique()
-                .HasFilter("((confirmation_token)::text !~ '^[0-9 ]*$'::text)");
-
-            entity.HasIndex(e => e.email_change_token_current, "email_change_token_current_idx")
-                .IsUnique()
-                .HasFilter("((email_change_token_current)::text !~ '^[0-9 ]*$'::text)");
-
-            entity.HasIndex(e => e.email_change_token_new, "email_change_token_new_idx")
-                .IsUnique()
-                .HasFilter("((email_change_token_new)::text !~ '^[0-9 ]*$'::text)");
-
-            entity.HasIndex(e => e.reauthentication_token, "reauthentication_token_idx")
-                .IsUnique()
-                .HasFilter("((reauthentication_token)::text !~ '^[0-9 ]*$'::text)");
-
-            entity.HasIndex(e => e.recovery_token, "recovery_token_idx")
-                .IsUnique()
-                .HasFilter("((recovery_token)::text !~ '^[0-9 ]*$'::text)");
-
-            entity.HasIndex(e => e.email, "users_email_partial_key")
-                .IsUnique()
-                .HasFilter("(is_sso_user = false)");
-
-            entity.Property(e => e.id).ValueGeneratedNever();
-            entity.Property(e => e.confirmed_at).HasComputedColumnSql("LEAST(email_confirmed_at, phone_confirmed_at)", true);
-            entity.Property(e => e.email_change_confirm_status).HasDefaultValue((short)0);
-            entity.Property(e => e.email_change_token_current).HasDefaultValueSql("''::character varying");
-            entity.Property(e => e.is_anonymous).HasDefaultValue(false);
-            entity.Property(e => e.is_sso_user)
-                .HasDefaultValue(false)
-                .HasComment("Auth: Set this column to true when the account comes from SSO. These accounts can have duplicate emails.");
-            entity.Property(e => e.phone).HasDefaultValueSql("NULL::character varying");
-            entity.Property(e => e.phone_change).HasDefaultValueSql("''::character varying");
-            entity.Property(e => e.phone_change_token).HasDefaultValueSql("''::character varying");
-            entity.Property(e => e.reauthentication_token).HasDefaultValueSql("''::character varying");
-        });
-
-        modelBuilder.Entity<user1>(entity =>
-        {
-            entity.HasKey(e => e.user_id).HasName("users_pkey");
-
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.is_active).HasDefaultValue(true);
-
-            entity.HasOne(d => d.role).WithMany(p => p.user1s)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("users_role_id_fkey");
-        });
-
-        modelBuilder.Entity<vector_index>(entity =>
-        {
-            entity.HasKey(e => e.id).HasName("vector_indexes_pkey");
-
-            entity.HasIndex(e => new { e.name, e.bucket_id }, "vector_indexes_name_bucket_id_idx")
-                .IsUnique()
-                .UseCollation(new[] { "C", null });
-
-            entity.Property(e => e.id).HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.created_at).HasDefaultValueSql("now()");
-            entity.Property(e => e.name).UseCollation("C");
-            entity.Property(e => e.updated_at).HasDefaultValueSql("now()");
-
-            entity.HasOne(d => d.bucket).WithMany(p => p.vector_indices)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("vector_indexes_bucket_id_fkey");
-        });
-
-        modelBuilder.Entity<vendor>(entity =>
-        {
-            entity.HasKey(e => e.vendor_id).HasName("vendors_pkey");
-
-            entity.Property(e => e.is_active).HasDefaultValue(true);
-        });
-        modelBuilder.HasSequence<int>("seq_schema_version", "graphql").IsCyclic();
-
-        OnModelCreatingPartial(modelBuilder);
-    }
-    */
 	partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

@@ -22,7 +22,7 @@ namespace SmartServe.Domain.Services
 			if (user == null)
 				return null;
 
-			return PinHasher.Verify(pin, user.pin_hash)
+			return PinHasher.Verify(pin, user.PinHash)
 				? user
 				: null;
 		}

@@ -3,21 +3,15 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Entities;
 
-public partial class User
+public partial class RestaurantTable
 {
-    public int UserId { get; set; }
+    public int TableId { get; set; }
 
-    public string Name { get; set; } = null!;
-
-    public int RoleId { get; set; }
+    public string? DisplayName { get; set; }
 
     public bool? IsActive { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
-    public string? PinHash { get; set; }
-
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
-    public virtual Role Role { get; set; } = null!;
 }

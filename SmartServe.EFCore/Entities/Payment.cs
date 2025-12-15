@@ -1,30 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartServe.EFCore.Entities;
 
-public partial class payment
+public partial class Payment
 {
-    [Key]
-    public int payment_id { get; set; }
+    public int PaymentId { get; set; }
 
-    public int? order_id { get; set; }
+    public int? OrderId { get; set; }
 
-    [StringLength(20)]
-    public string? mode { get; set; }
+    public string? Mode { get; set; }
 
-    [Precision(10, 2)]
-    public decimal? amount { get; set; }
+    public decimal? Amount { get; set; }
 
-    [StringLength(20)]
-    public string? status { get; set; }
+    public string? Status { get; set; }
 
-    public DateTime? created_at { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    //[ForeignKey("order_id")]
-    //[InverseProperty("payments")]
-    //public virtual order? order { get; set; }
+    public virtual Order? Order { get; set; }
 }

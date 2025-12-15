@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartServe.EFCore.Entities;
 
-[Index("role_name", Name = "roles_role_name_key", IsUnique = true)]
-public partial class role
+public partial class Role
 {
-    [Key]
-    public int role_id { get; set; }
+    public int RoleId { get; set; }
 
-    [StringLength(50)]
-    public string role_name { get; set; } = null!;
+    public string RoleName { get; set; } = null!;
 
-    //[InverseProperty("role")]
-    //public virtual ICollection<user1> user1s { get; set; } = new List<user1>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Entities;
 
-public partial class Category
+public partial class ServingType
 {
-    public int CategoryId { get; set; }
+    public int ServingTypeId { get; set; }
 
     public string Name { get; set; } = null!;
-
-    public bool? IsActive { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

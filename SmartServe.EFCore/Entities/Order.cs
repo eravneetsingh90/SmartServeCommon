@@ -1,43 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartServe.EFCore.Entities;
 
-[Index("created_at", Name = "idx_orders_created_at")]
-[Index("order_number", Name = "orders_order_number_key", IsUnique = true)]
-public partial class order
+public partial class Order
 {
-    [Key]
-    public int order_id { get; set; }
+    public int OrderId { get; set; }
 
-    public int? order_number { get; set; }
+    public string? OrderNumber { get; set; }
 
-    [StringLength(20)]
-    public string? order_type { get; set; }
+    public string? OrderType { get; set; }
 
-    [StringLength(20)]
-    public string? status { get; set; }
+    public string? Status { get; set; }
 
-    [Precision(10, 2)]
-    public decimal? total_amount { get; set; }
+    public decimal? TotalAmount { get; set; }
 
-    public int? created_by { get; set; }
+    public int? CreatedBy { get; set; }
 
-    public DateTime? created_at { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    //[ForeignKey("created_by")]
-    //[InverseProperty("orders")]
-    //public virtual user1? created_byNavigation { get; set; }
+    public int? TableId { get; set; }
 
-    //[InverseProperty("order")]
-    //public virtual kot? kot { get; set; }
+    public int? StatusId { get; set; }
 
-    //[InverseProperty("order")]
-    //public virtual ICollection<OrderItem> order_items { get; set; } = new List<OrderItem>();
+    public bool? IsActive { get; set; }
 
-    //[InverseProperty("order")]
-    //public virtual ICollection<payment> payments { get; set; } = new List<payment>();
+    public DateTime? ClosedAt { get; set; }
+
+    public virtual User? CreatedByNavigation { get; set; }
+
+    public virtual Kot? Kot { get; set; }
+
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+    public virtual TableStatus? StatusNavigation { get; set; }
+
+    public virtual RestaurantTable? Table { get; set; }
 }
