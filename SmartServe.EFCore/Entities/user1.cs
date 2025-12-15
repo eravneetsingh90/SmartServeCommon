@@ -13,13 +13,14 @@ public partial class user1
     public int user_id { get; set; }
 
     [StringLength(100)]
-    public string name { get; set; } = null!;
+    public string name { get; set; }
 
     public int role_id { get; set; }
 
-    public bool? is_active { get; set; }
+    public bool is_active { get; set; }
 
-    public DateTime? created_at { get; set; }
+	public string pin_hash { get; set; }
+	public DateTime? created_at { get; set; }
 
     //[InverseProperty("created_byNavigation")]
     //public virtual ICollection<order> orders { get; set; } = new List<order>();

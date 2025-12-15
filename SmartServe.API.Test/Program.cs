@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.UseEFCore(builder.Configuration);
 
 
-builder.Services.UseSmartServeStores();
+builder.Services.UseDomain();
 // Add services to the container.
 
 builder.Services.AddControllers();
