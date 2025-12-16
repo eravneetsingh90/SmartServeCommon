@@ -1,11 +1,13 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public class TableViewDto
+	public class GetTableView
 	{
 		public int TableId { get; set; }
 		public string DisplayName { get; set; }
 
 		public int? OrderId { get; set; }
+
+		public decimal Amount { get; set; }
 
 		public string StatusCode { get; set; }
 		public string StatusName { get; set; }

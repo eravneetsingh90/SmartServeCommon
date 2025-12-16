@@ -32,7 +32,7 @@ namespace SmartServe.Domain.Stores
 			await UpdateAsync(table);
 		}
 
-		public async Task<List<TableViewDto>> GetTablesForViewAsync()
+		public async Task<List<GetTableView>> GetTablesForViewAsync()
 		{
 			var query =
 				from table in _db.RestaurantTables
@@ -53,13 +53,13 @@ namespace SmartServe.Domain.Stores
 
 				from tableStatus in statusGroup.DefaultIfEmpty()
 
-				select new TableViewDto
+				select new GetTableView
 				{
 					TableId = table.TableId,
 					DisplayName = table.DisplayName??string.Empty,
 
 					OrderId = activeOrder != null ? activeOrder.OrderId : null,
-
+					Amount = activeOrder != null ? Convert.ToDecimal(activeOrder.TotalAmount) : 0,
 					StatusCode = tableStatus != null ? tableStatus.StatusCode : "BLANK",
 					StatusName = tableStatus != null ? tableStatus.StatusName : "Blank Table",
 					ColorHex = tableStatus != null ? tableStatus.ColorHex : "#E0E0E0"

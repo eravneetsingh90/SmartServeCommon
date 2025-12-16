@@ -55,7 +55,7 @@ namespace SmartServe.API.Test.Controllers
 		// New test endpoint: returns table view DTOs produced by RestaurantTableStore.GetTablesForViewAsync
 		[HttpGet]
 		[Route("get-tables-view")]
-		public async Task<IEnumerable<TableViewDto>> GetTablesView()
+		public async Task<IEnumerable<GetTableView>> GetTablesView()
 		{
 			var tables = await _tableStore.GetTablesForViewAsync();
 			return tables;
