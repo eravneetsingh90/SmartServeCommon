@@ -15,6 +15,7 @@ namespace SmartServe.Domain.Dependencies
 			//stores
 			services.AddScoped<ProductStore>();
 			services.AddScoped<UserStore>();
+			services.AddScoped<RestaurantTableStore>();
 
 			return services;
 		}
