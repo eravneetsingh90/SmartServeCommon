@@ -1,6 +1,6 @@
 ﻿using SmartServe.Domain.Security;
 using SmartServe.Domain.Stores;
-using SmartServe.EFCore.Entities;
+using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services
 {

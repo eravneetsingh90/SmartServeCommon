@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SmartServe.Domain.Stores;
 using SmartServe.Domain.Models;
-using SmartServe.EFCore.Db;
-using SmartServe.EFCore.Entities;
+using SmartServe.Domain.Stores;
+using SmartServe.EFCore.Models;
 
 namespace SmartServe.API.Test.Controllers
 {

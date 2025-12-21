@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SmartServe.EFCore.Entities;
+namespace SmartServe.EFCore.Models;
 
 public partial class Role
 {

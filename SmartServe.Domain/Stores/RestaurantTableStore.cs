@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
-using SmartServe.EFCore.Entities;
+using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
@@ -40,7 +40,7 @@ namespace SmartServe.Domain.Stores
 
 				join order in _db.Orders
 					.Where(o =>
-						o.IsActive ==true &&
+						//o.IsActive ==true &&
 						o.ClosedAt == null &&
 						o.OrderType == "DINE_IN")
 					on table.TableId equals order.TableId into orderGroup

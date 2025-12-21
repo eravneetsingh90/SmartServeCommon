@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SmartServe.EFCore.Entities;
+namespace SmartServe.EFCore.Models;
 
-public partial class Stock
+public partial class IngredientStock
 {
     public int IngredientId { get; set; }
 
-    public decimal CurrentQty { get; set; }
+    public decimal? Quantity { get; set; }
 
     public virtual Ingredient Ingredient { get; set; } = null!;
 }

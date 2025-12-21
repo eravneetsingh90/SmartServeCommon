@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SmartServe.EFCore.Entities;
+namespace SmartServe.EFCore.Models;
 
-public partial class StockTransaction
+public partial class IngredientTransaction
 {
-    public int StockTxnId { get; set; }
+    public int IngredientTxnId { get; set; }
 
     public int? IngredientId { get; set; }
 
     public decimal ChangeQty { get; set; }
 
-    public string? Reason { get; set; }
+    public string Reason { get; set; } = null!;
 
     public int? ReferenceId { get; set; }
 
