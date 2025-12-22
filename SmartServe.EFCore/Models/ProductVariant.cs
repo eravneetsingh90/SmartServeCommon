@@ -5,13 +5,13 @@ namespace SmartServe.EFCore.Models;
 
 public partial class ProductVariant
 {
-    public int VariantId { get; set; }
+    public int ProductVariantId { get; set; }
 
     public int ProductId { get; set; }
 
     public int? BrandId { get; set; }
 
-    public string VariantName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     public decimal Price { get; set; }
 

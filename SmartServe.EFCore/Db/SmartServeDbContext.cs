@@ -323,15 +323,15 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<ProductVariant>(entity =>
 		{
-			entity.HasKey(e => e.VariantId).HasName("product_variants_pkey");
+			entity.HasKey(e => e.ProductVariantId).HasName("product_variants_pkey");
 
 			entity.ToTable("product_variants");
 
 			entity.HasIndex(e => e.ProductId, "idx_variants_product");
 
-			entity.HasIndex(e => new { e.ProductId, e.BrandId, e.VariantName }, "product_variants_product_id_brand_id_variant_name_key").IsUnique();
+			entity.HasIndex(e => new { e.ProductId, e.BrandId, e.Name }, "product_variants_product_id_brand_id_variant_name_key").IsUnique();
 
-			entity.Property(e => e.VariantId).HasColumnName("variant_id");
+			entity.Property(e => e.ProductVariantId).HasColumnName("variant_id");
 			entity.Property(e => e.BrandId).HasColumnName("brand_id");
 			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
 			entity.Property(e => e.CreatedAt)
@@ -347,7 +347,7 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.TracksStock)
 				.HasDefaultValue(false)
 				.HasColumnName("tracks_stock");
-			entity.Property(e => e.VariantName)
+			entity.Property(e => e.Name)
 				.HasMaxLength(100)
 				.HasColumnName("variant_name");
 
