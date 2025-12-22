@@ -4,9 +4,11 @@ public partial class Category
 {
     public int CategoryId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; } = string.Empty;
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+	public int DisplayOrder { get; set; }
+
+	public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

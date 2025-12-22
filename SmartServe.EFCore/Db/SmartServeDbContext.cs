@@ -95,6 +95,7 @@ public partial class SmartServeDbContext : DbContext
 			entity.HasIndex(e => e.Name, "categories_name_key").IsUnique();
 
 			entity.Property(e => e.CategoryId).HasColumnName("category_id");
+			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");

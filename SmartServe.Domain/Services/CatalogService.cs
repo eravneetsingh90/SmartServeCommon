@@ -33,7 +33,7 @@ namespace SmartServe.Domain.Services
 			_categories = await _db.Categories
 				.AsNoTracking()
 				.Where(c => c.IsActive == true)
-				//.OrderBy(c => c.DisplayOrder)
+				.OrderBy(c => c.DisplayOrder)
 				.ToListAsync();
 
 			// Products
