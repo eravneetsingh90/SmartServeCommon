@@ -11,6 +11,7 @@ namespace SmartServe.Domain.Dependencies
 		{
 			//services
 			services.AddScoped<AuthService>();
+			services.AddScoped<ICatalogService, CatalogService>();
 
 			//stores
 			services.AddScoped<ProductStore>();
