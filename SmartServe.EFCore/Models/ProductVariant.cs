@@ -20,8 +20,10 @@ public partial class ProductVariant
     public bool? IsActive { get; set; }
 
     public DateTime? CreatedAt { get; set; }
+    
+    public int DisplayOrder { get; set; }
 
-    public virtual Brand? Brand { get; set; }
+	public virtual Brand? Brand { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

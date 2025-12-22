@@ -283,6 +283,7 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.Property(e => e.ProductId).HasColumnName("product_id");
 			entity.Property(e => e.CategoryId).HasColumnName("category_id");
+			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
@@ -332,6 +333,7 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.Property(e => e.VariantId).HasColumnName("variant_id");
 			entity.Property(e => e.BrandId).HasColumnName("brand_id");
+			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
