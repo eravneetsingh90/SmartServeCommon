@@ -14,55 +14,52 @@ namespace SmartServe.Domain.Stores
 			_set = _db.Set<T>();
 		}
 
-		// READ: Get all
-		public virtual async Task<List<T>> GetAllAsync(
-			bool asNoTracking = true)
+		// ================= READ =================
+
+		public virtual async Task<List<T>> GetAllAsync()
 		{
-			return asNoTracking
-				? await _set.AsNoTracking().ToListAsync()
-				: await _set.ToListAsync();
+			// 🔑 ALWAYS DETACHED
+			return await _set.AsNoTracking().ToListAsync();
 		}
 
-		// READ: Get by primary key
-		public virtual async Task<T?> GetByIdAsync(
-			object id,
-			bool asNoTracking = false)
+		public virtual async Task<T?> GetByIdAsync(object id)
 		{
-			if (asNoTracking)
-			{
-				return await _set
-					.AsNoTracking()
-					.FirstOrDefaultAsync(e =>
-						EF.Property<object>(e, "Id").Equals(id));
-			}
-
-			return await _set.FindAsync(id);
+			return await _set
+				.AsNoTracking()
+				.FirstOrDefaultAsync(e =>
+					EF.Property<object>(e, "Id")!.Equals(id));
 		}
 
-		// CREATE
+		// ================= CREATE =================
+
 		public virtual async Task AddAsync(T entity)
 		{
 			_set.Add(entity);
 			await _db.SaveChangesAsync();
 		}
 
-		// UPDATE
+		// ================= UPDATE =================
+
 		public virtual async Task UpdateAsync(T entity)
 		{
-			_set.Update(entity);
+			// 🔑 PREVENT MULTIPLE TRACKING
+			_db.ChangeTracker.Clear();
+
+			_set.Attach(entity);
+			_db.Entry(entity).State = EntityState.Modified;
+
 			await _db.SaveChangesAsync();
 		}
 
-		// DELETE
+		// ================= DELETE =================
+
 		public virtual async Task DeleteAsync(T entity)
 		{
-			_set.Remove(entity);
-			await _db.SaveChangesAsync();
-		}
+			_db.ChangeTracker.Clear();
 
-		// SAVE (for batch operations)
-		public virtual async Task SaveChangesAsync()
-		{
+			_set.Attach(entity);
+			_set.Remove(entity);
+
 			await _db.SaveChangesAsync();
 		}
 	}
