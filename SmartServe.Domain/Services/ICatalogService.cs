@@ -12,6 +12,8 @@ namespace SmartServe.Domain.Services
 		IReadOnlyList<ProductVariant> GetVariantsByProduct(int productId);
 
 		IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30);
+
+		public void Reset();
 	}
 
 }

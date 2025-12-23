@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Models;
+using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 
@@ -7,7 +8,9 @@ namespace SmartServe.Domain.Services
 {
 	public class CatalogService : ICatalogService
 	{
-		private readonly SmartServeDbContext _db;
+		private readonly CategoryStore _categoryStore;
+		private readonly ProductStore _productStore;
+		private readonly ProductVariantStore _variantStore;
 
 		private List<Category> _categories = new();
 		private List<Product> _products = new();
@@ -16,9 +19,14 @@ namespace SmartServe.Domain.Services
 
 		private bool _loaded;
 
-		public CatalogService(SmartServeDbContext db)
+		public CatalogService(
+			CategoryStore categoryStore,
+			ProductStore productStore,
+			ProductVariantStore variantStore)
 		{
-			_db = db;
+			_categoryStore = categoryStore;
+			_productStore = productStore;
+			_variantStore = variantStore;
 		}
 
 		// =============================
@@ -30,23 +38,20 @@ namespace SmartServe.Domain.Services
 				return;
 
 			// Categories
-			_categories = await _db.Categories
-				.AsNoTracking()
+			_categories = (await _categoryStore.GetAllAsync())
 				.Where(c => c.IsActive == true)
 				.OrderBy(c => c.DisplayOrder)
-				.ToListAsync();
+				.ToList();
 
 			// Products
-			_products = await _db.Products
-				.AsNoTracking()
+			_products = (await _productStore.GetAllAsync())
 				.Where(p => p.IsActive == true)
-				.ToListAsync();
+				.ToList();
 
 			// Variants
-			_variants = await _db.ProductVariants
-				.AsNoTracking()
+			_variants = (await _variantStore.GetAllAsync())
 				.Where(v => v.IsActive == true)
-				.ToListAsync();
+				.ToList();
 
 			// 🔍 Build search index
 			_searchIndex =
@@ -77,10 +82,16 @@ namespace SmartServe.Domain.Services
 			=> _categories;
 
 		public IReadOnlyList<Product> GetProductsByCategory(int categoryId)
-			=> _products.Where(p => p.CategoryId == categoryId).ToList();
+			=> _products
+				.Where(p => p.CategoryId == categoryId)
+				.OrderBy(p => p.DisplayOrder)
+				.ToList();
 
 		public IReadOnlyList<ProductVariant> GetVariantsByProduct(int productId)
-			=> _variants.Where(v => v.ProductId == productId).ToList();
+			=> _variants
+				.Where(v => v.ProductId == productId)
+				.OrderBy(v => v.DisplayOrder)
+				.ToList();
 
 		public IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30)
 		{
@@ -93,6 +104,15 @@ namespace SmartServe.Domain.Services
 				.Where(x => x.SearchText.Contains(term))
 				.Take(maxResults)
 				.ToList();
+		}
+
+		public void Reset()
+		{
+			_loaded = false;
+			_categories.Clear();
+			_products.Clear();
+			_variants.Clear();
+			_searchIndex.Clear();
 		}
 	}
 
