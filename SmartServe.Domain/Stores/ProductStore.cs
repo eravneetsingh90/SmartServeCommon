@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Stores
 		{
 			return await _db.Products
 				.AsNoTracking()
-				.Where(p => p.IsActive == true && p.CategoryId == categoryId)
+				.Where(p => p.CategoryId == categoryId)
 				.OrderBy(p => p.DisplayOrder)
 				.ToListAsync();
 		}
