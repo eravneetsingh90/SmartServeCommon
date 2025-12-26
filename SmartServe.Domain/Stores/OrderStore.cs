@@ -3,40 +3,34 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class OrderStore : BaseStore<Order>
+	public class OrderStore : BaseStore<Order>, IOrderStore
 	{
 		public OrderStore(SmartServeDbContext db) : base(db) { }
 
-		public async Task<Order> CreateOrderAsync(
-			int? tableId,
-			string orderType,
-			int statusId)
+		public Task<Order> CreateOrderAsync(Order order)
 		{
-			var order = new Order
-			{
-				TableId = tableId,
-				OrderType = orderType,
-				StatusId = statusId,
-				OrderNumber = $"ORD-{DateTime.Now:yyyyMMddHHmmss}",
-				//IsActive = true,
-				CreatedAt = DateTime.Now,
-				TotalAmount = 0
-			};
-
-			await AddAsync(order);
-			return order;
+			throw new NotImplementedException();
 		}
 
-		public async Task CloseOrderAsync(int orderId, decimal totalAmount)
+		public Task<Order?> GetOrderAsync(int orderId)
 		{
-			var order = await GetByIdAsync(orderId);
-			if (order == null) return;
+			throw new NotImplementedException();
+		}
 
-			order.TotalAmount = totalAmount;
-			//order.IsActive = false;
-			order.ClosedAt = DateTime.Now;
+		public Task UpdateOrderAsync(Order order)
+		{
+			throw new NotImplementedException();
+		}
 
-			await UpdateAsync(order);
+		public async Task ClearOrderItemsAsync(int orderId)
+		{
+			var items = _db.OrderItems.Where(x => x.OrderId == orderId);
+			_db.OrderItems.RemoveRange(items);
+		}
+
+		public Task AddOrderItemsAsync(IEnumerable<OrderItem> items)
+		{
+			throw new NotImplementedException();
 		}
 	}
 

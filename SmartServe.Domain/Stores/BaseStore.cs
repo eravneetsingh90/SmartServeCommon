@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartServe.Domain.Stores.SmartServe.Domain.Stores;
 using SmartServe.EFCore.Db;
 
 namespace SmartServe.Domain.Stores
 {
-	public class BaseStore<T> where T : class
+	public class BaseStore<T> : IBaseStore<T> where T : class
 	{
 		protected readonly SmartServeDbContext _db;
 		protected readonly DbSet<T> _set;
@@ -18,7 +19,6 @@ namespace SmartServe.Domain.Stores
 
 		public virtual async Task<List<T>> GetAllAsync()
 		{
-			// 🔑 ALWAYS DETACHED
 			return await _set.AsNoTracking().ToListAsync();
 		}
 
@@ -32,28 +32,51 @@ namespace SmartServe.Domain.Stores
 
 		// ================= CREATE =================
 
-		public virtual async Task AddAsync(T entity)
+		public virtual Task AddAsync(T entity)
+		{
+			_set.Add(entity);
+			return Task.CompletedTask;
+		}
+
+		public virtual async Task AddAndSaveAsync(T entity)
 		{
 			_set.Add(entity);
 			await _db.SaveChangesAsync();
 		}
-
 		// ================= UPDATE =================
 
-		public virtual async Task UpdateAsync(T entity)
+		public virtual Task UpdateAsync(T entity)
 		{
-			// 🔑 PREVENT MULTIPLE TRACKING
+			_db.ChangeTracker.Clear();
+
+			_set.Attach(entity);
+			_db.Entry(entity).State = EntityState.Modified;
+
+			return Task.CompletedTask;
+		}
+
+		public virtual async Task UpdateAndSaveAsync(T entity)
+		{
 			_db.ChangeTracker.Clear();
 
 			_set.Attach(entity);
 			_db.Entry(entity).State = EntityState.Modified;
 
 			await _db.SaveChangesAsync();
-		}
 
+		}
 		// ================= DELETE =================
 
-		public virtual async Task DeleteAsync(T entity)
+		public virtual Task DeleteAsync(T entity)
+		{
+			_db.ChangeTracker.Clear();
+
+			_set.Attach(entity);
+			_set.Remove(entity);
+
+			return Task.CompletedTask;
+		}
+		public virtual async Task DeleteAndSaveAsync(T entity)
 		{
 			_db.ChangeTracker.Clear();
 

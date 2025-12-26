@@ -18,10 +18,11 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<ProductVariantStore>();
 			services.AddScoped<UserStore>();
 			services.AddScoped<RestaurantTableStore>();
-			services.AddScoped<CategoryStore>();
+			services.AddScoped<ICategoryStore,CategoryStore>();
 			services.AddScoped<OrderItemStore>();
 			services.AddScoped<OrderStore>();
-
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			
 			return services;
 		}
 	}
