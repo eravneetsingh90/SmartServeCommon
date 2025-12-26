@@ -9,7 +9,7 @@ namespace SmartServe.Domain.Services
 	public class CatalogService : ICatalogService
 	{
 		private readonly ICategoryStore _categoryStore;
-		private readonly ProductStore _productStore;
+		private readonly IProductStore _productStore;
 		private readonly ProductVariantStore _variantStore;
 
 		private List<Category> _categories = new();
@@ -21,7 +21,7 @@ namespace SmartServe.Domain.Services
 
 		public CatalogService(
 			ICategoryStore categoryStore,
-			ProductStore productStore,
+			IProductStore productStore,
 			ProductVariantStore variantStore)
 		{
 			_categoryStore = categoryStore;

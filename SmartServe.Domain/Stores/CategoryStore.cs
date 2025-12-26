@@ -15,6 +15,7 @@ namespace SmartServe.Domain.Stores
 		public async Task<List<Category>> GetActiveCategoriesAsync()
 		{
 			return await _db.Categories
+				.AsNoTracking()
 				.Where(c => c.IsActive == true)
 				.OrderBy(c => c.DisplayOrder)
 				.ToListAsync();
@@ -23,13 +24,13 @@ namespace SmartServe.Domain.Stores
 		public async Task<List<Category>> GetAllCategoriesByOrderAsync()
 		{
 			return await _db.Categories
+				.AsNoTracking()
 				.OrderBy(c => c.DisplayOrder)
 				.ToListAsync();
 		}
 
 		public async Task SaveBulkCategoriesAsync(IEnumerable<Category> categories)
 		{
-			// 🔹 Business Rule: No duplicate names
 			var duplicateNames = categories
 				.Where(c => !string.IsNullOrWhiteSpace(c.Name))
 				.GroupBy(c => c.Name.Trim().ToLower())
