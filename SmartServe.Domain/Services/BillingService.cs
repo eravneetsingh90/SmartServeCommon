@@ -13,6 +13,11 @@ namespace SmartServe.Domain.Services
 			_orderStore = orderStore;
 		}
 
+		public Task<Order?> GetOrderAsync(int orderId)
+		{
+			return _orderStore.GetOrderAsync(orderId);
+		}
+
 		public async Task<int> SaveOrderAsync(BillingSaveRequest request)
 		{
 			Order order;

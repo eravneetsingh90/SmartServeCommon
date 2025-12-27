@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SmartServe.Domain.Models;
+﻿using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
-using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services

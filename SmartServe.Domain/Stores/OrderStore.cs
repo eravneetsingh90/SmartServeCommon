@@ -17,8 +17,15 @@ namespace SmartServe.Domain.Stores
 
 		public async Task<Order?> GetOrderAsync(int orderId)
 		{
+			//return await _db.Orders
+			//	.Include(o => o.OrderItems)
+			//	.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
 			return await _db.Orders
+				.AsNoTracking()
 				.Include(o => o.OrderItems)
+					.ThenInclude(oi => oi.Variant)
+						.ThenInclude(v => v.Product)
 				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 		}
 
