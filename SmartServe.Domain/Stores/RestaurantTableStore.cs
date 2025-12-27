@@ -5,7 +5,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class RestaurantTableStore : BaseStore<RestaurantTable>
+	public class RestaurantTableStore : BaseStore<RestaurantTable>, IRestaurantTableStore
 	{
 		public RestaurantTableStore(SmartServeDbContext db) : base(db)
 		{

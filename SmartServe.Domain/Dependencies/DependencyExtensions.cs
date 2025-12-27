@@ -12,15 +12,16 @@ namespace SmartServe.Domain.Dependencies
 			//services
 			services.AddScoped<AuthService>();
 			services.AddSingleton<ICatalogService, CatalogService>();
+			services.AddSingleton<IBillingService, BillingService>();
 
 			//stores
 			services.AddScoped<IProductStore, ProductStore>();
 			services.AddScoped<IProductVariantStore, ProductVariantStore>();
 			services.AddScoped<UserStore>();
-			services.AddScoped<RestaurantTableStore>();
+			services.AddScoped<IRestaurantTableStore,RestaurantTableStore>();
 			services.AddScoped<ICategoryStore, CategoryStore>();
 			services.AddScoped<OrderItemStore>();
-			services.AddScoped<OrderStore>();
+			services.AddScoped<IOrderStore,OrderStore>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			return services;

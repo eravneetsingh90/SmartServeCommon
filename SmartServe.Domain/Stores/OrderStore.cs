@@ -1,5 +1,6 @@
 ﻿using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmartServe.Domain.Stores
 {
@@ -7,31 +8,37 @@ namespace SmartServe.Domain.Stores
 	{
 		public OrderStore(SmartServeDbContext db) : base(db) { }
 
-		public Task<Order> CreateOrderAsync(Order order)
+		public async Task<Order> CreateOrderAsync(Order order)
 		{
-			throw new NotImplementedException();
+			_db.Orders.Add(order);
+			await _db.SaveChangesAsync();
+			return order;
 		}
 
-		public Task<Order?> GetOrderAsync(int orderId)
+		public async Task<Order?> GetOrderAsync(int orderId)
 		{
-			throw new NotImplementedException();
+			return await _db.Orders
+				.Include(o => o.OrderItems)
+				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 		}
 
-		public Task UpdateOrderAsync(Order order)
+		public async Task UpdateOrderAsync(Order order)
 		{
-			throw new NotImplementedException();
+			_db.Orders.Update(order);
+			await _db.SaveChangesAsync();
+		}
+
+		public async Task AddOrderItemsAsync(IEnumerable<OrderItem> items)
+		{
+			_db.OrderItems.AddRange(items);
+			await _db.SaveChangesAsync();
 		}
 
 		public async Task ClearOrderItemsAsync(int orderId)
 		{
 			var items = _db.OrderItems.Where(x => x.OrderId == orderId);
 			_db.OrderItems.RemoveRange(items);
-		}
-
-		public Task AddOrderItemsAsync(IEnumerable<OrderItem> items)
-		{
-			throw new NotImplementedException();
+			await _db.SaveChangesAsync();
 		}
 	}
-
 }
