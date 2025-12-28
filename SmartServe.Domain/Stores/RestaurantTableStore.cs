@@ -40,7 +40,6 @@ namespace SmartServe.Domain.Stores
 
 				join order in _db.Orders
 					.Where(o =>
-						//o.IsActive ==true &&
 						o.ClosedAt == null &&
 						o.OrderType == "DINE_IN")
 					on table.TableId equals order.TableId into orderGroup
@@ -53,22 +52,27 @@ namespace SmartServe.Domain.Stores
 
 				from tableStatus in statusGroup.DefaultIfEmpty()
 
+				let hasStatus = tableStatus != null && activeOrder !=null
+
 				select new GetTableView
 				{
 					TableId = table.TableId,
-					DisplayName = table.DisplayName??string.Empty,
+					DisplayName = table.DisplayName ?? string.Empty,
 
-					OrderId = activeOrder != null ? activeOrder.OrderId : null,
-					Amount = activeOrder != null ? Convert.ToDecimal(activeOrder.TotalAmount) : 0,
-					StatusCode = tableStatus != null ? tableStatus.StatusCode : "BLANK",
-					StatusName = tableStatus != null ? tableStatus.StatusName : "Blank Table",
-					ColorHex = tableStatus != null ? tableStatus.ColorHex : "#E0E0E0"
+					// ✅ Order info ONLY if status exists
+					OrderId = hasStatus ? activeOrder.OrderId : null,
+					Amount = hasStatus ? Convert.ToDecimal(activeOrder.TotalAmount) : 0,
+
+					StatusCode = hasStatus ? tableStatus.StatusCode : "BLANK",
+					StatusName = hasStatus ? tableStatus.StatusName : "Blank Table",
+					ColorHex = hasStatus ? tableStatus.ColorHex : "#E0E0E0"
 				};
 
 			return await query
 				.OrderBy(t => t.DisplayName)
 				.ToListAsync();
 		}
+
 
 	}
 
