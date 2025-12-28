@@ -20,6 +20,12 @@ namespace SmartServe.Domain.Services
 			return _orderStore.GetOrderAsync(orderId);
 		}
 
+		public async Task<int> UpdateOrderAsync(Order order)
+		{
+			await _orderStore.UpdateAndSaveAsync(order);
+			return order.OrderId;
+		}
+
 		public async Task<int> SaveOrderAsync(BillingSaveRequest request)
 		{
 			Order order;
@@ -44,9 +50,9 @@ namespace SmartServe.Domain.Services
 				order = await _orderStore.GetOrderAsync(request.OrderId.Value)
 					?? throw new InvalidOperationException("Order not found");
 
-				order.TotalAmount = request.TotalAmount;
+				order.StatusId = tableStatus.StatusId;
 
-				await _orderStore.UpdateOrderAsync(order);
+				await _orderStore.UpdateAndSaveAsync(order);
 				await _orderStore.ClearOrderItemsAsync(order.OrderId);
 			}
 
@@ -65,7 +71,5 @@ namespace SmartServe.Domain.Services
 			return order.OrderId;
 		}
 
-		// TEMP: later move to lookup / cache
-		private int GetRunningStatusId() => 1;
 	}
 }

@@ -5,14 +5,12 @@ namespace SmartServe.Domain.Services
 {
 	public interface ICatalogService
 	{
-		Task LoadAsync(); // load everything once
-
+		Task LoadAsync();
 		IReadOnlyList<Category> GetCategories();
 		IReadOnlyList<Product> GetProductsByCategory(int categoryId);
 		IReadOnlyList<ProductVariant> GetVariantsByProduct(int productId);
-
 		IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30);
-
+		TableStatus GetTableStatusByCode(string statusCode);
 		public void Reset();
 	}
 

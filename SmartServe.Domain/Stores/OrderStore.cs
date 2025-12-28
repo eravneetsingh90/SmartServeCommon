@@ -29,12 +29,6 @@ namespace SmartServe.Domain.Stores
 				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 		}
 
-		public async Task UpdateOrderAsync(Order order)
-		{
-			_db.Orders.Update(order);
-			await _db.SaveChangesAsync();
-		}
-
 		public async Task AddOrderItemsAsync(IEnumerable<OrderItem> items)
 		{
 			_db.OrderItems.AddRange(items);
