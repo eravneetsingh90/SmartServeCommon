@@ -23,7 +23,7 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<OrderItemStore>();
 			services.AddScoped<IOrderStore,OrderStore>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+			services.AddScoped<ITableStatusStore, TableStatusStore>();
 			return services;
 		}
 	}

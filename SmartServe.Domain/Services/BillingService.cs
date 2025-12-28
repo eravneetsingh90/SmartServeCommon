@@ -7,10 +7,12 @@ namespace SmartServe.Domain.Services
 	public class BillingService : IBillingService
 	{
 		private readonly IOrderStore _orderStore;
+		private readonly ITableStatusStore _tableStatusStore;
 
-		public BillingService(IOrderStore orderStore)
+		public BillingService(IOrderStore orderStore, ITableStatusStore tableStatusStore)
 		{
 			_orderStore = orderStore;
+			_tableStatusStore = tableStatusStore;
 		}
 
 		public Task<Order?> GetOrderAsync(int orderId)
@@ -21,15 +23,16 @@ namespace SmartServe.Domain.Services
 		public async Task<int> SaveOrderAsync(BillingSaveRequest request)
 		{
 			Order order;
+			var tableStatus = await _tableStatusStore.GetTableStatusByCode(request.TableStatusCode);
 
-			// 🔹 NEW ORDER
-			if (request.OrderId == null)
+			if (request.OrderId == null || request.OrderId <= 0)
 			{
 				order = new Order
 				{
 					OrderType = request.OrderType,
 					TotalAmount = request.TotalAmount,
-					StatusId = GetRunningStatusId(),
+					StatusId = tableStatus.StatusId,
+					TableId = request.TableId,
 					CreatedAt = DateTime.UtcNow
 				};
 

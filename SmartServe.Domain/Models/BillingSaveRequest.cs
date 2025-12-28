@@ -4,6 +4,7 @@
 	{
 		public int? OrderId { get; set; } // null = new order
 		public string OrderType { get; set; } // DINE_IN, DELIVERY, PICKUP
+		public string TableStatusCode { get; set; }
 		public int? TableId { get; set; }
 		public decimal TotalAmount { get; set; }
 
