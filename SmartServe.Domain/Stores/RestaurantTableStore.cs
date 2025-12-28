@@ -47,6 +47,7 @@ namespace SmartServe.Domain.Stores
 				from activeOrder in orderGroup.DefaultIfEmpty()
 
 				join status in _db.TableStatuses
+					.Where(o=>o.StatusCode != "BLANK")
 					on activeOrder.StatusId equals status.StatusId
 					into statusGroup
 
