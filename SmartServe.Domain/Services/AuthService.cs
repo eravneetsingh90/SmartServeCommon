@@ -4,7 +4,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services
 {
-	public class AuthService
+	public class AuthService : IAuthService
 	{
 		private readonly UserStore _userStore;
 

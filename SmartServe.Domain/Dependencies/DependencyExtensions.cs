@@ -10,7 +10,7 @@ namespace SmartServe.Domain.Dependencies
 			this IServiceCollection services)
 		{
 			//services
-			services.AddScoped<AuthService>();
+			services.AddScoped<IAuthService,AuthService>();
 			services.AddSingleton<ICatalogService, CatalogService>();
 			services.AddSingleton<IBillingService, BillingService>();
 
