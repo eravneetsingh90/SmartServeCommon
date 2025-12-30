@@ -10,10 +10,12 @@
 
 		public decimal? Amount { get; set; }
 
-		public string? Status { get; set; }
+		public decimal? PartPaymentCash { get; set; }
+
+		//public string? Status { get; set; }
 
 		public DateTime? CreatedAt { get; set; }
 
-		public virtual OrderDto? Order { get; set; }
+		//public virtual OrderDto? Order { get; set; }
 	}
 }
