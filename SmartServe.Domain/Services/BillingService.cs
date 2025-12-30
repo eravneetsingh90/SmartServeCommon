@@ -46,83 +46,18 @@ namespace SmartServe.Domain.Services
 
 		public async Task CreateOrderItemsAsync(List<OrderItemDto> request)
 		{
-			//var items = orderItems.Select(x => new OrderItem
-			//{
-			//	OrderId = orderId,
-			//	VariantId = x.VariantId,
-			//	Quantity = x.Quantity,
-			//	PriceSnapshot = x.PriceSnapshot,
-			//	DiscountAmount = 0
-			//});
 			var orderItems = _mapper.Map<List<OrderItem>>(request);
 
 			await _orderItemStore.AddOrderItemsAsync(orderItems);
 
 		}
 
-	//	public async Task UpdateOrderItemsAsync(
-	//int orderId,
-	//List<OrderItemDto> incomingItems)
-	//	{
-	//		var order = GetOrderAsync(orderId);
+		public async Task UpdateOrderItemsAsync(int orderId,List<OrderItemDto> items)
+		{
+			var orderItems = _mapper.Map<List<OrderItem>>(items);
 
-	//		if (order == null)
-	//			throw new Exception("Open order not found");
-
-	//		foreach (var dto in incomingItems)
-	//		{
-	//			// 🔹 UPDATE existing
-	//			if (dto.OrderItemId>0)
-	//			{
-	//				var existing = order.order.OrderItems
-	//					.FirstOrDefault(x => x.OrderItemId == dto.OrderItemId.Value);
-
-	//				if (existing == null)
-	//					throw new Exception("Order item not found");
-
-	//				if (dto.Quantity <= 0)
-	//				{
-	//					_db.OrderItems.Remove(existing);
-	//				}
-	//				else
-	//				{
-	//					existing.Quantity = dto.Quantity;
-	//					existing.PriceSnapshot = dto.PriceSnapshot;
-	//				}
-	//			}
-	//			// 🔹 ADD new
-	//			else
-	//			{
-	//				order.OrderItems.Add(new OrderItem
-	//				{
-	//					VariantId = dto.VariantId,
-	//					Quantity = dto.Quantity,
-	//					PriceSnapshot = dto.PriceSnapshot,
-	//					DiscountAmount = 0
-	//				});
-	//			}
-	//		}
-
-	//		// 3️⃣ REMOVE items missing from request
-	//		var incomingIds = incomingItems
-	//			.Where(x => x.OrderItemId.HasValue)
-	//			.Select(x => x.OrderItemId!.Value)
-	//			.ToHashSet();
-
-	//		var toRemove = order.OrderItems
-	//			.Where(x => x.OrderItemId > 0 && !incomingIds.Contains(x.OrderItemId))
-	//			.ToList();
-
-	//		_db.OrderItems.RemoveRange(toRemove);
-
-	//		// 4️⃣ Recalculate totals
-	//		order.TotalAmount = order.OrderItems
-	//			.Sum(x => x.Quantity * x.PriceSnapshot);
-
-	//		// 5️⃣ Save
-	//		await _db.SaveChangesAsync();
-	//	}
-
+			await _orderItemStore.UpdateOrderItemsAsync(orderId,orderItems);
+		}
 
 	}
 }

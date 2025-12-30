@@ -22,11 +22,11 @@ namespace SmartServe.Domain.Models
 
 		public int DisplayOrder { get; set; }
 
-		public virtual Brand? Brand { get; set; }
+		//public virtual Brand? Brand { get; set; }
 
-		public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+		//public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
 
-		//public virtual ProductDto Product { get; set; } = null!;
+		public virtual ProductDto Product { get; set; } = null!;
 
 		//public virtual ICollection<ProductIngredientDto> ProductIngredients { get; set; } = new List<ProductIngredientDto>();
 

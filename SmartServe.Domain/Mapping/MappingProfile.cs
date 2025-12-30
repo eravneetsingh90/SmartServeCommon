@@ -36,7 +36,12 @@ public class MappingProfile : Profile
 			CreateMap<PaymentDto, Payment>();
 
 			CreateMap<ProductVariant, ProductVariantDto>();
-			CreateMap<ProductVariantDto, ProductVariant>();
+			CreateMap<ProductVariantDto, ProductVariant>()
+				.ForMember(d => d.Product, opt => opt.Ignore());
+
+			CreateMap<Product, ProductDto>();
+			CreateMap<ProductDto, Product>();
+			
 		}
 	}
 

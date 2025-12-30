@@ -7,5 +7,6 @@ namespace SmartServe.Domain.Stores
 	{
 		Task<List<OrderItem>> GetOrderItemsAsync(int orderId);
 		Task AddOrderItemsAsync(List<OrderItem> items);
+		Task UpdateOrderItemsAsync(int orderId, List<OrderItem> orderItems);
 	}
 }
