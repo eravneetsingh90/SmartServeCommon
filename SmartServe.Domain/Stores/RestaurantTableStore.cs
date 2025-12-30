@@ -36,37 +36,39 @@ namespace SmartServe.Domain.Stores
 		{
 			var query =
 				from table in _db.RestaurantTables
-				where table.IsActive == true
+				where table.IsActive==true
 
-				join order in _db.Orders
+				// ✅ Open order = ClosedAt IS NULL
+				let activeOrder = _db.Orders
 					.Where(o =>
+						o.TableId == table.TableId &&
 						o.ClosedAt == null &&
 						o.OrderType == "DINE_IN")
-					on table.TableId equals order.TableId into orderGroup
+					.OrderByDescending(o => o.CreatedAt)
+					.Select(o => new
+					{
+						o.OrderId,
+						o.TotalAmount,
+						o.StatusId
+					})
+					.FirstOrDefault()
 
-				from activeOrder in orderGroup.DefaultIfEmpty()
-
-				join status in _db.TableStatuses
-					.Where(o=>o.StatusCode != "BLANK")
-					on activeOrder.StatusId equals status.StatusId
-					into statusGroup
-
-				from tableStatus in statusGroup.DefaultIfEmpty()
-
-				let hasStatus = tableStatus != null && activeOrder !=null
+				// ✅ Resolve table status only if order exists
+				let tableStatus = activeOrder != null
+					? _db.TableStatuses.FirstOrDefault(s => s.StatusId == activeOrder.StatusId)
+					: null
 
 				select new GetTableView
 				{
 					TableId = table.TableId,
 					DisplayName = table.DisplayName ?? string.Empty,
 
-					// ✅ Order info ONLY if status exists
-					OrderId = hasStatus ? activeOrder.OrderId : null,
-					Amount = hasStatus ? Convert.ToDecimal(activeOrder.TotalAmount) : 0,
+					OrderId = activeOrder != null ? activeOrder.OrderId : null,
+					Amount = activeOrder != null ? activeOrder.TotalAmount ?? 0 : 0,
 
-					StatusCode = hasStatus ? tableStatus.StatusCode : "BLANK",
-					StatusName = hasStatus ? tableStatus.StatusName : "Blank Table",
-					ColorHex = hasStatus ? tableStatus.ColorHex : "#E0E0E0"
+					StatusCode = tableStatus.StatusCode ?? "BLANK",
+					StatusName = tableStatus.StatusName ?? "Blank Table",
+					ColorHex = tableStatus.ColorHex ?? "#E0E0E0"
 				};
 
 			return await query

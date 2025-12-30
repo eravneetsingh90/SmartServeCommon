@@ -14,7 +14,7 @@
 
 		public decimal? DiscountAmount { get; set; }
 
-		public virtual OrderDto? Order { get; set; }
+		//public virtual OrderDto? Order { get; set; }
 
 		public virtual ProductVariantDto? Variant { get; set; }
 	}

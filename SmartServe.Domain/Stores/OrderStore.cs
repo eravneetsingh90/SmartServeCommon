@@ -18,12 +18,6 @@ namespace SmartServe.Domain.Stores
 				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 		}
 
-		public async Task AddOrderItemsAsync(IEnumerable<OrderItem> items)
-		{
-			_db.OrderItems.AddRange(items);
-			await _db.SaveChangesAsync();
-		}
-
 		public async Task ClearOrderItemsAsync(int orderId)
 		{
 			var items = _db.OrderItems.Where(x => x.OrderId == orderId);

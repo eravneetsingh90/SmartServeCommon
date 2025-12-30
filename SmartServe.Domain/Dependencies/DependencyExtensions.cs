@@ -25,7 +25,7 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<UserStore>();
 			services.AddScoped<IRestaurantTableStore,RestaurantTableStore>();
 			services.AddScoped<ICategoryStore, CategoryStore>();
-			services.AddScoped<OrderItemStore>();
+			services.AddScoped<IOrderItemStore,OrderItemStore>();
 			services.AddScoped<IOrderStore,OrderStore>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddScoped<ITableStatusStore, TableStatusStore>();
