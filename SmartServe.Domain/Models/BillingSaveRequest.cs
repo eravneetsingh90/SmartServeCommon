@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public class BillingSaveRequest
+	public class BillingSaveRequest2
 	{
 		public int? OrderId { get; set; } // null = new order
 		public string OrderType { get; set; } // DINE_IN, DELIVERY, PICKUP

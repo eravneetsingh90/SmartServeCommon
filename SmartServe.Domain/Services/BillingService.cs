@@ -1,4 +1,5 @@
-﻿using SmartServe.Domain.Models;
+﻿using AutoMapper;
+using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
 
@@ -8,56 +9,44 @@ namespace SmartServe.Domain.Services
 	{
 		private readonly IOrderStore _orderStore;
 		private readonly ITableStatusStore _tableStatusStore;
+		private readonly IMapper _mapper;
 
-		public BillingService(IOrderStore orderStore, ITableStatusStore tableStatusStore)
+
+		public BillingService(IMapper mapper, IOrderStore orderStore, ITableStatusStore tableStatusStore)
 		{
+			_mapper = mapper;
 			_orderStore = orderStore;
 			_tableStatusStore = tableStatusStore;
 		}
 
-		public Task<Order?> GetOrderAsync(int orderId)
+		public async Task<OrderDto> GetOrderAsync(int orderId)
 		{
-			return _orderStore.GetOrderAsync(orderId);
+			var order = await _orderStore.GetOrderAsync(orderId);
+			return _mapper.Map<OrderDto>(order);
 		}
 
-		public async Task<int> UpdateOrderAsync(Order order)
+		public async Task UpdateOrderAsync(OrderDto dto)
 		{
+			var order = await _orderStore.GetOrderAsync(dto.OrderId);
+
+			if (order == null)
+				throw new Exception("Order not found");
+
+			_mapper.Map(dto, order);
 			await _orderStore.UpdateAndSaveAsync(order);
-			return order.OrderId;
 		}
 
-		public async Task<int> SaveOrderAsync(BillingSaveRequest request)
+		public async Task<int> CreateOrderAsync(OrderDto request)
 		{
-			Order order;
-			var tableStatus = await _tableStatusStore.GetTableStatusByCode(request.TableStatusCode);
+			var order = _mapper.Map<Order>(request);
 
-			if (request.OrderId == null || request.OrderId <= 0)
+			if (request.OrderId <= 0)
 			{
-				order = new Order
-				{
-					OrderType = request.OrderType,
-					TotalAmount = request.TotalAmount,
-					StatusId = tableStatus.StatusId,
-					TableId = request.TableId,
-					CreatedAt = DateTime.UtcNow
-				};
-
-				await _orderStore.CreateOrderAsync(order);
-			}
-			// 🔹 UPDATE EXISTING ORDER (future-ready)
-			else
-			{
-				order = await _orderStore.GetOrderAsync(request.OrderId.Value)
-					?? throw new InvalidOperationException("Order not found");
-
-				order.StatusId = tableStatus.StatusId;
-
-				await _orderStore.UpdateAndSaveAsync(order);
-				await _orderStore.ClearOrderItemsAsync(order.OrderId);
-			}
+				order.CreatedAt = DateTime.UtcNow;
+				await _orderStore.AddAndSaveAsync(order);
 
 			// 🔹 ADD ORDER ITEMS
-			var items = request.Items.Select(x => new OrderItem
+			var items = request.OrderItems.Select(x => new OrderItem
 			{
 				OrderId = order.OrderId,
 				VariantId = x.VariantId,
@@ -68,6 +57,8 @@ namespace SmartServe.Domain.Services
 
 			await _orderStore.AddOrderItemsAsync(items);
 
+			
+			}
 			return order.OrderId;
 		}
 

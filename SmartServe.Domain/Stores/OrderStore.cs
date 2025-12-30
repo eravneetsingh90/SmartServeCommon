@@ -8,19 +8,8 @@ namespace SmartServe.Domain.Stores
 	{
 		public OrderStore(SmartServeDbContext db) : base(db) { }
 
-		public async Task<Order> CreateOrderAsync(Order order)
-		{
-			_db.Orders.Add(order);
-			await _db.SaveChangesAsync();
-			return order;
-		}
-
 		public async Task<Order?> GetOrderAsync(int orderId)
 		{
-			//return await _db.Orders
-			//	.Include(o => o.OrderItems)
-			//	.FirstOrDefaultAsync(o => o.OrderId == orderId);
-
 			return await _db.Orders
 				.AsNoTracking()
 				.Include(o => o.OrderItems)

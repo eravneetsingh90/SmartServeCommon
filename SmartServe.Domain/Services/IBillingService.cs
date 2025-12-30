@@ -5,8 +5,8 @@ namespace SmartServe.Domain.Services
 {
 	public interface IBillingService
 	{
-		Task<int> UpdateOrderAsync(Order order);
-		Task<int> SaveOrderAsync(BillingSaveRequest request);
-		Task<Order?> GetOrderAsync(int orderId);
+		Task UpdateOrderAsync(OrderDto dto);
+		Task<int> CreateOrderAsync(OrderDto request);
+		Task<OrderDto> GetOrderAsync(int orderId);
 	}
 }
