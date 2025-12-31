@@ -334,6 +334,7 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.ProductVariantId).HasColumnName("variant_id");
 			entity.Property(e => e.BrandId).HasColumnName("brand_id");
 			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
+			entity.Property(e => e.StockMode).HasColumnName("stock_mode");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");

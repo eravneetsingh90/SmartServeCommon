@@ -16,8 +16,9 @@ public partial class ProductVariant
     public decimal Price { get; set; }
 
     public bool? TracksStock { get; set; }
+	public string StockMode { get; set; }
 
-    public bool? IsActive { get; set; }
+	public bool? IsActive { get; set; }
 
     public DateTime? CreatedAt { get; set; }
     

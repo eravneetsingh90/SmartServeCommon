@@ -11,7 +11,6 @@ namespace SmartServe.Domain.Services
 		private readonly IUnitOfWork _uow;
 		private readonly IOrderStore _orderStore;
 		private readonly IOrderItemStore _orderItemStore;
-		private readonly ITableStatusStore _tableStatusStore;
 		private readonly IPaymentStore _paymentStore;
 		private readonly ICatalogService _catalogService;
 		private readonly IMapper _mapper;
@@ -28,7 +27,6 @@ namespace SmartServe.Domain.Services
 		{
 			_mapper = mapper;
 			_orderStore = orderStore;
-			_tableStatusStore = tableStatusStore;
 			_orderItemStore = orderItemStore;
 			_uow = uow;
 			_paymentStore = paymentStore;
