@@ -110,13 +110,10 @@ namespace SmartServe.Domain.Services
 				.ToList();
 		}
 
-		public void Reset()
+		public async Task Refresh()
 		{
 			_loaded = false;
-			_categories.Clear();
-			_products.Clear();
-			_variants.Clear();
-			_searchIndex.Clear();
+			await LoadAsync();
 		}
 
 		public TableStatus GetTableStatusByCode(string statusCode)
