@@ -5,8 +5,9 @@ namespace SmartServe.Domain.Stores
 {
 	public interface ICategoryStore : IBaseStore<Category>
 	{
-		Task<List<Category>> GetActiveCategoriesAsync();
-		Task<List<Category>> GetAllCategoriesByOrderAsync();
-		Task SaveBulkCategoriesAsync(IEnumerable<Category> categories);		
+		Task<List<Category>> GetActiveAsync();
+		Task<List<Category>> GetAllAsync();
+		Task SaveBulkAsync(IEnumerable<Category> categories);
+		Task DeleteAsync(int id);
 	}
 }

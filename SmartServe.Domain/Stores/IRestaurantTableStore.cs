@@ -1,11 +1,12 @@
 ﻿using SmartServe.Domain.Models;
+using SmartServe.Domain.Stores.SmartServe.Domain.Stores;
+using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IRestaurantTableStore
+	public interface IRestaurantTableStore : IBaseStore<RestaurantTable>
 	{
 		Task CreateTableAsync(string displayName);
-		Task SoftDeleteTableAsync(int tableId);
 		Task<List<GetTableView>> GetTablesForViewAsync();
 	}
 }

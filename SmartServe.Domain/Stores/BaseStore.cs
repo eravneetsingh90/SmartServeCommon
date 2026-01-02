@@ -4,86 +4,78 @@ using SmartServe.EFCore.Db;
 
 namespace SmartServe.Domain.Stores
 {
-	public class BaseStore<T> : IBaseStore<T> where T : class
+	public abstract class BaseStore<T> : IBaseStore<T> where T : class
 	{
-		protected readonly SmartServeDbContext _db;
-		protected readonly DbSet<T> _set;
+		protected readonly SmartServeDbContext Db;
+		protected readonly DbSet<T> Set;
 
-		public BaseStore(SmartServeDbContext db)
+		protected BaseStore(SmartServeDbContext db)
 		{
-			_db = db;
-			_set = _db.Set<T>();
+			Db = db;
+			Set = db.Set<T>();
 		}
 
 		// ================= READ =================
 
 		public virtual async Task<List<T>> GetAllAsync()
 		{
-			return await _set.AsNoTracking().ToListAsync();
+			return await Set.AsNoTracking().ToListAsync();
 		}
 
-		public virtual async Task<T?> GetByIdAsync(object id)
+		public virtual async Task<T?> GetByIdAsync<TKey>(TKey id)
 		{
-			return await _set
-				.AsNoTracking()
+			return await Set.AsNoTracking()
 				.FirstOrDefaultAsync(e =>
-					EF.Property<object>(e, "Id")!.Equals(id));
+					EF.Property<TKey>(e, "Id")!.Equals(id));
 		}
 
-		// ================= CREATE =================
-
-		public virtual Task AddAsync(T entity)
+		public virtual void Add(T entity)
 		{
-			_set.Add(entity);
-			return Task.CompletedTask;
+			Set.Add(entity);
+		}
+		public virtual void AddRange(List<T> entities)
+		{
+			Set.AddRange(entities);
+		}
+		public virtual void RemoveRange(List<T> entities)
+		{
+			Set.RemoveRange(entities);
+		}
+		public virtual void Attach(T entity)
+		{
+			var entry = Db.Entry(entity);
+			if (entry.State == EntityState.Detached)
+			{
+				Set.Attach(entity);
+			}
 		}
 
-		public virtual async Task AddAndSaveAsync(T entity)
+		public virtual void Remove(T entity)
 		{
-			_set.Add(entity);
-			await _db.SaveChangesAsync();
+			var entry = Db.Entry(entity);
+
+			if (entry.State == EntityState.Detached)
+			{
+				// Reuse tracked instance if present
+				var tracked = Db.ChangeTracker
+					.Entries<T>()
+					.FirstOrDefault(e =>
+						EF.Property<object>(e.Entity, "Id")!
+							.Equals(EF.Property<object>(entity, "Id")));
+
+				entity = tracked?.Entity ?? entity;
+				if (tracked == null)
+					Set.Attach(entity);
+			}
+
+			Set.Remove(entity);
 		}
-		// ================= UPDATE =================
 
-		public virtual Task UpdateAsync(T entity)
+		// ================= COMMIT =================
+
+		public virtual Task SaveAsync()
 		{
-			_db.ChangeTracker.Clear();
-
-			_set.Attach(entity);
-			_db.Entry(entity).State = EntityState.Modified;
-
-			return Task.CompletedTask;
-		}
-
-		public virtual async Task UpdateAndSaveAsync(T entity)
-		{
-			_db.ChangeTracker.Clear();
-
-			_set.Attach(entity);
-			_db.Entry(entity).State = EntityState.Modified;
-
-			await _db.SaveChangesAsync();
-
-		}
-		// ================= DELETE =================
-
-		public virtual Task DeleteAsync(T entity)
-		{
-			_db.ChangeTracker.Clear();
-
-			_set.Attach(entity);
-			_set.Remove(entity);
-
-			return Task.CompletedTask;
-		}
-		public virtual async Task DeleteAndSaveAsync(T entity)
-		{
-			_db.ChangeTracker.Clear();
-
-			_set.Attach(entity);
-			_set.Remove(entity);
-
-			await _db.SaveChangesAsync();
+			return Db.SaveChangesAsync();
 		}
 	}
 }

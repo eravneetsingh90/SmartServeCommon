@@ -41,14 +41,16 @@ namespace SmartServe.Domain.Services
 
 		public async Task UpdateOrderAsync(OrderDto order)
 		{
-			await _orderStore.UpdateAndSaveAsync(_mapper.Map<Order>(order));
+			_orderStore.Update(_mapper.Map<Order>(order));
+			await _orderStore.SaveAsync();
 		}
 
 		public async Task<int> CreateOrderAsync(OrderDto request)
 		{
 			var order = _mapper.Map<Order>(request);
 			order.CreatedAt = DateTime.UtcNow;
-			await _orderStore.AddAndSaveAsync(order);
+			_orderStore.Add(order);
+			await _orderStore.SaveAsync();
 			return order.OrderId;
 		}
 
@@ -69,7 +71,7 @@ namespace SmartServe.Domain.Services
 
 		public async Task CloseOrderAsync(int orderId, PaymentDto payment)
 		{
-			//await _uow.BeginAsync();
+			await _uow.BeginAsync();
 			try
 			{
 				var order = await GetOrderAsync(orderId);
@@ -81,28 +83,42 @@ namespace SmartServe.Domain.Services
 					var finalPayment = _mapper.Map<Payment>(payment);
 					finalPayment.OrderId = order.OrderId;
 					finalPayment.CreatedAt = DateTime.UtcNow;
-					await _paymentStore.AddAndSaveAsync(finalPayment);
+					_paymentStore.Add(finalPayment);
+					await _paymentStore.SaveAsync();
 				}
 				else
 				{
-					await _paymentStore.AddRangeAsync(new[]
+					var payments = new List<Payment>();
+					payments.Add(new Payment
 					{
-						new Payment { OrderId = order.OrderId, Mode = PaymentMode.CASH, Amount = payment.PartPaymentCash,CreatedAt = DateTime.UtcNow},
-						new Payment { OrderId = order.OrderId, Mode = PaymentMode.UPI, Amount = payment.Amount-payment.PartPaymentCash,CreatedAt = DateTime.UtcNow }
+						OrderId = order.OrderId,
+						Mode = PaymentMode.CASH,
+						Amount = payment.PartPaymentCash,
+						CreatedAt = DateTime.UtcNow
 					});
+					payments.Add(new Payment
+					{
+						OrderId = order.OrderId,
+						Mode = PaymentMode.UPI,
+						Amount = payment.Amount - payment.PartPaymentCash,
+						CreatedAt = DateTime.UtcNow
+					});
+					_paymentStore.AddRange(payments);
 				}
+				await _paymentStore.SaveAsync();
 				order.ClosedAt = DateTime.UtcNow;
 				order.StatusId = _catalogService.GetTableStatusByCode(TableStatusCodes.BLANK).StatusId;
 
 				var finalOrder = _mapper.Map<Order>(order);
 
-				await _orderStore.UpdateAndSaveAsync(finalOrder);
-				//await _uow.CommitAsync();
+				_orderStore.Update(finalOrder);
+				await _orderStore.SaveAsync();
+				await _uow.CommitAsync();
 			}
 
 			catch
 			{
-				//await _uow.RollbackAsync();
+				await _uow.RollbackAsync();
 				throw;
 			}
 

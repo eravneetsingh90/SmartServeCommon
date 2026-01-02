@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using System.Runtime.CompilerServices;
 
 namespace SmartServe.Domain.Stores
 {
@@ -12,24 +13,24 @@ namespace SmartServe.Domain.Stores
 			_uow = uow;
 		}
 
-		public async Task<List<Category>> GetActiveCategoriesAsync()
+		public async Task<List<Category>> GetActiveAsync()
 		{
-			return await _db.Categories
+			return await Set
 				.AsNoTracking()
 				.Where(c => c.IsActive == true)
 				.OrderBy(c => c.DisplayOrder)
 				.ToListAsync();
 		}
 
-		public async Task<List<Category>> GetAllCategoriesByOrderAsync()
+		public async Task<List<Category>> GetAllAsync()
 		{
-			return await _db.Categories
+			return await Set
 				.AsNoTracking()
 				.OrderBy(c => c.DisplayOrder)
 				.ToListAsync();
 		}
 
-		public async Task SaveBulkCategoriesAsync(IEnumerable<Category> categories)
+		public async Task SaveBulkAsync(IEnumerable<Category> categories)
 		{
 			var duplicateNames = categories
 				.Where(c => !string.IsNullOrWhiteSpace(c.Name))
@@ -49,9 +50,23 @@ namespace SmartServe.Domain.Stores
 				foreach (var category in categories)
 				{
 					if (category.CategoryId == 0)
-						await AddAsync(category);
+						Add(category);
 					else
-						await UpdateAsync(category);
+					{
+						var tracked = Db.Categories.Local
+							.FirstOrDefault(x => x.CategoryId == category.CategoryId);
+
+						if (tracked == null)
+						{
+							tracked = new Category
+							{
+								CategoryId = category.CategoryId
+							};
+
+							Attach(tracked);
+						}
+						Db.Entry(tracked).CurrentValues.SetValues(category);
+					}
 				}
 
 				await _uow.CommitAsync();
@@ -61,6 +76,23 @@ namespace SmartServe.Domain.Stores
 				await _uow.RollbackAsync();
 				throw;
 			}
+		}
+		public async Task DeleteAsync(int id)
+		{
+			var tracked = Db.Categories.Local
+				.FirstOrDefault(x => x.CategoryId == id);
+
+			if (tracked == null)
+			{
+				tracked = new Category
+				{
+					CategoryId = id
+				};
+
+				Attach(tracked);
+			}
+			Remove(tracked);
+			await SaveAsync();
 		}
 	}
 

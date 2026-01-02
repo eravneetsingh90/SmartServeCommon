@@ -19,27 +19,18 @@ namespace SmartServe.Domain.Stores
 				IsActive = true,
 				CreatedAt = DateTime.Now
 			};
-
-			await AddAsync(table);
-		}
-
-		public async Task SoftDeleteTableAsync(int tableId)
-		{
-			var table = await GetByIdAsync(tableId);
-			if (table == null) return;
-
-			table.IsActive = false;
-			await UpdateAsync(table);
+			Add(table);
+			await SaveAsync();
 		}
 
 		public async Task<List<GetTableView>> GetTablesForViewAsync()
 		{
 			var query =
-				from table in _db.RestaurantTables
+				from table in Set
 				where table.IsActive==true
 
 				// ✅ Open order = ClosedAt IS NULL
-				let activeOrder = _db.Orders
+				let activeOrder = Db.Orders
 					.Where(o =>
 						o.TableId == table.TableId &&
 						o.ClosedAt == null &&
@@ -55,7 +46,7 @@ namespace SmartServe.Domain.Stores
 
 				// ✅ Resolve table status only if order exists
 				let tableStatus = activeOrder != null
-					? _db.TableStatuses.FirstOrDefault(s => s.StatusId == activeOrder.StatusId)
+					? Db.TableStatuses.FirstOrDefault(s => s.StatusId == activeOrder.StatusId)
 					: null
 
 				select new GetTableView

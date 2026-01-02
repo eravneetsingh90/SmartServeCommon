@@ -10,7 +10,7 @@ namespace SmartServe.Domain.Stores
 
 		public async Task<TableStatus?>  GetTableStatusByCode(string code)
 		{
-			return await _db.TableStatuses.Where(ts => ts.StatusCode == code).FirstOrDefaultAsync();
+			return await Set.Where(ts => ts.StatusCode == code).FirstOrDefaultAsync();
 		}
 	}
 }

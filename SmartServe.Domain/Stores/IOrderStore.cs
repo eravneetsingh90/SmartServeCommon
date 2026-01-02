@@ -6,7 +6,7 @@ namespace SmartServe.Domain.Stores
 	public interface IOrderStore : IBaseStore<Order>
 	{
 		Task<Order?> GetOrderAsync(int orderId);
-		Task ClearOrderItemsAsync(int orderId);
+		void Update(Order order);
 	}
 
 }

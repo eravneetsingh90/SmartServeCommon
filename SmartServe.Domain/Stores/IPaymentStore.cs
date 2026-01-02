@@ -5,7 +5,5 @@ namespace SmartServe.Domain.Stores
 {
 	public interface IPaymentStore : IBaseStore<Payment>
 	{
-		Task AddAsync(Payment payment);
-		Task AddRangeAsync(IEnumerable<Payment> payments);
 	}
 }

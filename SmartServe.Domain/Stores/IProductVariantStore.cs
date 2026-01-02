@@ -5,7 +5,8 @@ namespace SmartServe.Domain.Stores
 {
 	public interface IProductVariantStore : IBaseStore<ProductVariant>
 	{
-		Task<List<ProductVariant>> GetProductsVariantByProductAsync(int productId);
-		Task SaveBulkProductVariantsAsync(IEnumerable<ProductVariant> productvariant);
+		Task<List<ProductVariant>> GetByProductIdAsync(int productId);
+		Task SaveBulkAsync(IEnumerable<ProductVariant> incoming);
+		Task DeleteAsync(int id);
 	}
 }

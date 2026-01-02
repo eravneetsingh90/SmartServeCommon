@@ -1,6 +1,7 @@
-﻿using SmartServe.EFCore.Db;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace SmartServe.Domain.Stores
 {
@@ -10,19 +11,27 @@ namespace SmartServe.Domain.Stores
 
 		public async Task<Order?> GetOrderAsync(int orderId)
 		{
-			return await _db.Orders
+			return await Set
 				.AsNoTracking()
 				.Include(o => o.OrderItems)
 					.ThenInclude(oi => oi.Variant)
 						.ThenInclude(v => v.Product)
 				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 		}
-
-		public async Task ClearOrderItemsAsync(int orderId)
+		public virtual void Update(Order order)
 		{
-			var items = _db.OrderItems.Where(x => x.OrderId == orderId);
-			_db.OrderItems.RemoveRange(items);
-			await _db.SaveChangesAsync();
+			var tracked = Db.Orders.Local.FirstOrDefault(x => x.OrderId == order.OrderId);
+
+			if (tracked == null)
+			{
+				tracked = new Order
+				{
+					OrderId = order.OrderId
+				};
+
+				Attach(tracked);
+			}
+			Db.Entry(tracked).CurrentValues.SetValues(order);
 		}
 	}
 }

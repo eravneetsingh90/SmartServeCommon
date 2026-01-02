@@ -11,30 +11,30 @@ namespace SmartServe.Domain.Stores
 
 		public async Task<List<OrderItem>> GetOrderItemsAsync(int orderId)
 		{
-			return await _db.OrderItems
+			return await Set
 				.Where(i => i.OrderId == orderId)
 				.ToListAsync();
 		}
 		public async Task AddOrderItemsAsync(List<OrderItem> items)
 		{
-			_db.OrderItems.AddRange(items);
-			await _db.SaveChangesAsync();
+			AddRange(items);
+			await SaveAsync();
 		}
 
 		public async Task RemoveOrderItemsAsync(List<OrderItem> items)
 		{
-			_db.OrderItems.RemoveRange(items);
-			await _db.SaveChangesAsync();
+			RemoveRange(items);
+			await SaveAsync();
 		}
 		public async Task UpdateOrderItemsAsync(int orderId, List<OrderItem> orderItems)
 		{
 			var existingItems = await GetOrderItemsAsync(orderId);
 
-			_db.OrderItems.RemoveRange(existingItems);
+			RemoveRange(existingItems);
 
-			await _db.OrderItems.AddRangeAsync(orderItems);
+			await Set.AddRangeAsync(orderItems);
 
-			await _db.SaveChangesAsync();
+			await SaveAsync();
 		}
 
 	}

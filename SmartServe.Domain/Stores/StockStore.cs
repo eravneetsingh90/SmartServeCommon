@@ -17,7 +17,7 @@ namespace SmartServe.Domain.Stores
 
 		public async Task ConsumeAsync(OrderItem item, int orderId)
 		{
-			var stock = await _db.Stocks.FirstOrDefaultAsync(s => s.VariantId == item.VariantId);
+			var stock = await Set.FirstOrDefaultAsync(s => s.VariantId == item.VariantId);
 
 			if (stock == null)
 				throw new InvalidOperationException(
@@ -29,7 +29,7 @@ namespace SmartServe.Domain.Stores
 
 			stock.Quantity -= item.Quantity;
 
-			_db.StockTransactions.Add(new StockTransaction
+			Db.StockTransactions.Add(new StockTransaction
 			{
 				VariantId = item.VariantId,
 				ChangeQty = -item.Quantity,

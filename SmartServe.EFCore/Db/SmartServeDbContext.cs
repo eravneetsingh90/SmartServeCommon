@@ -345,9 +345,6 @@ public partial class SmartServeDbContext : DbContext
 				.HasPrecision(10, 2)
 				.HasColumnName("price");
 			entity.Property(e => e.ProductId).HasColumnName("product_id");
-			entity.Property(e => e.TracksStock)
-				.HasDefaultValue(false)
-				.HasColumnName("tracks_stock");
 			entity.Property(e => e.Name)
 				.HasMaxLength(100)
 				.HasColumnName("variant_name");
