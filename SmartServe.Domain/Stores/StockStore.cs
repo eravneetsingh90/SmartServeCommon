@@ -38,5 +38,7 @@ namespace SmartServe.Domain.Stores
 				CreatedAt = DateTime.UtcNow
 			});
 		}
+
+		
 	}
 }

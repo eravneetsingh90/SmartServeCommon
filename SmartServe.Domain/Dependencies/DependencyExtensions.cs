@@ -29,8 +29,10 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddScoped<ITableStatusStore, TableStatusStore>();
 			services.AddScoped<IPaymentStore, PaymentStore>();
+			services.AddScoped<IBrandStore, BrandStore>();
 			return services;
 		}
 	}
 }
+
 

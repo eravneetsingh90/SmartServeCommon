@@ -10,24 +10,28 @@ namespace SmartServe.Domain.Services
 		private readonly IProductStore _productStore;
 		private readonly IProductVariantStore _variantStore;
 		private readonly ITableStatusStore _tableStatusStore;
+		private readonly IBrandStore _brandStore;
 
 		private List<Category> _categories = new();
 		private List<Product> _products = new();
 		private List<ProductVariant> _variants = new();
 		private List<CatalogSearchItem> _searchIndex = new();
 		private List<TableStatus> _tableStatus = new();
+		private List<Brand> _brands = new();
 		private bool _loaded;
 
 		public CatalogService(
 			ICategoryStore categoryStore,
 			IProductStore productStore,
 			IProductVariantStore variantStore,
-			ITableStatusStore tableStatusStore)
+			ITableStatusStore tableStatusStore,
+			IBrandStore brandStore)
 		{
 			_categoryStore = categoryStore;
 			_productStore = productStore;
 			_variantStore = variantStore;
 			_tableStatusStore = tableStatusStore;
+			_brandStore = brandStore;
 		}
 
 		// =============================
@@ -56,6 +60,10 @@ namespace SmartServe.Domain.Services
 
 			// Table Statuses
 			_tableStatus = (await _tableStatusStore.GetAllAsync()).ToList();
+
+			_brands = (await _brandStore.GetAllAsync())
+				.Where(v => v.IsActive == true)
+				.ToList();
 
 			// 🔍 Build search index
 			_searchIndex =
@@ -119,6 +127,9 @@ namespace SmartServe.Domain.Services
 		public TableStatus GetTableStatusByCode(string statusCode)
 			=> _tableStatus
 				.Where(v => v.StatusCode.Equals(statusCode)).FirstOrDefault();
+
+		public IReadOnlyList<Brand> GetBrands()
+			=> _brands;
 	}
 
 }

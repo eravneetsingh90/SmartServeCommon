@@ -12,6 +12,7 @@ namespace SmartServe.Domain.Services
 		IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30);
 		TableStatus GetTableStatusByCode(string statusCode);
 		Task Refresh();
+		IReadOnlyList<Brand> GetBrands();
 	}
 
 }
