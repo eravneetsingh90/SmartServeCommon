@@ -1,4 +1,7 @@
-﻿namespace SmartServe.EFCore.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SmartServe.EFCore.Models;
 
 public partial class Order
 {

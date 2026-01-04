@@ -1,12 +1,16 @@
-﻿using SmartServe.Domain.Stores.SmartServe.Domain.Stores;
+﻿using SmartServe.Domain.Models;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IStockStore : IBaseStore<Stock>
+	public interface IStockStore 
 	{
-		bool CanHandle(ProductVariant variant);
-		Task ConsumeAsync(OrderItem item, int orderId);
-	}
+		Task<List<StockItem>> GetStockItemsAsync();
 
+		Task<StockItem?> GetStockItemAsync(string itemType, int referenceId);
+
+		Task AddTransactionAsync(StockTransaction transaction);
+
+		Task<List<CurrentStockDto>> GetCurrentStockAsync();
+	}
 }

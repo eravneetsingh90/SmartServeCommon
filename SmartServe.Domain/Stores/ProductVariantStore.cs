@@ -28,7 +28,7 @@ namespace SmartServe.Domain.Stores
 		public async Task SaveBulkAsync(IEnumerable<ProductVariant> incoming)
 		{
 			var duplicate = incoming
-				.GroupBy(x => x.Name.Trim().ToLower())
+				.GroupBy(x => x.VariantName.Trim().ToLower())
 				.Any(g => g.Count() > 1);
 			if (duplicate)
 			{
@@ -40,20 +40,20 @@ namespace SmartServe.Domain.Stores
 			{
 				foreach (var variant in incoming)
 				{
-					if (variant.ProductVariantId == 0)
+					if (variant.VariantId == 0)
 					{
 						Add(variant);
 					}
 					else
 					{
 						var tracked = Db.ProductVariants.Local
-							.FirstOrDefault(x => x.ProductVariantId == variant.ProductVariantId);
+							.FirstOrDefault(x => x.VariantId == variant.VariantId);
 
 						if (tracked == null)
 						{
 							tracked = new ProductVariant
 							{
-								ProductVariantId = variant.ProductVariantId
+								VariantId = variant.VariantId
 							};
 
 							Attach(tracked);
@@ -77,13 +77,13 @@ namespace SmartServe.Domain.Stores
 		public async Task DeleteAsync(int productVariantId)
 		{
 			var tracked = Db.ProductVariants.Local
-				.FirstOrDefault(x => x.ProductVariantId == productVariantId);
+				.FirstOrDefault(x => x.VariantId == productVariantId);
 
 			if (tracked == null)
 			{
 				tracked = new ProductVariant
 				{
-					ProductVariantId = productVariantId
+					VariantId = productVariantId
 				};
 
 				Attach(tracked);

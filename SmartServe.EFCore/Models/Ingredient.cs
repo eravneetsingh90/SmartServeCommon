@@ -13,9 +13,5 @@ public partial class Ingredient
 
     public bool? IsActive { get; set; }
 
-    public virtual IngredientStock? IngredientStock { get; set; }
-
-    public virtual ICollection<IngredientTransaction> IngredientTransactions { get; set; } = new List<IngredientTransaction>();
-
     public virtual ICollection<ProductIngredient> ProductIngredients { get; set; } = new List<ProductIngredient>();
 }

@@ -13,9 +13,9 @@ public partial class Product
 
     public bool? IsActive { get; set; }
 
-	public int DisplayOrder { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-	public DateTime? CreatedAt { get; set; }
+    public int DisplayOrder { get; set; }
 
     public virtual Category? Category { get; set; }
 

@@ -1,44 +1,65 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartServe.Domain.Constants;
+using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class StockStore : BaseStore<Stock>, IStockStore
+	public class StockStore : IStockStore
 	{
-		public StockStore(SmartServeDbContext db) : base(db)
+		private readonly SmartServeDbContext _db;
+
+		public StockStore(SmartServeDbContext db) 
 		{
-			
-		}
-		public bool CanHandle(ProductVariant variant)
-		=> variant.StockMode == StockMode.SEALED;
-
-
-		public async Task ConsumeAsync(OrderItem item, int orderId)
-		{
-			var stock = await Set.FirstOrDefaultAsync(s => s.VariantId == item.VariantId);
-
-			if (stock == null)
-				throw new InvalidOperationException(
-					$"No stock record found for variant {item.VariantId}");
-
-			if (stock.Quantity < item.Quantity)
-				throw new InvalidOperationException(
-					$"Insufficient stock for variant {item.VariantId}");
-
-			stock.Quantity -= item.Quantity;
-
-			Db.StockTransactions.Add(new StockTransaction
-			{
-				VariantId = item.VariantId,
-				ChangeQty = -item.Quantity,
-				Reason = "SALE",
-				ReferenceId = orderId,
-				CreatedAt = DateTime.UtcNow
-			});
+			_db = db;
 		}
 
-		
+		public async Task<List<StockItem>> GetStockItemsAsync()
+		{
+			return await _db.StockItems
+				.Where(x => x.IsActive == true)
+				.AsNoTracking()
+				.ToListAsync();
+		}
+
+		public async Task<StockItem?> GetStockItemAsync(string itemType, int referenceId)
+		{
+			return await _db.StockItems
+				.FirstOrDefaultAsync(x =>
+					x.ItemType == itemType &&
+					x.ReferenceId == referenceId &&
+					x.IsActive == true);
+		}
+
+		public async Task AddTransactionAsync(StockTransaction transaction)
+		{
+			_db.StockTransactions.Add(transaction);
+			await _db.SaveChangesAsync();
+		}
+
+		public async Task<List<CurrentStockDto>> GetCurrentStockAsync()
+		{
+			var query =
+				from si in _db.StockItems
+				where si.IsActive == true
+				join st in _db.StockTransactions
+					on si.StockItemId equals st.StockItemId into txnGroup
+				select new CurrentStockDto
+				{
+					StockItemId = si.StockItemId,
+					ItemType = si.ItemType,
+					ReferenceId = si.ReferenceId,
+					Unit = si.Unit,
+					MinStockLevel = si.MinStockLevel??0,
+
+					CurrentQuantity = txnGroup.Sum(t =>
+						t.TransactionType == "IN" ? t.Quantity :
+						t.TransactionType == "OUT" ? -t.Quantity :
+						t.Quantity)
+				};
+
+			return await query.AsNoTracking().ToListAsync();
+		}
 	}
+
 }

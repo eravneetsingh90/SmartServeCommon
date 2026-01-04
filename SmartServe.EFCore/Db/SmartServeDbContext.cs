@@ -20,10 +20,6 @@ public partial class SmartServeDbContext : DbContext
 
 	public virtual DbSet<Ingredient> Ingredients { get; set; }
 
-	public virtual DbSet<IngredientStock> IngredientStocks { get; set; }
-
-	public virtual DbSet<IngredientTransaction> IngredientTransactions { get; set; }
-
 	public virtual DbSet<Order> Orders { get; set; }
 
 	public virtual DbSet<OrderItem> OrderItems { get; set; }
@@ -40,7 +36,7 @@ public partial class SmartServeDbContext : DbContext
 
 	public virtual DbSet<Role> Roles { get; set; }
 
-	public virtual DbSet<Stock> Stocks { get; set; }
+	public virtual DbSet<StockItem> StockItems { get; set; }
 
 	public virtual DbSet<StockTransaction> StockTransactions { get; set; }
 
@@ -95,7 +91,9 @@ public partial class SmartServeDbContext : DbContext
 			entity.HasIndex(e => e.Name, "categories_name_key").IsUnique();
 
 			entity.Property(e => e.CategoryId).HasColumnName("category_id");
-			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
+			entity.Property(e => e.DisplayOrder)
+				.HasDefaultValue(0)
+				.HasColumnName("display_order");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");
@@ -123,52 +121,6 @@ public partial class SmartServeDbContext : DbContext
 				.HasMaxLength(20)
 				.HasDefaultValueSql("'PCS'::character varying")
 				.HasColumnName("unit");
-		});
-
-		modelBuilder.Entity<IngredientStock>(entity =>
-		{
-			entity.HasKey(e => e.IngredientId).HasName("ingredient_stock_pkey");
-
-			entity.ToTable("ingredient_stock");
-
-			entity.Property(e => e.IngredientId)
-				.ValueGeneratedNever()
-				.HasColumnName("ingredient_id");
-			entity.Property(e => e.Quantity)
-				.HasPrecision(10, 2)
-				.HasDefaultValueSql("0")
-				.HasColumnName("quantity");
-
-			entity.HasOne(d => d.Ingredient).WithOne(p => p.IngredientStock)
-				.HasForeignKey<IngredientStock>(d => d.IngredientId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("ingredient_stock_ingredient_id_fkey");
-		});
-
-		modelBuilder.Entity<IngredientTransaction>(entity =>
-		{
-			entity.HasKey(e => e.IngredientTxnId).HasName("ingredient_transactions_pkey");
-
-			entity.ToTable("ingredient_transactions");
-
-			entity.HasIndex(e => e.IngredientId, "idx_ingredient_txn");
-
-			entity.Property(e => e.IngredientTxnId).HasColumnName("ingredient_txn_id");
-			entity.Property(e => e.ChangeQty)
-				.HasPrecision(10, 2)
-				.HasColumnName("change_qty");
-			entity.Property(e => e.CreatedAt)
-				.HasDefaultValueSql("now()")
-				.HasColumnName("created_at");
-			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
-			entity.Property(e => e.Reason)
-				.HasMaxLength(20)
-				.HasColumnName("reason");
-			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
-
-			entity.HasOne(d => d.Ingredient).WithMany(p => p.IngredientTransactions)
-				.HasForeignKey(d => d.IngredientId)
-				.HasConstraintName("ingredient_transactions_ingredient_id_fkey");
 		});
 
 		modelBuilder.Entity<Order>(entity =>
@@ -283,10 +235,12 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.Property(e => e.ProductId).HasColumnName("product_id");
 			entity.Property(e => e.CategoryId).HasColumnName("category_id");
-			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
+			entity.Property(e => e.DisplayOrder)
+				.HasDefaultValue(0)
+				.HasColumnName("display_order");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");
@@ -323,21 +277,22 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<ProductVariant>(entity =>
 		{
-			entity.HasKey(e => e.ProductVariantId).HasName("product_variants_pkey");
+			entity.HasKey(e => e.VariantId).HasName("product_variants_pkey");
 
 			entity.ToTable("product_variants");
 
 			entity.HasIndex(e => e.ProductId, "idx_variants_product");
 
-			entity.HasIndex(e => new { e.ProductId, e.BrandId, e.Name }, "product_variants_product_id_brand_id_variant_name_key").IsUnique();
+			entity.HasIndex(e => new { e.ProductId, e.BrandId, e.VariantName }, "product_variants_product_id_brand_id_variant_name_key").IsUnique();
 
-			entity.Property(e => e.ProductVariantId).HasColumnName("variant_id");
+			entity.Property(e => e.VariantId).HasColumnName("variant_id");
 			entity.Property(e => e.BrandId).HasColumnName("brand_id");
-			entity.Property(e => e.DisplayOrder).HasColumnName("display_order");
-			entity.Property(e => e.StockMode).HasColumnName("stock_mode");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
+			entity.Property(e => e.DisplayOrder)
+				.HasDefaultValue(0)
+				.HasColumnName("display_order");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");
@@ -345,7 +300,11 @@ public partial class SmartServeDbContext : DbContext
 				.HasPrecision(10, 2)
 				.HasColumnName("price");
 			entity.Property(e => e.ProductId).HasColumnName("product_id");
-			entity.Property(e => e.Name)
+			entity.Property(e => e.StockMode)
+				.HasMaxLength(20)
+				.HasDefaultValueSql("'NONE'::character varying")
+				.HasColumnName("stock_mode");
+			entity.Property(e => e.VariantName)
 				.HasMaxLength(100)
 				.HasColumnName("variant_name");
 
@@ -390,25 +349,34 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("role_name");
 		});
 
-		modelBuilder.Entity<Stock>(entity =>
+		modelBuilder.Entity<StockItem>(entity =>
 		{
-			entity.HasKey(e => e.VariantId).HasName("stock_pkey");
+			entity.HasKey(e => e.StockItemId).HasName("stock_items_pkey");
 
-			entity.ToTable("stock");
+			entity.ToTable("stock_items");
 
-			entity.HasIndex(e => e.VariantId, "idx_stock_variant");
+			entity.HasIndex(e => e.ItemType, "idx_stock_items_type");
 
-			entity.Property(e => e.VariantId)
-				.ValueGeneratedNever()
-				.HasColumnName("variant_id");
-			entity.Property(e => e.Quantity)
-				.HasDefaultValue(0)
-				.HasColumnName("quantity");
+			entity.HasIndex(e => new { e.ItemType, e.ReferenceId }, "stock_items_item_type_reference_id_key").IsUnique();
 
-			entity.HasOne(d => d.Variant).WithOne(p => p.Stock)
-				.HasForeignKey<Stock>(d => d.VariantId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("stock_variant_id_fkey");
+			entity.Property(e => e.StockItemId).HasColumnName("stock_item_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.IsActive)
+				.HasDefaultValue(true)
+				.HasColumnName("is_active");
+			entity.Property(e => e.ItemType)
+				.HasMaxLength(20)
+				.HasColumnName("item_type");
+			entity.Property(e => e.MinStockLevel)
+				.HasPrecision(10, 2)
+				.HasDefaultValueSql("0")
+				.HasColumnName("min_stock_level");
+			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
+			entity.Property(e => e.Unit)
+				.HasMaxLength(20)
+				.HasColumnName("unit");
 		});
 
 		modelBuilder.Entity<StockTransaction>(entity =>
@@ -417,20 +385,33 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.ToTable("stock_transactions");
 
+			entity.HasIndex(e => e.CreatedAt, "idx_stock_txn_created");
+
+			entity.HasIndex(e => e.StockItemId, "idx_stock_txn_item");
+
 			entity.Property(e => e.StockTxnId).HasColumnName("stock_txn_id");
-			entity.Property(e => e.ChangeQty).HasColumnName("change_qty");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
+			entity.Property(e => e.Quantity)
+				.HasPrecision(10, 2)
+				.HasColumnName("quantity");
 			entity.Property(e => e.Reason)
-				.HasMaxLength(20)
+				.HasMaxLength(30)
 				.HasColumnName("reason");
 			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
-			entity.Property(e => e.VariantId).HasColumnName("variant_id");
+			entity.Property(e => e.ReferenceType)
+				.HasMaxLength(20)
+				.HasColumnName("reference_type");
+			entity.Property(e => e.StockItemId).HasColumnName("stock_item_id");
+			entity.Property(e => e.TransactionType)
+				.HasMaxLength(10)
+				.HasColumnName("transaction_type");
 
-			entity.HasOne(d => d.Variant).WithMany(p => p.StockTransactions)
-				.HasForeignKey(d => d.VariantId)
-				.HasConstraintName("stock_transactions_variant_id_fkey");
+			entity.HasOne(d => d.StockItem).WithMany(p => p.StockTransactions)
+				.HasForeignKey(d => d.StockItemId)
+				.OnDelete(DeleteBehavior.ClientSetNull)
+				.HasConstraintName("stock_transactions_stock_item_id_fkey");
 		});
 
 		modelBuilder.Entity<TableStatus>(entity =>

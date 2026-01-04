@@ -2,6 +2,18 @@
 {
 	public interface IStockService
 	{
-		Task ConsumeForOrderAsync(int orderId);
+		Task ApplyOrderStockAsync(int orderId);
+
+		Task AddStockAsync(
+			string itemType,
+			int referenceId,
+			decimal quantity,
+			string reason);
+
+		Task AdjustStockAsync(
+			int stockItemId,
+			decimal quantity,
+			string reason);
 	}
+
 }

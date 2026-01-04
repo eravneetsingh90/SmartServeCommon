@@ -74,13 +74,13 @@ namespace SmartServe.Domain.Services
 				 {
 					 CategoryId = c.CategoryId,
 					 ProductId = p.ProductId,
-					 VariantId = v.ProductVariantId,
+					 VariantId = v.VariantId,
 					 CategoryName = c.Name,
 					 ProductName = p.Name,
-					 VariantName = v.Name,
+					 VariantName = v.VariantName,
 					 Price = v.Price,
 					 SearchText =
-						 (c.Name + " " + p.Name + " " + v.Name).ToLower()
+						 (c.Name + " " + p.Name + " " + v.VariantName).ToLower()
 				 })
 				.ToList();
 

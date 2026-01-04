@@ -1,80 +1,153 @@
-﻿using AutoMapper;
-using SmartServe.Domain.Constants;
+﻿using SmartServe.Domain.Constants;
 using SmartServe.Domain.Stores;
+using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services
 {
 	public class StockService : IStockService
 	{
-		private readonly IMapper _mapper;
-		private readonly IUnitOfWork _uow;
-		private readonly IOrderStore _orderStore;
 		private readonly IStockStore _stockStore;
-		private readonly IProductIngredientStore _productIngredientStore;
+		private readonly IOrderStore _orderStore;
+		private readonly IProductVariantStore _productVariantStore;
+		private readonly IIngredientStore _ingredientStore;
+
 		public StockService(
-			IMapper mapper,
-			IUnitOfWork uow,
-			IOrderStore orderStore,
-			IOrderItemStore orderItemStore,
 			IStockStore stockStore,
-			IProductIngredientStore productIngredientStore)
+			IOrderStore orderStore,
+			IProductVariantStore productVariantStore,
+			IIngredientStore ingredientStore)
 		{
-			_mapper = mapper;
-			_uow = uow;
-			_orderStore = orderStore;
 			_stockStore = stockStore;
-			_productIngredientStore = productIngredientStore;
+			_orderStore = orderStore;
+			_productVariantStore = productVariantStore;
+			_ingredientStore = ingredientStore;
 		}
-		
-		public async Task ConsumeForOrderAsync(int orderId)
+
+		public async Task ApplyOrderStockAsync(int orderId)
 		{
 			var order = await _orderStore.GetOrderAsync(orderId);
-
 			if (order == null)
-				throw new InvalidOperationException($"Order {orderId} not found");
+				throw new InvalidOperationException("Order not found");
 
-			using var tx = _uow.BeginAsync();
-
-			try
+			foreach (var item in order.OrderItems)
 			{
-				foreach (var item in order.OrderItems)
+				var variant = await _productVariantStore.GetByIdAsync(item.VariantId);
+				if (variant == null || variant.StockMode == "NONE")
+					continue;
+
+				if (variant.StockMode == "SEALED")
 				{
-					if (item.Variant.StockMode == StockMode.SEALED)
-					{
-						var canHandle = _stockStore.CanHandle(item.Variant);
-
-						if (canHandle == null)
-							throw new InvalidOperationException(
-								$"No stock for variant {item.VariantId}");
-
-						await _stockStore.ConsumeAsync(item, orderId);
-					}
-					else if (item.Variant.StockMode == StockMode.INGREDIENT)
-					{
-						var canHandle = _productIngredientStore.CanHandle(item.Variant);
-
-						if (canHandle == null)
-							throw new InvalidOperationException(
-								$"No stock for variant {item.VariantId}");
-
-						await _productIngredientStore.ConsumeAsync(item, orderId);
-					}
-					else
-					{
-						continue;
-					}
-
-					
+					await DeductSealedVariantAsync(
+						variant.VariantId,
+						item.Quantity,
+						orderId);
 				}
-
-				await _uow.CommitAsync();
-			}
-			catch
-			{
-				await _uow.RollbackAsync();
-				throw;
+				else if (variant.StockMode == "INGREDIENT")
+				{
+					await DeductIngredientsAsync(
+						variant.VariantId,
+						item.Quantity,
+						orderId);
+				}
 			}
 		}
 
+		private async Task DeductSealedVariantAsync(
+			int variantId,
+			int quantity,
+			int orderId)
+		{
+			var stockItem = await _stockStore
+				.GetStockItemAsync(StockItemType.VARIANT, variantId);
+
+			if (stockItem == null)
+				throw new InvalidOperationException(
+					$"Stock item not found for variant {variantId}");
+
+			await _stockStore.AddTransactionAsync(new StockTransaction
+			{
+				StockItemId = stockItem.StockItemId,
+				TransactionType = StockTxnType.OUT,
+				Quantity = quantity,
+				Reason = "SALE",
+				ReferenceType = "ORDER",
+				ReferenceId = orderId,
+				CreatedAt = DateTime.UtcNow
+			});
+		}
+
+		private async Task DeductIngredientsAsync(
+			int variantId,
+			int variantQty,
+			int orderId)
+		{
+			var recipe = await _ingredientStore
+				.GetIngredientsForVariantAsync(variantId);
+
+			foreach (var r in recipe)
+			{
+				var totalQty = r.QtyRequired * variantQty;
+
+				var stockItem = await _stockStore
+					.GetStockItemAsync(
+						StockItemType.INGREDIENT,
+						r.IngredientId);
+
+				if (stockItem == null)
+					throw new InvalidOperationException(
+						$"Stock item not found for ingredient {r.IngredientId}");
+
+				await _stockStore.AddTransactionAsync(new StockTransaction
+				{
+					StockItemId = stockItem.StockItemId,
+					TransactionType = StockTxnType.OUT,
+					Quantity = totalQty,
+					Reason = "SALE",
+					ReferenceType = "ORDER",
+					ReferenceId = orderId,
+					CreatedAt = DateTime.UtcNow
+				});
+			}
+		}
+
+		public async Task AddStockAsync(
+			string itemType,
+			int referenceId,
+			decimal quantity,
+			string reason)
+		{
+			var stockItem = await _stockStore
+				.GetStockItemAsync(itemType, referenceId);
+
+			if (stockItem == null)
+				throw new InvalidOperationException("Stock item not found");
+
+			await _stockStore.AddTransactionAsync(new StockTransaction
+			{
+				StockItemId = stockItem.StockItemId,
+				TransactionType = StockTxnType.IN,
+				Quantity = quantity,
+				Reason = reason,
+				ReferenceType = "MANUAL",
+				CreatedAt = DateTime.UtcNow
+			});
+		}
+
+		public async Task AdjustStockAsync(
+			int stockItemId,
+			decimal quantity,
+			string reason)
+		{
+			await _stockStore.AddTransactionAsync(new StockTransaction
+			{
+				StockItemId = stockItemId,
+				TransactionType = StockTxnType.ADJUST,
+				Quantity = quantity,
+				Reason = reason,
+				ReferenceType = "MANUAL",
+				CreatedAt = DateTime.UtcNow
+			});
+		}
 	}
+
 }

@@ -4,13 +4,13 @@ namespace SmartServe.Domain.Models
 {
 	public class ProductVariantDto
 	{
-		public int ProductVariantId { get; set; }
+		public int VariantId { get; set; }
 
 		public int ProductId { get; set; }
 
 		public int? BrandId { get; set; }
 
-		public string Name { get; set; } = null!;
+		public string VariantName { get; set; } = null!;
 
 		public decimal Price { get; set; }
 
