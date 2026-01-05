@@ -1,11 +1,4 @@
-﻿using SmartServe.EFCore.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SmartServe.Domain.Models
+﻿namespace SmartServe.Domain.Models
 {
 	public class BrandDto
 	{

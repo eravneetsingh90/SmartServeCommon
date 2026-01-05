@@ -300,10 +300,6 @@ public partial class SmartServeDbContext : DbContext
 				.HasPrecision(10, 2)
 				.HasColumnName("price");
 			entity.Property(e => e.ProductId).HasColumnName("product_id");
-			entity.Property(e => e.StockMode)
-				.HasMaxLength(20)
-				.HasDefaultValueSql("'NONE'::character varying")
-				.HasColumnName("stock_mode");
 			entity.Property(e => e.VariantName)
 				.HasMaxLength(100)
 				.HasColumnName("variant_name");

@@ -32,23 +32,7 @@ namespace SmartServe.Domain.Services
 			foreach (var item in order.OrderItems)
 			{
 				var variant = await _productVariantStore.GetByIdAsync(item.VariantId);
-				if (variant == null || variant.StockMode == "NONE")
-					continue;
-
-				if (variant.StockMode == "SEALED")
-				{
-					await DeductSealedVariantAsync(
-						variant.VariantId,
-						item.Quantity,
-						orderId);
-				}
-				else if (variant.StockMode == "INGREDIENT")
-				{
-					await DeductIngredientsAsync(
-						variant.VariantId,
-						item.Quantity,
-						orderId);
-				}
+				
 			}
 		}
 

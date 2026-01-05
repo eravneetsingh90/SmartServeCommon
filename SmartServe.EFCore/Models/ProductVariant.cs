@@ -21,8 +21,6 @@ public partial class ProductVariant
 
     public int DisplayOrder { get; set; }
 
-    public string StockMode { get; set; } = null!;
-
     public virtual Brand? Brand { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

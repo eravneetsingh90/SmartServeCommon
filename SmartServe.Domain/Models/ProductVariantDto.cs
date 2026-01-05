@@ -14,8 +14,6 @@
 		public bool? IsActive { get; set; }
 		public DateTime? CreatedAt { get; set; }
 		public int DisplayOrder { get; set; }
-		public string StockMode { get; set; }
-		
 		public virtual BrandDto? Brand { get; set; }
 
 		//public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
