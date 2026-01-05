@@ -19,22 +19,22 @@ public class MappingProfile : Profile
 			CreateMap<OrderItemDto, OrderItem>()
 				.ForMember(d => d.Variant, opt => opt.Ignore());
 
-			CreateMap<TableStatus, TableStatusDto>();
-			CreateMap<TableStatusDto, TableStatus>();
+			CreateMap<TableStatus, TableStatusDto>().ReverseMap();
 
-			CreateMap<RestaurantTable, RestaurantTableDto>();
-			CreateMap<RestaurantTableDto, RestaurantTable>();
+			CreateMap<RestaurantTable, RestaurantTableDto>().ReverseMap();
 
-			CreateMap<Payment, PaymentDto>();
-			CreateMap<PaymentDto, Payment>();
+			CreateMap<Payment, PaymentDto>().ReverseMap();
 
 			CreateMap<ProductVariant, ProductVariantDto>();
 			CreateMap<ProductVariantDto, ProductVariant>()
 				.ForMember(d => d.Product, opt => opt.Ignore());
 
-			CreateMap<Product, ProductDto>();
-			CreateMap<ProductDto, Product>();
-			
+			CreateMap<Product, ProductDto>().ReverseMap();
+
+			CreateMap<Category, CategoryDto>().ReverseMap();
+
+			CreateMap<Brand, BrandDto>().ReverseMap();
+
 		}
 	}
 

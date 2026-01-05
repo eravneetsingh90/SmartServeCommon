@@ -25,7 +25,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task SaveBulkAsync(IEnumerable<ProductVariant> incoming)
+		public async Task<IEnumerable<ProductVariant>> SaveBulkAsync(IEnumerable<ProductVariant> incoming)
 		{
 			var duplicate = incoming
 				.GroupBy(x => x.VariantName.Trim().ToLower())
@@ -65,6 +65,7 @@ namespace SmartServe.Domain.Stores
 				}
 				await SaveAsync();
 				await _uow.CommitAsync();
+				return incoming;
 			}
 			catch
 			{

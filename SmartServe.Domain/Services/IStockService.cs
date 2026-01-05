@@ -14,6 +14,12 @@
 			int stockItemId,
 			decimal quantity,
 			string reason);
+
+		Task EnsureStockItemAsync(
+			string itemType,
+			int referenceId,
+			string unit);
+
 	}
 
 }

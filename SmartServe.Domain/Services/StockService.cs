@@ -58,7 +58,7 @@ namespace SmartServe.Domain.Services
 			int orderId)
 		{
 			var stockItem = await _stockStore
-				.GetStockItemAsync(StockItemType.VARIANT, variantId);
+				.GetStockItemAsync(StockMode.SEALED, variantId);
 
 			if (stockItem == null)
 				throw new InvalidOperationException(
@@ -90,7 +90,7 @@ namespace SmartServe.Domain.Services
 
 				var stockItem = await _stockStore
 					.GetStockItemAsync(
-						StockItemType.INGREDIENT,
+						StockMode.INGREDIENT,
 						r.IngredientId);
 
 				if (stockItem == null)
@@ -148,6 +148,30 @@ namespace SmartServe.Domain.Services
 				CreatedAt = DateTime.UtcNow
 			});
 		}
+
+		public async Task EnsureStockItemAsync(
+			string itemType,
+			int referenceId,
+			string unit)
+		{
+			var existing = await _stockStore
+				.GetStockItemAsync(itemType, referenceId);
+
+			if (existing != null)
+				return; // already exists → SAFE EXIT
+
+			var stockItem = new StockItem
+			{
+				ItemType = itemType,
+				ReferenceId = referenceId,
+				Unit = unit,
+				IsActive = true,
+				CreatedAt = DateTime.UtcNow
+			};
+
+			await _stockStore.AddStockItemAsync(stockItem);
+		}
+
 	}
 
 }

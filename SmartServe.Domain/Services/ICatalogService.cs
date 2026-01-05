@@ -6,10 +6,10 @@ namespace SmartServe.Domain.Services
 	public interface ICatalogService
 	{
 		Task LoadAsync();
-		IReadOnlyList<Category> GetCategories();
-		IReadOnlyList<Product> GetProductsByCategory(int categoryId);
-		IReadOnlyList<ProductVariant> GetVariantsByProduct(int productId);
-		IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30);
+		IReadOnlyList<CategoryDto> GetCategories();
+		IReadOnlyList<ProductDto> GetProductsByCategory(int categoryId);
+		IReadOnlyList<ProductVariantDto> GetVariantsByProduct(int productId);
+		IReadOnlyList<CatalogSearchItemDto> Search(string term, int maxResults = 30);
 		TableStatus GetTableStatusByCode(string statusCode);
 		Task Refresh();
 		IReadOnlyList<Brand> GetBrands();

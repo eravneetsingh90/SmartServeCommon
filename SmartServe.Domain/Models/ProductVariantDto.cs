@@ -1,6 +1,4 @@
-﻿using SmartServe.EFCore.Models;
-
-namespace SmartServe.Domain.Models
+﻿namespace SmartServe.Domain.Models
 {
 	public class ProductVariantDto
 	{
@@ -13,16 +11,12 @@ namespace SmartServe.Domain.Models
 		public string VariantName { get; set; } = null!;
 
 		public decimal Price { get; set; }
-
-		public bool? TracksStock { get; set; }
-		public string StockMode { get; set; }
 		public bool? IsActive { get; set; }
-
 		public DateTime? CreatedAt { get; set; }
-
 		public int DisplayOrder { get; set; }
-
-		//public virtual Brand? Brand { get; set; }
+		public string StockMode { get; set; }
+		
+		public virtual BrandDto? Brand { get; set; }
 
 		//public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
 

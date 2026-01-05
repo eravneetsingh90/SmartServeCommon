@@ -15,8 +15,10 @@ namespace SmartServe.Domain.Dependencies
 			
 			//services
 			services.AddScoped<IAuthService, AuthService>();
+			services.AddScoped<IStockService, StockService>();
 			services.AddSingleton<ICatalogService, CatalogService>();
 			services.AddSingleton<IBillingService, BillingService>();
+			services.AddScoped<IProductService, ProductService>();
 
 			//stores
 			services.AddScoped<IProductStore, ProductStore>();
@@ -31,6 +33,7 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<IPaymentStore, PaymentStore>();
 			services.AddScoped<IBrandStore, BrandStore>();
 			services.AddScoped<IStockStore, StockStore>();
+			services.AddScoped<IIngredientStore, IngredientStore>();
 			return services;
 		}
 	}

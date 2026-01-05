@@ -27,9 +27,4 @@
 		public const string OUT = "OUT";
 		public const string ADJUST = "ADJUST";
 	}
-	public static class StockItemType
-	{
-		public const string VARIANT = "VARIANT";
-		public const string INGREDIENT = "INGREDIENT";
-	}
 }
