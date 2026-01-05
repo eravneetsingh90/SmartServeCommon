@@ -10,9 +10,9 @@ namespace SmartServe.Domain.Services
 		IReadOnlyList<ProductDto> GetProductsByCategory(int categoryId);
 		IReadOnlyList<ProductVariantDto> GetVariantsByProduct(int productId);
 		IReadOnlyList<CatalogSearchItemDto> Search(string term, int maxResults = 30);
-		TableStatus GetTableStatusByCode(string statusCode);
+		TableStatusDto GetTableStatusByCode(string statusCode);
 		Task Refresh();
-		IReadOnlyList<Brand> GetBrands();
+		IReadOnlyList<BrandDto> GetBrands();
 	}
 
 }

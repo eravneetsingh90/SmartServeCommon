@@ -1,41 +1,39 @@
-﻿using SmartServe.Domain.Models;
+﻿using AutoMapper;
+using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
+using System.Collections.Generic;
 
 namespace SmartServe.Domain.Services
 {
 	public class CatalogService : ICatalogService
 	{
 		#region fields
+		private readonly IMapper _mapper;
 		private readonly IProductService _productService;
-		#endregion
 		private readonly ITableStatusStore _tableStatusStore;
 		private readonly IBrandStore _brandStore;
-
 		private List<CategoryDto> _categories = new();
 		private List<ProductDto> _products = new();
 		private List<ProductVariantDto> _variants = new();
 		private List<CatalogSearchItemDto> _searchIndex = new();
-		private List<TableStatus> _tableStatus = new();
-		private List<Brand> _brands = new();
+		private List<TableStatusDto> _tableStatus = new();
+		private List<BrandDto> _brands = new();
 		private bool _loaded;
+		#endregion
 
 		public CatalogService(
+			IMapper mapper,
 			IProductService productService,
-			ICategoryStore categoryStore,
-			IProductStore productStore,
-			IProductVariantStore variantStore,
 			ITableStatusStore tableStatusStore,
 			IBrandStore brandStore)
 		{
+			_mapper = mapper;
 			_productService = productService;
 			_tableStatusStore = tableStatusStore;
 			_brandStore = brandStore;
 		}
 
-		// =============================
-		// LOAD EVERYTHING ONCE
-		// =============================
 		public async Task LoadAsync()
 		{
 			if (_loaded)
@@ -58,12 +56,13 @@ namespace SmartServe.Domain.Services
 				.ToList();
 
 			// Table Statuses
-			_tableStatus = (await _tableStatusStore.GetAllAsync()).ToList();
+			var tableStatus = (await _tableStatusStore.GetAllAsync()).ToList();
+			_tableStatus = _mapper.Map<List<TableStatusDto>>(tableStatus);
 
-			_brands = (await _brandStore.GetAllAsync())
+			var brands = (await _brandStore.GetAllAsync())
 				.Where(v => v.IsActive == true)
 				.ToList();
-
+			_brands = _mapper.Map<List<BrandDto>>(brands);
 			// 🔍 Build search index
 			_searchIndex =
 				(from v in _variants
@@ -86,9 +85,6 @@ namespace SmartServe.Domain.Services
 			_loaded = true;
 		}
 
-		// =============================
-		// READ FROM MEMORY ONLY
-		// =============================
 		public IReadOnlyList<CategoryDto> GetCategories()
 			=> _categories;
 
@@ -123,11 +119,11 @@ namespace SmartServe.Domain.Services
 			await LoadAsync();
 		}
 
-		public TableStatus GetTableStatusByCode(string statusCode)
+		public TableStatusDto GetTableStatusByCode(string statusCode)
 			=> _tableStatus
 				.Where(v => v.StatusCode.Equals(statusCode)).FirstOrDefault();
 
-		public IReadOnlyList<Brand> GetBrands()
+		public IReadOnlyList<BrandDto> GetBrands()
 			=> _brands;
 	}
 
