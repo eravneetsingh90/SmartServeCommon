@@ -3,11 +3,8 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IIngredientStore : IBaseStore<ProductIngredient>
+	public interface IIngredientStore : IBaseStore<Ingredient>
 	{
-		Task<IEnumerable<ProductIngredient>> GetIngredientsForVariantAsync(int variantId);
-
-	
+			
 	}
-
 }

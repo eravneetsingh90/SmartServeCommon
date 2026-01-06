@@ -35,6 +35,7 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<IStockItemStore, StockItemStore>();
 			services.AddScoped<IStockTransactionStore, StockTransactionStore>();
 			services.AddScoped<IIngredientStore, IngredientStore>();
+			services.AddScoped<IProductIngredientStore, ProductIngredientStore>();
 			return services;
 		}
 	}

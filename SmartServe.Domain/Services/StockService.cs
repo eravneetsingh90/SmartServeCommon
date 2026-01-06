@@ -14,6 +14,7 @@ namespace SmartServe.Domain.Services
 		private readonly IStockTransactionStore _stockTransactionStore;
 		private readonly IOrderStore _orderStore;
 		private readonly IIngredientStore _ingredientStore;
+		private readonly IProductIngredientStore _productIngredientStore;
 		#endregion
 
 		#region constructor
@@ -22,13 +23,15 @@ namespace SmartServe.Domain.Services
 			IStockItemStore stockItemStore,
 			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
-			IIngredientStore ingredientStore)
+			IIngredientStore ingredientStore,
+			IProductIngredientStore productIngredientStore)
 		{
 			_mapper = mapper;
 			_stockItemStore = stockItemStore;
 			_stockTransactionStore = stockTransactionStore;
 			_orderStore = orderStore;
 			_ingredientStore = ingredientStore;
+			_productIngredientStore = productIngredientStore;
 		}
 		#endregion
 
@@ -53,7 +56,7 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.AddStockItemAsync(stockItem);
 		}
 
-		public async Task ActivateStockItemAsync(string itemType,int referenceId)
+		public async Task ActivateStockItemAsync(string itemType, int referenceId)
 		{
 			var stockItem = await _stockItemStore
 				.GetStockItemAsync(itemType, referenceId);
@@ -72,7 +75,7 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.UpdateStockItemAsync(stockItem);
 		}
 
-		public async Task DeactivateStockItemAsync(string itemType,int referenceId)
+		public async Task DeactivateStockItemAsync(string itemType, int referenceId)
 		{
 			var stockItem = await _stockItemStore.GetStockItemAsync(itemType, referenceId);
 
@@ -90,7 +93,7 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.UpdateStockItemAsync(stockItem);
 		}
 
-		public async Task AddStockAsync(int stockItemId,decimal quantity,string reason,string referenceType = "MANUAL",int? referenceId = null)
+		public async Task AddStockAsync(int stockItemId, decimal quantity, string reason, string referenceType = "MANUAL", int? referenceId = null)
 		{
 			if (quantity <= 0)
 				throw new ArgumentException("Quantity must be greater than zero.");
@@ -108,7 +111,7 @@ namespace SmartServe.Domain.Services
 			await _stockTransactionStore.SaveAsync();
 		}
 
-		public async Task AdjustStockAsync(int stockItemId,decimal quantity,string reason)
+		public async Task AdjustStockAsync(int stockItemId, decimal quantity, string reason)
 		{
 			if (quantity == 0)
 				return;
@@ -133,7 +136,6 @@ namespace SmartServe.Domain.Services
 
 			foreach (var item in order.OrderItems)
 			{
-				// 1️⃣ Check sealed stock (variant stock_item exists)
 				var variantStockItem = await _stockItemStore
 					.GetStockItemAsync(
 						StockItemType.VARIANT,
@@ -141,7 +143,6 @@ namespace SmartServe.Domain.Services
 
 				if (variantStockItem != null)
 				{
-					// SEALED ITEM
 					await ConsumeStockAsync(
 						variantStockItem.StockItemId,
 						item.Quantity,
@@ -150,9 +151,7 @@ namespace SmartServe.Domain.Services
 					continue;
 				}
 
-				// 2️⃣ Ingredient-based deduction (recipe)
-				var ingredients = await _ingredientStore
-					.GetIngredientsForVariantAsync(Convert.ToInt32(item.VariantId));
+				var ingredients = await _productIngredientStore.GetIngredientsForVariantAsync(Convert.ToInt32(item.VariantId));
 
 				foreach (var ing in ingredients)
 				{
@@ -175,7 +174,7 @@ namespace SmartServe.Domain.Services
 			}
 		}
 
-		private async Task ConsumeStockAsync(int stockItemId,decimal quantity,int orderId)
+		private async Task ConsumeStockAsync(int stockItemId, decimal quantity, int orderId)
 		{
 			if (quantity <= 0)
 				return;
@@ -198,6 +197,12 @@ namespace SmartServe.Domain.Services
 				CreatedAt = DateTime.UtcNow
 			});
 			await _stockTransactionStore.SaveAsync();
+		}
+
+		public async Task<List<IngredientDto>> GetIngredients()
+		{
+			var items = await _ingredientStore.GetAllAsync();
+			return _mapper.Map<List<IngredientDto>>(items);
 		}
 
 		#endregion
