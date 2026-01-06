@@ -40,11 +40,6 @@ namespace SmartServe.Domain.Services
 
 		public async Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel)
 		{
-			var existing = await _stockItemStore.GetStockItemAsync(itemType, referenceId);
-
-			if (existing != null)
-				throw new InvalidOperationException("Stock item already exists.");
-
 			var stockItem = new StockItem
 			{
 				ItemType = itemType,
@@ -56,6 +51,25 @@ namespace SmartServe.Domain.Services
 			};
 
 			await _stockItemStore.AddStockItemAsync(stockItem);
+		}
+
+		public async Task ActivateStockItemAsync(string itemType,int referenceId)
+		{
+			var stockItem = await _stockItemStore
+				.GetStockItemAsync(itemType, referenceId);
+
+			if (stockItem == null)
+			{
+				await CreateStockItemAsync(itemType, referenceId, "PCS", 0);
+				return;
+			}
+
+			if (stockItem.IsActive == true)
+				return; // already active → no-op
+
+			stockItem.IsActive = true;
+
+			await _stockItemStore.UpdateStockItemAsync(stockItem);
 		}
 
 		public async Task DeactivateStockItemAsync(string itemType,int referenceId)

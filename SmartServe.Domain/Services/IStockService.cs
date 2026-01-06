@@ -7,6 +7,7 @@ namespace SmartServe.Domain.Services
 	{
 		Task<List<StockItemDto>> GetStockItemAsync(string itemType);
 		Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel);
+		Task ActivateStockItemAsync(string itemType,int referenceId);
 		Task DeactivateStockItemAsync(string itemType, int referenceId);
 		Task AddStockAsync(int stockItemId,decimal quantity,string reason,string referenceType = "MANUAL",int? referenceId = null);
 		Task AdjustStockAsync(int stockItemId,decimal quantity,string reason);

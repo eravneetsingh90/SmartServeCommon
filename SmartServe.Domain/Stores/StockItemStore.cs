@@ -32,8 +32,7 @@ namespace SmartServe.Domain.Stores
 			return await Set
 				.FirstOrDefaultAsync(x =>
 					x.ItemType == itemType &&
-					x.ReferenceId == referenceId &&
-					x.IsActive == true);
+					x.ReferenceId == referenceId);
 		}
 		public async Task AddStockItemAsync(StockItem stockItem)
 		{
