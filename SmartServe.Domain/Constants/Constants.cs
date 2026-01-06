@@ -15,10 +15,9 @@
 		public const string CARD = "CARD";
 		public const string PART = "PART";
 	}
-	public static class StockMode
+	public static class StockItemType
 	{
-		public const string NONE = "NONE";
-		public const string SEALED = "SEALED";
+		public const string VARIANT = "VARIANT";
 		public const string INGREDIENT = "INGREDIENT";
 	}
 	public static class StockTxnType

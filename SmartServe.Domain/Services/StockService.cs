@@ -1,4 +1,6 @@
-﻿using SmartServe.Domain.Constants;
+﻿using AutoMapper;
+using SmartServe.Domain.Constants;
+using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
 
@@ -6,123 +8,98 @@ namespace SmartServe.Domain.Services
 {
 	public class StockService : IStockService
 	{
-		private readonly IStockStore _stockStore;
+		#region fields
+		private readonly IMapper _mapper;
+		private readonly IStockItemStore _stockItemStore;
+		private readonly IStockTransactionStore _stockTransactionStore;
 		private readonly IOrderStore _orderStore;
-		private readonly IProductVariantStore _productVariantStore;
 		private readonly IIngredientStore _ingredientStore;
+		#endregion
 
+		#region constructor
 		public StockService(
-			IStockStore stockStore,
+			IMapper mapper,
+			IStockItemStore stockItemStore,
+			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
-			IProductVariantStore productVariantStore,
 			IIngredientStore ingredientStore)
 		{
-			_stockStore = stockStore;
+			_mapper = mapper;
+			_stockItemStore = stockItemStore;
+			_stockTransactionStore = stockTransactionStore;
 			_orderStore = orderStore;
-			_productVariantStore = productVariantStore;
 			_ingredientStore = ingredientStore;
 		}
+		#endregion
 
-		public async Task ApplyOrderStockAsync(int orderId)
+		#region methods
+		public async Task<List<StockItemDto>> GetStockItemAsync(string itemType)
 		{
-			var order = await _orderStore.GetOrderAsync(orderId);
-			if (order == null)
-				throw new InvalidOperationException("Order not found");
-
-			foreach (var item in order.OrderItems)
-			{
-				var variant = await _productVariantStore.GetByIdAsync(item.VariantId);
-				
-			}
+			return _mapper.Map<List<StockItemDto>>(await _stockItemStore.GetStockItemAsync(itemType));
 		}
 
-		private async Task DeductSealedVariantAsync(
-			int variantId,
-			int quantity,
-			int orderId)
+		public async Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel)
 		{
-			var stockItem = await _stockStore
-				.GetStockItemAsync(StockMode.SEALED, variantId);
+			var existing = await _stockItemStore.GetStockItemAsync(itemType, referenceId);
 
-			if (stockItem == null)
-				throw new InvalidOperationException(
-					$"Stock item not found for variant {variantId}");
+			if (existing != null)
+				throw new InvalidOperationException("Stock item already exists.");
 
-			await _stockStore.AddTransactionAsync(new StockTransaction
+			var stockItem = new StockItem
 			{
-				StockItemId = stockItem.StockItemId,
-				TransactionType = StockTxnType.OUT,
-				Quantity = quantity,
-				Reason = "SALE",
-				ReferenceType = "ORDER",
-				ReferenceId = orderId,
+				ItemType = itemType,
+				ReferenceId = referenceId,
+				Unit = unit,
+				MinStockLevel = minStockLevel,
+				IsActive = true,
 				CreatedAt = DateTime.UtcNow
-			});
+			};
+
+			await _stockItemStore.AddStockItemAsync(stockItem);
 		}
 
-		private async Task DeductIngredientsAsync(
-			int variantId,
-			int variantQty,
-			int orderId)
+		public async Task DeactivateStockItemAsync(string itemType,int referenceId)
 		{
-			var recipe = await _ingredientStore
-				.GetIngredientsForVariantAsync(variantId);
-
-			foreach (var r in recipe)
-			{
-				var totalQty = r.QtyRequired * variantQty;
-
-				var stockItem = await _stockStore
-					.GetStockItemAsync(
-						StockMode.INGREDIENT,
-						r.IngredientId);
-
-				if (stockItem == null)
-					throw new InvalidOperationException(
-						$"Stock item not found for ingredient {r.IngredientId}");
-
-				await _stockStore.AddTransactionAsync(new StockTransaction
-				{
-					StockItemId = stockItem.StockItemId,
-					TransactionType = StockTxnType.OUT,
-					Quantity = totalQty,
-					Reason = "SALE",
-					ReferenceType = "ORDER",
-					ReferenceId = orderId,
-					CreatedAt = DateTime.UtcNow
-				});
-			}
-		}
-
-		public async Task AddStockAsync(
-			string itemType,
-			int referenceId,
-			decimal quantity,
-			string reason)
-		{
-			var stockItem = await _stockStore
-				.GetStockItemAsync(itemType, referenceId);
+			var stockItem = await _stockItemStore.GetStockItemAsync(itemType, referenceId);
 
 			if (stockItem == null)
-				throw new InvalidOperationException("Stock item not found");
+				return;
 
-			await _stockStore.AddTransactionAsync(new StockTransaction
+			var currentQty = await _stockItemStore.GetCurrentStockQuantityAsync(stockItem.StockItemId);
+
+			if (currentQty != 0)
+				throw new InvalidOperationException(
+					"Cannot remove from stock while quantity is not zero.");
+
+			stockItem.IsActive = false;
+
+			await _stockItemStore.UpdateStockItemAsync(stockItem);
+		}
+
+		public async Task AddStockAsync(int stockItemId,decimal quantity,string reason,string referenceType = "MANUAL",int? referenceId = null)
+		{
+			if (quantity <= 0)
+				throw new ArgumentException("Quantity must be greater than zero.");
+
+			_stockTransactionStore.Add(new StockTransaction
 			{
-				StockItemId = stockItem.StockItemId,
+				StockItemId = stockItemId,
 				TransactionType = StockTxnType.IN,
 				Quantity = quantity,
 				Reason = reason,
-				ReferenceType = "MANUAL",
+				ReferenceType = referenceType,
+				ReferenceId = referenceId,
 				CreatedAt = DateTime.UtcNow
 			});
+			await _stockTransactionStore.SaveAsync();
 		}
 
-		public async Task AdjustStockAsync(
-			int stockItemId,
-			decimal quantity,
-			string reason)
+		public async Task AdjustStockAsync(int stockItemId,decimal quantity,string reason)
 		{
-			await _stockStore.AddTransactionAsync(new StockTransaction
+			if (quantity == 0)
+				return;
+
+			_stockTransactionStore.Add(new StockTransaction
 			{
 				StockItemId = stockItemId,
 				TransactionType = StockTxnType.ADJUST,
@@ -131,31 +108,85 @@ namespace SmartServe.Domain.Services
 				ReferenceType = "MANUAL",
 				CreatedAt = DateTime.UtcNow
 			});
+			await _stockTransactionStore.SaveAsync();
 		}
 
-		public async Task EnsureStockItemAsync(
-			string itemType,
-			int referenceId,
-			string unit)
+		public async Task ApplyOrderStockAsync(int orderId)
 		{
-			var existing = await _stockStore
-				.GetStockItemAsync(itemType, referenceId);
+			var order = await _orderStore.GetOrderAsync(orderId);
+			if (order == null)
+				throw new InvalidOperationException("Order not found.");
 
-			if (existing != null)
-				return; // already exists → SAFE EXIT
-
-			var stockItem = new StockItem
+			foreach (var item in order.OrderItems)
 			{
-				ItemType = itemType,
-				ReferenceId = referenceId,
-				Unit = unit,
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow
-			};
+				// 1️⃣ Check sealed stock (variant stock_item exists)
+				var variantStockItem = await _stockItemStore
+					.GetStockItemAsync(
+						StockItemType.VARIANT,
+						Convert.ToInt32(item.VariantId));
 
-			await _stockStore.AddStockItemAsync(stockItem);
+				if (variantStockItem != null)
+				{
+					// SEALED ITEM
+					await ConsumeStockAsync(
+						variantStockItem.StockItemId,
+						item.Quantity,
+						orderId);
+
+					continue;
+				}
+
+				// 2️⃣ Ingredient-based deduction (recipe)
+				var ingredients = await _ingredientStore
+					.GetIngredientsForVariantAsync(Convert.ToInt32(item.VariantId));
+
+				foreach (var ing in ingredients)
+				{
+					var ingredientStockItem = await _stockItemStore
+						.GetStockItemAsync(
+							StockItemType.INGREDIENT,
+							ing.IngredientId);
+
+					if (ingredientStockItem == null)
+						throw new InvalidOperationException(
+							$"Ingredient stock not configured.");
+
+					var totalQty = ing.QtyRequired * item.Quantity;
+
+					await ConsumeStockAsync(
+						ingredientStockItem.StockItemId,
+						totalQty,
+						orderId);
+				}
+			}
 		}
 
+		private async Task ConsumeStockAsync(int stockItemId,decimal quantity,int orderId)
+		{
+			if (quantity <= 0)
+				return;
+
+			var currentQty = await _stockItemStore
+				.GetCurrentStockQuantityAsync(stockItemId);
+
+			if (currentQty < quantity)
+				throw new InvalidOperationException(
+					"Insufficient stock.");
+
+			_stockTransactionStore.Add(new StockTransaction
+			{
+				StockItemId = stockItemId,
+				TransactionType = StockTxnType.OUT,
+				Quantity = quantity,
+				Reason = "SALE",
+				ReferenceType = "ORDER",
+				ReferenceId = orderId,
+				CreatedAt = DateTime.UtcNow
+			});
+			await _stockTransactionStore.SaveAsync();
+		}
+
+		#endregion
 	}
 
 }

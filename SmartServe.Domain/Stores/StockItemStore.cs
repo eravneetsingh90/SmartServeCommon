@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class StockStore : BaseStore<StockItem>,IStockStore
+	public class StockItemStore : BaseStore<StockItem>,IStockItemStore
 	{
 		
-		public StockStore(SmartServeDbContext db) : base(db)
+		public StockItemStore(SmartServeDbContext db) : base(db)
 		{
 		}
 
@@ -16,6 +17,13 @@ namespace SmartServe.Domain.Stores
 		{
 			return await Set
 				.Where(x => x.IsActive == true)
+				.AsNoTracking()
+				.ToListAsync();
+		}
+		public async Task<List<StockItem>> GetStockItemAsync(string itemType)
+		{
+			return await Set
+				.Where(x => x.ItemType == itemType)
 				.AsNoTracking()
 				.ToListAsync();
 		}
@@ -36,12 +44,6 @@ namespace SmartServe.Domain.Stores
 		public async Task UpdateStockItemAsync(StockItem stockItem)
 		{
 			Set.Update(stockItem);
-			await SaveAsync();
-		}
-
-		public async Task AddTransactionAsync(StockTransaction transaction)
-		{
-			Db.StockTransactions.Add(transaction);
 			await SaveAsync();
 		}
 
@@ -103,6 +105,18 @@ namespace SmartServe.Domain.Stores
 			return await query
 				.AsNoTracking()
 				.ToListAsync();
+		}
+
+		public async Task<decimal> GetCurrentStockQuantityAsync(int stockItemId)
+		{
+			var qty = await Db.StockTransactions
+				.Where(x => x.StockItemId == stockItemId)
+				.SumAsync(x =>
+					x.TransactionType == StockTxnType.IN ? x.Quantity :
+					x.TransactionType == StockTxnType.OUT ? -x.Quantity :
+					x.Quantity);
+
+			return qty;
 		}
 
 	}

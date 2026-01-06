@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SmartServe.EFCore.Models;
+﻿namespace SmartServe.EFCore.Models;
 
 public partial class StockItem
 {
