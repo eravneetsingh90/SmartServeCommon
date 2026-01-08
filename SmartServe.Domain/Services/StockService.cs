@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
@@ -9,6 +10,7 @@ namespace SmartServe.Domain.Services
 	public class StockService : IStockService
 	{
 		#region fields
+		private readonly IUnitOfWork _uow;
 		private readonly IMapper _mapper;
 		private readonly IStockStore _stockItemStore;
 		private readonly IStockTransactionStore _stockTransactionStore;
@@ -20,12 +22,14 @@ namespace SmartServe.Domain.Services
 		#region constructor
 		public StockService(
 			IMapper mapper,
+			IUnitOfWork uow,
 			IStockStore stockItemStore,
 			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
 			IIngredientStore ingredientStore,
 			IProductIngredientStore productIngredientStore)
 		{
+			_uow = uow;
 			_mapper = mapper;
 			_stockItemStore = stockItemStore;
 			_stockTransactionStore = stockTransactionStore;
@@ -93,22 +97,28 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.UpdateStockAsync(stockItem);
 		}
 
-		public async Task AddStockAsync(int stockItemId, decimal quantity, string reason, string referenceType = "MANUAL", int? referenceId = null)
+		public async Task AddStockAsync(List<AddStockDto> rows)
 		{
-			if (quantity <= 0)
-				throw new ArgumentException("Quantity must be greater than zero.");
-
-			_stockTransactionStore.Add(new StockTransaction
+			await _uow.BeginAsync();
+			foreach (var row in rows)
 			{
-				Id = stockItemId,
-				TransactionType = StockTxnType.IN,
-				Quantity = quantity,
-				Reason = reason,
-				ReferenceType = referenceType,
-				ReferenceId = referenceId,
-				CreatedAt = DateTime.UtcNow
-			});
+				var stockItem = await _stockItemStore.GetStockAsync(row.ItemType.ToString(), row.ReferenceId);
+
+				if (stockItem == null)
+					throw new Exception("Stock item not found.");
+
+				_stockTransactionStore.Add(new StockTransaction
+				{
+					StockId = stockItem.Id,
+					TransactionType = StockTxnType.IN,
+					Quantity = row.Quantity,
+					Reason = row.Reason,
+					CreatedAt = DateTime.UtcNow
+				});
+			}
+
 			await _stockTransactionStore.SaveAsync();
+			await _uow.CommitAsync();
 		}
 
 		public async Task AdjustStockAsync(int stockItemId, decimal quantity, string reason)

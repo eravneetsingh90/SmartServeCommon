@@ -9,7 +9,7 @@ namespace SmartServe.Domain.Services
 		Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel);
 		Task ActivateStockItemAsync(string itemType,int referenceId);
 		Task DeactivateStockItemAsync(string itemType, int referenceId);
-		Task AddStockAsync(int stockItemId,decimal quantity,string reason,string referenceType = "MANUAL",int? referenceId = null);
+		Task AddStockAsync(List<AddStockDto> rows);
 		Task AdjustStockAsync(int stockItemId,decimal quantity,string reason);
 		Task ApplyOrderStockAsync(int orderId);
 		Task<List<IngredientDto>> GetIngredients();
