@@ -5,7 +5,7 @@ namespace SmartServe.Domain.Services
 {
 	public interface IStockService
 	{
-		Task<List<StockItemDto>> GetStockItemAsync(string itemType);
+		Task<List<StockDto>> GetStockItemAsync(string itemType);
 		Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel);
 		Task ActivateStockItemAsync(string itemType,int referenceId);
 		Task DeactivateStockItemAsync(string itemType, int referenceId);

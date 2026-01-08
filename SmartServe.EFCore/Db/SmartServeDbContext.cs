@@ -36,7 +36,7 @@ public partial class SmartServeDbContext : DbContext
 
 	public virtual DbSet<Role> Roles { get; set; }
 
-	public virtual DbSet<StockItem> StockItems { get; set; }
+	public virtual DbSet<Stock> Stocks { get; set; }
 
 	public virtual DbSet<StockTransaction> StockTransactions { get; set; }
 
@@ -345,17 +345,15 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("role_name");
 		});
 
-		modelBuilder.Entity<StockItem>(entity =>
+		modelBuilder.Entity<Stock>(entity =>
 		{
-			entity.HasKey(e => e.StockItemId).HasName("stock_items_pkey");
+			entity.HasKey(e => e.Id).HasName("stock_pkey");
 
-			entity.ToTable("stock_items");
+			entity.ToTable("stock");
 
-			entity.HasIndex(e => e.ItemType, "idx_stock_items_type");
+			entity.HasIndex(e => new { e.ItemType, e.ReferenceId }, "stock_item_type_reference_id_key").IsUnique();
 
-			entity.HasIndex(e => new { e.ItemType, e.ReferenceId }, "stock_items_item_type_reference_id_key").IsUnique();
-
-			entity.Property(e => e.StockItemId).HasColumnName("stock_item_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
@@ -377,15 +375,11 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<StockTransaction>(entity =>
 		{
-			entity.HasKey(e => e.StockTxnId).HasName("stock_transactions_pkey");
+			entity.HasKey(e => e.Id).HasName("stock_transactions_pkey");
 
 			entity.ToTable("stock_transactions");
 
-			entity.HasIndex(e => e.CreatedAt, "idx_stock_txn_created");
-
-			entity.HasIndex(e => e.StockItemId, "idx_stock_txn_item");
-
-			entity.Property(e => e.StockTxnId).HasColumnName("stock_txn_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
@@ -399,15 +393,15 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.ReferenceType)
 				.HasMaxLength(20)
 				.HasColumnName("reference_type");
-			entity.Property(e => e.StockItemId).HasColumnName("stock_item_id");
+			entity.Property(e => e.StockId).HasColumnName("stock_id");
 			entity.Property(e => e.TransactionType)
 				.HasMaxLength(10)
 				.HasColumnName("transaction_type");
 
-			entity.HasOne(d => d.StockItem).WithMany(p => p.StockTransactions)
-				.HasForeignKey(d => d.StockItemId)
+			entity.HasOne(d => d.Stock).WithMany(p => p.StockTransactions)
+				.HasForeignKey(d => d.StockId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("stock_transactions_stock_item_id_fkey");
+				.HasConstraintName("stock_transactions_stock_id_fkey");
 		});
 
 		modelBuilder.Entity<TableStatus>(entity =>

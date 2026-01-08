@@ -5,9 +5,9 @@ namespace SmartServe.EFCore.Models;
 
 public partial class StockTransaction
 {
-    public int StockTxnId { get; set; }
+    public int Id { get; set; }
 
-    public int StockItemId { get; set; }
+    public int StockId { get; set; }
 
     public string TransactionType { get; set; } = null!;
 
@@ -21,5 +21,5 @@ public partial class StockTransaction
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual StockItem StockItem { get; set; } = null!;
+    public virtual Stock Stock { get; set; } = null!;
 }

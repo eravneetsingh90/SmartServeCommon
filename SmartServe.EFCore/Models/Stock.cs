@@ -1,8 +1,11 @@
-﻿namespace SmartServe.EFCore.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public partial class StockItem
+namespace SmartServe.EFCore.Models;
+
+public partial class Stock
 {
-    public int StockItemId { get; set; }
+    public int Id { get; set; }
 
     public string ItemType { get; set; } = null!;
 

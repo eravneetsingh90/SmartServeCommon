@@ -2,7 +2,7 @@
 {
 	public class CurrentStockDto
 	{
-		public int StockItemId { get; set; }
+		public int Id { get; set; }
 
 		public string ItemType { get; set; }
 		public int ReferenceId { get; set; }

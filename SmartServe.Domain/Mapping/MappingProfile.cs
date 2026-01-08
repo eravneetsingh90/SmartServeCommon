@@ -26,7 +26,7 @@ namespace SmartServe.Domain.Mapping
 			CreateMap<Product, ProductDto>().ReverseMap();
 			CreateMap<Category, CategoryDto>().ReverseMap();
 			CreateMap<Brand, BrandDto>().ReverseMap();
-			CreateMap<StockItem, StockItemDto>().ReverseMap();
+			CreateMap<Stock, StockDto>().ReverseMap();
 			CreateMap<StockTransaction, StockTransactionDto>().ReverseMap();
 			CreateMap<Ingredient, IngredientDto>().ReverseMap();
 			CreateMap<ProductIngredient, ProductIngredientDto>().ReverseMap();

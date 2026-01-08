@@ -10,7 +10,7 @@ namespace SmartServe.Domain.Services
 	{
 		#region fields
 		private readonly IMapper _mapper;
-		private readonly IStockItemStore _stockItemStore;
+		private readonly IStockStore _stockItemStore;
 		private readonly IStockTransactionStore _stockTransactionStore;
 		private readonly IOrderStore _orderStore;
 		private readonly IIngredientStore _ingredientStore;
@@ -20,7 +20,7 @@ namespace SmartServe.Domain.Services
 		#region constructor
 		public StockService(
 			IMapper mapper,
-			IStockItemStore stockItemStore,
+			IStockStore stockItemStore,
 			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
 			IIngredientStore ingredientStore,
@@ -36,14 +36,14 @@ namespace SmartServe.Domain.Services
 		#endregion
 
 		#region methods
-		public async Task<List<StockItemDto>> GetStockItemAsync(string itemType)
+		public async Task<List<StockDto>> GetStockItemAsync(string itemType)
 		{
-			return _mapper.Map<List<StockItemDto>>(await _stockItemStore.GetStockItemAsync(itemType));
+			return _mapper.Map<List<StockDto>>(await _stockItemStore.GetStockAsync(itemType));
 		}
 
 		public async Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel)
 		{
-			var stockItem = new StockItem
+			var stockItem = new Stock
 			{
 				ItemType = itemType,
 				ReferenceId = referenceId,
@@ -53,13 +53,13 @@ namespace SmartServe.Domain.Services
 				CreatedAt = DateTime.UtcNow
 			};
 
-			await _stockItemStore.AddStockItemAsync(stockItem);
+			await _stockItemStore.AddStockAsync(stockItem);
 		}
 
 		public async Task ActivateStockItemAsync(string itemType, int referenceId)
 		{
 			var stockItem = await _stockItemStore
-				.GetStockItemAsync(itemType, referenceId);
+				.GetStockAsync(itemType, referenceId);
 
 			if (stockItem == null)
 			{
@@ -72,17 +72,17 @@ namespace SmartServe.Domain.Services
 
 			stockItem.IsActive = true;
 
-			await _stockItemStore.UpdateStockItemAsync(stockItem);
+			await _stockItemStore.UpdateStockAsync(stockItem);
 		}
 
 		public async Task DeactivateStockItemAsync(string itemType, int referenceId)
 		{
-			var stockItem = await _stockItemStore.GetStockItemAsync(itemType, referenceId);
+			var stockItem = await _stockItemStore.GetStockAsync(itemType, referenceId);
 
 			if (stockItem == null)
 				return;
 
-			var currentQty = await _stockItemStore.GetCurrentStockQuantityAsync(stockItem.StockItemId);
+			var currentQty = await _stockItemStore.GetCurrentStockQuantityAsync(stockItem.Id);
 
 			if (currentQty != 0)
 				throw new InvalidOperationException(
@@ -90,7 +90,7 @@ namespace SmartServe.Domain.Services
 
 			stockItem.IsActive = false;
 
-			await _stockItemStore.UpdateStockItemAsync(stockItem);
+			await _stockItemStore.UpdateStockAsync(stockItem);
 		}
 
 		public async Task AddStockAsync(int stockItemId, decimal quantity, string reason, string referenceType = "MANUAL", int? referenceId = null)
@@ -100,7 +100,7 @@ namespace SmartServe.Domain.Services
 
 			_stockTransactionStore.Add(new StockTransaction
 			{
-				StockItemId = stockItemId,
+				Id = stockItemId,
 				TransactionType = StockTxnType.IN,
 				Quantity = quantity,
 				Reason = reason,
@@ -118,7 +118,7 @@ namespace SmartServe.Domain.Services
 
 			_stockTransactionStore.Add(new StockTransaction
 			{
-				StockItemId = stockItemId,
+				Id = stockItemId,
 				TransactionType = StockTxnType.ADJUST,
 				Quantity = quantity,
 				Reason = reason,
@@ -137,14 +137,14 @@ namespace SmartServe.Domain.Services
 			foreach (var item in order.OrderItems)
 			{
 				var variantStockItem = await _stockItemStore
-					.GetStockItemAsync(
+					.GetStockAsync(
 						StockItemType.VARIANT,
 						Convert.ToInt32(item.VariantId));
 
 				if (variantStockItem != null)
 				{
 					await ConsumeStockAsync(
-						variantStockItem.StockItemId,
+						variantStockItem.Id,
 						item.Quantity,
 						orderId);
 
@@ -156,7 +156,7 @@ namespace SmartServe.Domain.Services
 				foreach (var ing in ingredients)
 				{
 					var ingredientStockItem = await _stockItemStore
-						.GetStockItemAsync(
+						.GetStockAsync(
 							StockItemType.INGREDIENT,
 							ing.IngredientId);
 
@@ -167,7 +167,7 @@ namespace SmartServe.Domain.Services
 					var totalQty = ing.QtyRequired * item.Quantity;
 
 					await ConsumeStockAsync(
-						ingredientStockItem.StockItemId,
+						ingredientStockItem.Id,
 						totalQty,
 						orderId);
 				}
@@ -188,7 +188,7 @@ namespace SmartServe.Domain.Services
 
 			_stockTransactionStore.Add(new StockTransaction
 			{
-				StockItemId = stockItemId,
+				Id = stockItemId,
 				TransactionType = StockTxnType.OUT,
 				Quantity = quantity,
 				Reason = "SALE",

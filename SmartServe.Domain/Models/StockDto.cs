@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SmartServe.Domain.Models
 {
-	public class StockItemDto
+	public class StockDto
 	{
-		public int StockItemId { get; set; }
+		public int Id { get; set; }
 
 		public string ItemType { get; set; } = null!;
 

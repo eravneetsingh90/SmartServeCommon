@@ -6,41 +6,41 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class StockItemStore : BaseStore<StockItem>,IStockItemStore
+	public class StockStore : BaseStore<Stock>, IStockStore
 	{
-		
-		public StockItemStore(SmartServeDbContext db) : base(db)
+
+		public StockStore(SmartServeDbContext db) : base(db)
 		{
 		}
 
-		public async Task<List<StockItem>> GetStockItemsAsync()
+		public async Task<List<Stock>> GetStockAsync()
 		{
 			return await Set
 				.Where(x => x.IsActive == true)
 				.AsNoTracking()
 				.ToListAsync();
 		}
-		public async Task<List<StockItem>> GetStockItemAsync(string itemType)
+		public async Task<List<Stock>> GetStockAsync(string itemType)
 		{
 			return await Set
 				.Where(x => x.ItemType == itemType)
 				.AsNoTracking()
 				.ToListAsync();
 		}
-		public async Task<StockItem?> GetStockItemAsync(string itemType, int referenceId)
+		public async Task<Stock?> GetStockAsync(string itemType, int referenceId)
 		{
 			return await Set
 				.FirstOrDefaultAsync(x =>
 					x.ItemType == itemType &&
 					x.ReferenceId == referenceId);
 		}
-		public async Task AddStockItemAsync(StockItem stockItem)
+		public async Task AddStockAsync(Stock stockItem)
 		{
 			Set.Add(stockItem);
 			await SaveAsync();
 		}
 
-		public async Task UpdateStockItemAsync(StockItem stockItem)
+		public async Task UpdateStockAsync(Stock stockItem)
 		{
 			Set.Update(stockItem);
 			await SaveAsync();
@@ -53,7 +53,7 @@ namespace SmartServe.Domain.Stores
 				where si.IsActive == true
 
 				join st in Db.StockTransactions
-					on si.StockItemId equals st.StockItemId into txnGroup
+					on si.Id equals st.Id into txnGroup
 
 				// VARIANT JOIN
 				join pv in Db.ProductVariants
@@ -81,11 +81,11 @@ namespace SmartServe.Domain.Stores
 
 				select new CurrentStockDto
 				{
-					StockItemId = si.StockItemId,
+					Id = si.Id,
 					ItemType = si.ItemType,
 					ReferenceId = si.ReferenceId,
 					Unit = si.Unit,
-					MinStockLevel = si.MinStockLevel??0,
+					MinStockLevel = si.MinStockLevel ?? 0,
 
 					ItemName =
 						si.ItemType == "VARIANT"
@@ -109,7 +109,7 @@ namespace SmartServe.Domain.Stores
 		public async Task<decimal> GetCurrentStockQuantityAsync(int stockItemId)
 		{
 			var qty = await Db.StockTransactions
-				.Where(x => x.StockItemId == stockItemId)
+				.Where(x => x.Id == stockItemId)
 				.SumAsync(x =>
 					x.TransactionType == StockTxnType.IN ? x.Quantity :
 					x.TransactionType == StockTxnType.OUT ? -x.Quantity :
