@@ -25,6 +25,16 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
+		public async Task<List<ProductVariant>> GetByBrandIdAsync(int brandId)
+		{
+			return await Set
+				.AsNoTracking()
+				.Include(v => v.Product)
+				.Where(v => v.BrandId == brandId)
+				.OrderBy(v => v.DisplayOrder)
+				.ToListAsync();
+		}
+
 		public async Task<IEnumerable<ProductVariant>> SaveBulkAsync(IEnumerable<ProductVariant> incoming)
 		{
 			var duplicate = incoming

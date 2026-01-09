@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
@@ -13,6 +12,7 @@ namespace SmartServe.Domain.Services
 		private readonly ICategoryStore _categoryStore;
 		private readonly IProductStore _productStore;
 		private readonly IProductVariantStore _variantStore;
+		private readonly IBrandStore _brandStore;
 		#endregion
 
 		#region constructor
@@ -21,12 +21,14 @@ namespace SmartServe.Domain.Services
 			ICategoryStore categoryStore,
 			IProductStore productStore,
 			IProductVariantStore variantStore,
-			IStockService stockService)
+			IStockService stockService,
+			IBrandStore brandStore)
 		{
 			_mapper = mapper;
 			_categoryStore = categoryStore;
 			_productStore = productStore;
 			_variantStore = variantStore;
+			_brandStore = brandStore;
 		}
 		#endregion
 
@@ -50,13 +52,21 @@ namespace SmartServe.Domain.Services
 			var items = await _productStore.GetByCategoryIdAsync(categoryId);
 			return _mapper.Map<List<ProductDto>>(items);
 		}
-
 		public async Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId)
 		{
 			var items = await _variantStore.GetByProductIdAsync(productId);
 			return _mapper.Map<List<ProductVariantDto>>(items);
 		}
-
+		public async Task<List<ProductVariantDto>> GetVariantsByBrandIdAsync(int brandId)
+		{
+			var items = await _variantStore.GetByBrandIdAsync(brandId);
+			return _mapper.Map<List<ProductVariantDto>>(items);
+		}
+		public async Task<List<BrandDto>> GetBrandsAsync()
+		{
+			var items = await _brandStore.GetAllAsync();
+			return _mapper.Map<List<BrandDto>>(items);
+		}
 		public async Task DeleteVariantAsync(int productVariantId)
 		{
 			_ = _variantStore.DeleteAsync(productVariantId);
@@ -66,5 +76,6 @@ namespace SmartServe.Domain.Services
 		{
 			await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariant>>(productVariants));
 		}
+
 	}
 }

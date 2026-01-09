@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
-using SmartServe.EFCore.Models;
-using System.Collections.Generic;
 
 namespace SmartServe.Domain.Services
 {
@@ -12,7 +10,6 @@ namespace SmartServe.Domain.Services
 		private readonly IMapper _mapper;
 		private readonly IProductService _productService;
 		private readonly ITableStatusStore _tableStatusStore;
-		private readonly IBrandStore _brandStore;
 		private List<CategoryDto> _categories = new();
 		private List<ProductDto> _products = new();
 		private List<ProductVariantDto> _variants = new();
@@ -25,13 +22,11 @@ namespace SmartServe.Domain.Services
 		public CatalogService(
 			IMapper mapper,
 			IProductService productService,
-			ITableStatusStore tableStatusStore,
-			IBrandStore brandStore)
+			ITableStatusStore tableStatusStore)
 		{
 			_mapper = mapper;
 			_productService = productService;
 			_tableStatusStore = tableStatusStore;
-			_brandStore = brandStore;
 		}
 
 		public async Task LoadAsync()
@@ -59,7 +54,7 @@ namespace SmartServe.Domain.Services
 			var tableStatus = (await _tableStatusStore.GetAllAsync()).ToList();
 			_tableStatus = _mapper.Map<List<TableStatusDto>>(tableStatus);
 
-			var brands = (await _brandStore.GetAllAsync())
+			var brands = (await _productService.GetBrandsAsync())
 				.Where(v => v.IsActive == true)
 				.ToList();
 			_brands = _mapper.Map<List<BrandDto>>(brands);

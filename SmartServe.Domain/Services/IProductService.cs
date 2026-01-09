@@ -5,11 +5,13 @@ namespace SmartServe.Domain.Services
 {
 	public interface IProductService
 	{
+		Task<List<BrandDto>> GetBrandsAsync();
 		Task<List<CategoryDto>> GetCategoriesAsync();
 		Task<List<ProductDto>> GetProductsAsync();
 		Task<List<ProductVariantDto>> GetProductVariantsAsync();
 		Task<List<ProductDto>> GetProductByCategoryIdAsync(int categoryId);
 		Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId);
+		Task<List<ProductVariantDto>> GetVariantsByBrandIdAsync(int brandId);
 		Task DeleteVariantAsync(int id);
 		Task SaveBulkVariantAsync(IEnumerable<ProductVariantDto> incoming);
 	}
