@@ -28,7 +28,7 @@ namespace SmartServe.Domain.Stores
 				.ToList();
 
 			if (duplicateNames.Any())
-				throw new InvalidOperationException(
+				throw new DuplicateWaitObjectException(
 					"Duplicate product names are not allowed within the same category.");
 
 			await _uow.BeginAsync();

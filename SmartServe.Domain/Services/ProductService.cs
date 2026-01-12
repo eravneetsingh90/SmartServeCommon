@@ -117,6 +117,11 @@ namespace SmartServe.Domain.Services
 			{
 				await _categoryStore.SaveBulkAsync(_mapper.Map<List<Category>>(items));
 			}
+			catch (DuplicateWaitObjectException ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.DuplicateNotAllowed;
+				response.MetaData.ResultMessage = "Duplicate category names are not allowed.";
+			}
 			catch (Exception ex)
 			{
 				response.MetaData.ResultCode = ResultCodes.Error;
@@ -131,6 +136,11 @@ namespace SmartServe.Domain.Services
 			{
 				await _productStore.SaveBulkAsync(_mapper.Map<List<Product>>(items));
 			}
+			catch (DuplicateWaitObjectException ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.DuplicateNotAllowed;
+				response.MetaData.ResultMessage = "Duplicate product names are not allowed within the same category.";
+			}
 			catch (Exception ex)
 			{
 				response.MetaData.ResultCode = ResultCodes.Error;
@@ -144,6 +154,11 @@ namespace SmartServe.Domain.Services
 			try
 			{
 				await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariant>>(productVariants));
+			}
+			catch (DuplicateWaitObjectException ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.DuplicateNotAllowed;
+				response.MetaData.ResultMessage = "Duplicate variant names are not allowed for the same product.";
 			}
 			catch (Exception ex)
 			{

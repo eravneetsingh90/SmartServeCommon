@@ -40,7 +40,7 @@ namespace SmartServe.Domain.Stores
 				.ToList();
 
 			if (duplicateNames.Any())
-				throw new InvalidOperationException(
+				throw new DuplicateWaitObjectException(
 					"Duplicate category names are not allowed.");
 
 			await _uow.BeginAsync();

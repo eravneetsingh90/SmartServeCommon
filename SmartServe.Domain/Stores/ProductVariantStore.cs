@@ -42,7 +42,7 @@ namespace SmartServe.Domain.Stores
 				.Any(g => g.Count() > 1);
 			if (duplicate)
 			{
-				throw new InvalidOperationException(
+				throw new DuplicateWaitObjectException(
 					"Duplicate variant names are not allowed for the same product.");
 			}
 			await _uow.BeginAsync();
