@@ -9,6 +9,7 @@ namespace SmartServe.Domain.Models
 		public string Name { get; set; } = null!;
 
 		public bool? IsActive { get; set; }
+		public bool? IsStock { get; set; }
 
 		public int DisplayOrder { get; set; }
 

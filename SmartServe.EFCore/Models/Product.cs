@@ -17,6 +17,8 @@ public partial class Product
 
     public int DisplayOrder { get; set; }
 
+    public bool? IsStock { get; set; }
+
     public virtual Category? Category { get; set; }
 
     public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();

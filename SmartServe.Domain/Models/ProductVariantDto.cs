@@ -12,6 +12,7 @@
 
 		public decimal Price { get; set; }
 		public bool? IsActive { get; set; }
+		public bool? IsStock { get; set; }
 		public DateTime? CreatedAt { get; set; }
 		public int DisplayOrder { get; set; }
 		public virtual BrandDto? Brand { get; set; }

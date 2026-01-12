@@ -1,5 +1,4 @@
 ﻿using SmartServe.Domain.Models;
-using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services
 {
@@ -12,7 +11,11 @@ namespace SmartServe.Domain.Services
 		Task<List<ProductDto>> GetProductByCategoryIdAsync(int categoryId);
 		Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId);
 		Task<List<ProductVariantDto>> GetVariantsByBrandIdAsync(int brandId);
-		Task DeleteVariantAsync(int id);
-		Task SaveBulkVariantAsync(IEnumerable<ProductVariantDto> incoming);
+		Task<BaseResponse> DeleteCategoryAsync(int id);
+		Task<BaseResponse> DeleteProductAsync(int id);
+		Task<BaseResponse> DeleteVariantAsync(int id);
+		Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<CategoryDto> items);
+		Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<ProductDto> items);
+		Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariantDto> incoming);
 	}
 }

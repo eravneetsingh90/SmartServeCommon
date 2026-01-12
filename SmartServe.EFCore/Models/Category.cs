@@ -13,5 +13,7 @@ public partial class Category
 
     public int DisplayOrder { get; set; }
 
+    public bool? IsStock { get; set; }
+
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

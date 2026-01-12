@@ -9,7 +9,7 @@
 		public int? CategoryId { get; set; }
 
 		public bool? IsActive { get; set; }
-
+		public bool? IsStock { get; set; }
 		public int DisplayOrder { get; set; }
 
 		public DateTime? CreatedAt { get; set; }

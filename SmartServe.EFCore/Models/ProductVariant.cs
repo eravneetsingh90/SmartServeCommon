@@ -21,6 +21,8 @@ public partial class ProductVariant
 
     public int DisplayOrder { get; set; }
 
+    public bool? IsStock { get; set; }
+
     public virtual Brand? Brand { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

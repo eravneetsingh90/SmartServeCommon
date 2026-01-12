@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
@@ -67,14 +68,89 @@ namespace SmartServe.Domain.Services
 			var items = await _brandStore.GetAllAsync();
 			return _mapper.Map<List<BrandDto>>(items);
 		}
-		public async Task DeleteVariantAsync(int productVariantId)
+		public async Task<BaseResponse> DeleteCategoryAsync(int productVariantId)
 		{
-			_ = _variantStore.DeleteAsync(productVariantId);
+			var response = BaseResponse.New();
+			try
+			{
+				await _categoryStore.DeleteAsync(productVariantId);
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
 		}
-
-		public async Task SaveBulkVariantAsync(IEnumerable<ProductVariantDto> productVariants)
+		public async Task<BaseResponse> DeleteProductAsync(int productVariantId)
 		{
-			await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariant>>(productVariants));
+			var response = BaseResponse.New();
+			try
+			{
+				await _productStore.DeleteAsync(productVariantId);
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
+		}
+		public async Task<BaseResponse> DeleteVariantAsync(int productVariantId)
+		{
+			var response = BaseResponse.New();
+			try
+			{
+				await _variantStore.DeleteAsync(productVariantId);
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
+		}
+		public async Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<CategoryDto> items)
+		{
+			var response = BaseResponse.New();
+			try
+			{
+				await _categoryStore.SaveBulkAsync(_mapper.Map<List<Category>>(items));
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
+		}
+		public async Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<ProductDto> items)
+		{
+			var response = BaseResponse.New();
+			try
+			{
+				await _productStore.SaveBulkAsync(_mapper.Map<List<Product>>(items));
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
+		}
+		public async Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariantDto> productVariants)
+		{
+			var response = BaseResponse.New();
+			try
+			{
+				await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariant>>(productVariants));
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
 		}
 
 	}
