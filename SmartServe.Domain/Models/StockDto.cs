@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Models
 
 		public string ItemType { get; set; } = null!;
 
-		public int ReferenceId { get; set; }
+		public int VariantId { get; set; }
 
 		public string Unit { get; set; } = null!;
 
@@ -24,6 +24,8 @@ namespace SmartServe.Domain.Models
 		public DateTime? CreatedAt { get; set; }
 
 		public virtual ICollection<StockTransactionDto> StockTransactions { get; set; } = new List<StockTransactionDto>();
+
+		public virtual ProductVariantDto Variant { get; set; } = null!;
 	}
 
 }

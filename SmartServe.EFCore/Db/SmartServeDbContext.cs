@@ -360,7 +360,9 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.ToTable("stock");
 
-			entity.HasIndex(e => new { e.ItemType, e.ReferenceId }, "stock_item_type_reference_id_key").IsUnique();
+			entity.HasIndex(e => e.VariantId, "idx_stock_variant");
+
+			entity.HasIndex(e => new { e.ItemType, e.VariantId }, "stock_item_type_variant_id_key").IsUnique();
 
 			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
@@ -376,10 +378,14 @@ public partial class SmartServeDbContext : DbContext
 				.HasPrecision(10, 2)
 				.HasDefaultValueSql("0")
 				.HasColumnName("min_stock_level");
-			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
 			entity.Property(e => e.Unit)
 				.HasMaxLength(20)
 				.HasColumnName("unit");
+			entity.Property(e => e.VariantId).HasColumnName("variant_id");
+
+			entity.HasOne(d => d.Variant).WithMany(p => p.Stocks)
+				.HasForeignKey(d => d.VariantId)
+				.HasConstraintName("stock_variant_id_fkey");
 		});
 
 		modelBuilder.Entity<StockTransaction>(entity =>
@@ -387,6 +393,10 @@ public partial class SmartServeDbContext : DbContext
 			entity.HasKey(e => e.Id).HasName("stock_transactions_pkey");
 
 			entity.ToTable("stock_transactions");
+
+			entity.HasIndex(e => e.CreatedAt, "idx_stock_tx_created");
+
+			entity.HasIndex(e => e.StockId, "idx_stock_tx_stock");
 
 			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
@@ -398,7 +408,6 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.Reason)
 				.HasMaxLength(30)
 				.HasColumnName("reason");
-			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
 			entity.Property(e => e.ReferenceType)
 				.HasMaxLength(20)
 				.HasColumnName("reference_type");
@@ -409,7 +418,6 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.HasOne(d => d.Stock).WithMany(p => p.StockTransactions)
 				.HasForeignKey(d => d.StockId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
 				.HasConstraintName("stock_transactions_stock_id_fkey");
 		});
 

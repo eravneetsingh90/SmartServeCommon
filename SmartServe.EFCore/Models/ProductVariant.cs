@@ -30,4 +30,6 @@ public partial class ProductVariant
     public virtual Product Product { get; set; } = null!;
 
     public virtual ICollection<ProductIngredient> ProductIngredients { get; set; } = new List<ProductIngredient>();
+
+    public virtual ICollection<Stock> Stocks { get; set; } = new List<Stock>();
 }

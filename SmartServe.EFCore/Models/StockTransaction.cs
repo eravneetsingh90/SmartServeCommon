@@ -17,8 +17,6 @@ public partial class StockTransaction
 
     public string? ReferenceType { get; set; }
 
-    public int? ReferenceId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     public virtual Stock Stock { get; set; } = null!;

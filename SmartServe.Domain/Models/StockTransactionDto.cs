@@ -1,17 +1,10 @@
-﻿using SmartServe.EFCore.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SmartServe.Domain.Models
+﻿namespace SmartServe.Domain.Models
 {
 	public partial class StockTransactionDto
 	{
 		public int Id { get; set; }
 
-		public int StockItemId { get; set; }
+		public int StockId { get; set; }
 
 		public string TransactionType { get; set; } = null!;
 
@@ -21,10 +14,8 @@ namespace SmartServe.Domain.Models
 
 		public string? ReferenceType { get; set; }
 
-		public int? ReferenceId { get; set; }
-
 		public DateTime? CreatedAt { get; set; }
 
-		public virtual StockDto StockItem { get; set; } = null!;
+		public virtual StockDto Stock { get; set; } = null!;
 	}
 }

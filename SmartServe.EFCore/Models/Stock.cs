@@ -9,7 +9,7 @@ public partial class Stock
 
     public string ItemType { get; set; } = null!;
 
-    public int ReferenceId { get; set; }
+    public int VariantId { get; set; }
 
     public string Unit { get; set; } = null!;
 
@@ -20,4 +20,6 @@ public partial class Stock
     public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<StockTransaction> StockTransactions { get; set; } = new List<StockTransaction>();
+
+    public virtual ProductVariant Variant { get; set; } = null!;
 }
