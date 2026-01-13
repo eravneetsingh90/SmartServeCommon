@@ -50,7 +50,7 @@ namespace SmartServe.Domain.Services
 			var stockItem = new Stock
 			{
 				ItemType = itemType,
-				ReferenceId = referenceId,
+				VariantId = referenceId,
 				Unit = unit,
 				MinStockLevel = minStockLevel,
 				IsActive = true,

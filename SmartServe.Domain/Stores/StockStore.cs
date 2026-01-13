@@ -32,7 +32,7 @@ namespace SmartServe.Domain.Stores
 			return await Set
 				.FirstOrDefaultAsync(x =>
 					x.ItemType == itemType &&
-					x.ReferenceId == referenceId);
+					x.VariantId == referenceId);
 		}
 		public async Task<List<Stock>> GetAllStockAsync()
 		{
@@ -64,7 +64,7 @@ namespace SmartServe.Domain.Stores
 
 				// VARIANT JOIN
 				join pv in Db.ProductVariants
-					on new { RefId = si.ReferenceId, Type = si.ItemType }
+					on new { RefId = si.VariantId, Type = si.ItemType }
 					equals new { RefId = pv.VariantId, Type = "SEALED" }
 					into variantJoin
 				from variant in variantJoin.DefaultIfEmpty()
@@ -81,7 +81,7 @@ namespace SmartServe.Domain.Stores
 
 					// INGREDIENT JOIN
 				join ing in Db.Ingredients
-					on new { RefId = si.ReferenceId, Type = si.ItemType }
+					on new { RefId = si.VariantId, Type = si.ItemType }
 					equals new { RefId = ing.IngredientId, Type = "INGREDIENT" }
 					into ingredientJoin
 				from ingredient in ingredientJoin.DefaultIfEmpty()
@@ -90,7 +90,7 @@ namespace SmartServe.Domain.Stores
 				{
 					Id = si.Id,
 					ItemType = si.ItemType,
-					ReferenceId = si.ReferenceId,
+					ReferenceId = si.VariantId,
 					Unit = si.Unit,
 					MinStockLevel = si.MinStockLevel ?? 0,
 

@@ -13,6 +13,7 @@
 		public string Reason { get; set; } = null!;
 
 		public string? ReferenceType { get; set; }
+		public int? ReferenceId { get; set; }
 
 		public DateTime? CreatedAt { get; set; }
 
