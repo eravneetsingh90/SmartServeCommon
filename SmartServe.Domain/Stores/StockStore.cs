@@ -34,6 +34,13 @@ namespace SmartServe.Domain.Stores
 					x.ItemType == itemType &&
 					x.ReferenceId == referenceId);
 		}
+		public async Task<List<Stock>> GetAllStockAsync()
+		{
+			return await Set
+				.Where(x => x.IsActive == true)
+				.AsNoTracking()
+				.ToListAsync();
+		}
 		public async Task AddStockAsync(Stock stockItem)
 		{
 			Set.Add(stockItem);

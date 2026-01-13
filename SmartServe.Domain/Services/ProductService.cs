@@ -14,6 +14,7 @@ namespace SmartServe.Domain.Services
 		private readonly IProductStore _productStore;
 		private readonly IProductVariantStore _variantStore;
 		private readonly IBrandStore _brandStore;
+		private readonly IStockStore _stockStore;
 		#endregion
 
 		#region constructor
@@ -23,13 +24,15 @@ namespace SmartServe.Domain.Services
 			IProductStore productStore,
 			IProductVariantStore variantStore,
 			IStockService stockService,
-			IBrandStore brandStore)
+			IBrandStore brandStore,
+			IStockStore stockStore)
 		{
 			_mapper = mapper;
 			_categoryStore = categoryStore;
 			_productStore = productStore;
 			_variantStore = variantStore;
 			_brandStore = brandStore;
+			_stockStore = stockStore;
 		}
 		#endregion
 
@@ -84,6 +87,11 @@ namespace SmartServe.Domain.Services
 		{
 			var items = await _brandStore.GetAllAsync();
 			return _mapper.Map<List<BrandDto>>(items);
+		}
+		public async Task<List<StockDto>> GetAllStockAsync()
+		{
+			var items = await _stockStore.GetAllStockAsync();
+			return _mapper.Map<List<StockDto>>(items);
 		}
 		public async Task<BaseResponse> DeleteCategoryAsync(int productVariantId)
 		{

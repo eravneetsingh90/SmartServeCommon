@@ -6,6 +6,7 @@ namespace SmartServe.Domain.Stores
 {
 	public interface IStockStore : IBaseStore<Stock>
 	{
+		Task<List<Stock>> GetAllStockAsync();
 		Task<List<Stock>> GetStockAsync();
 		Task<List<Stock>> GetStockAsync(string itemType);
 		Task<Stock?> GetStockAsync(string itemType, int referenceId);
