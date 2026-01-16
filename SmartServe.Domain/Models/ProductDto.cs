@@ -9,13 +9,15 @@
 		public int? CategoryId { get; set; }
 
 		public bool? IsActive { get; set; }
-		public bool? IsStock { get; set; }
-		public int DisplayOrder { get; set; }
 
 		public DateTime? CreatedAt { get; set; }
 
-		//public virtual Category? Category { get; set; }
+		public int DisplayOrder { get; set; }
 
-		//public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
+		public bool? IsStock { get; set; }
+
+		public virtual CategoryDto? Category { get; set; }
+
+		public virtual ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
 	}
 }

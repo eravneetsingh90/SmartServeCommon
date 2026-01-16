@@ -37,8 +37,11 @@ namespace SmartServe.Domain.Stores
 		public async Task<List<Stock>> GetAllStockAsync()
 		{
 			return await Set
-				.Where(x => x.IsActive == true)
 				.AsNoTracking()
+				.Include(s => s.Variant)
+					.ThenInclude(v => v.Product)
+						.ThenInclude(s => s.Category)
+				.Where(x => x.IsActive == true)
 				.ToListAsync();
 		}
 		public async Task AddStockAsync(Stock stockItem)

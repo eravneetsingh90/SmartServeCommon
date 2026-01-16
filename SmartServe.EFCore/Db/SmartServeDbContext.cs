@@ -394,10 +394,6 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.ToTable("stock_transactions");
 
-			entity.HasIndex(e => e.CreatedAt, "idx_stock_tx_created");
-
-			entity.HasIndex(e => e.StockId, "idx_stock_tx_stock");
-
 			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
@@ -408,6 +404,7 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.Reason)
 				.HasMaxLength(30)
 				.HasColumnName("reason");
+			entity.Property(e => e.ReferenceId).HasColumnName("reference_id");
 			entity.Property(e => e.ReferenceType)
 				.HasMaxLength(20)
 				.HasColumnName("reference_type");
@@ -469,6 +466,5 @@ public partial class SmartServeDbContext : DbContext
 
 		OnModelCreatingPartial(modelBuilder);
 	}
-
 	partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
