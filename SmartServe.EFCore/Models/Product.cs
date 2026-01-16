@@ -17,6 +17,8 @@ public partial class Product
 
     public DateTime? CreatedAt { get; set; }
 
+    public string? FoodType { get; set; }
+
     public virtual Category? Category { get; set; }
 
     public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();

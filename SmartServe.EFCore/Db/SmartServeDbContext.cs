@@ -218,6 +218,9 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.DisplayOrder)
 				.HasDefaultValue(0)
 				.HasColumnName("display_order");
+			entity.Property(e => e.FoodType)
+				.HasMaxLength(10)
+				.HasColumnName("food_type");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");

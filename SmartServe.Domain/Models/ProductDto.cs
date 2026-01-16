@@ -1,6 +1,4 @@
-﻿using SmartServe.EFCore.Models;
-
-namespace SmartServe.Domain.Models
+﻿namespace SmartServe.Domain.Models
 {
 	public class ProductDto
 	{
@@ -15,7 +13,7 @@ namespace SmartServe.Domain.Models
 		public int DisplayOrder { get; set; }
 
 		public DateTime? CreatedAt { get; set; }
-
+		public string? FoodType { get; set; }
 		public virtual CategoryDto? Category { get; set; }
 
 		public virtual ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
