@@ -18,8 +18,6 @@ public partial class SmartServeDbContext : DbContext
 
 	public virtual DbSet<Category> Categories { get; set; }
 
-	public virtual DbSet<Ingredient> Ingredients { get; set; }
-
 	public virtual DbSet<Order> Orders { get; set; }
 
 	public virtual DbSet<OrderItem> OrderItems { get; set; }
@@ -67,13 +65,13 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<Brand>(entity =>
 		{
-			entity.HasKey(e => e.BrandId).HasName("brands_pkey");
+			entity.HasKey(e => e.Id).HasName("brands_pkey");
 
 			entity.ToTable("brands");
 
 			entity.HasIndex(e => e.Name, "brands_name_key").IsUnique();
 
-			entity.Property(e => e.BrandId).HasColumnName("brand_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.IsActive)
 				.HasDefaultValue(true)
 				.HasColumnName("is_active");
@@ -84,13 +82,13 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<Category>(entity =>
 		{
-			entity.HasKey(e => e.CategoryId).HasName("categories_pkey");
+			entity.HasKey(e => e.Id).HasName("categories_pkey");
 
 			entity.ToTable("categories");
 
 			entity.HasIndex(e => e.Name, "categories_name_key").IsUnique();
 
-			entity.Property(e => e.CategoryId).HasColumnName("category_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.DisplayOrder)
 				.HasDefaultValue(0)
 				.HasColumnName("display_order");
@@ -102,30 +100,9 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("name");
 		});
 
-		modelBuilder.Entity<Ingredient>(entity =>
-		{
-			entity.HasKey(e => e.IngredientId).HasName("ingredients_pkey");
-
-			entity.ToTable("ingredients");
-
-			entity.HasIndex(e => e.Name, "ingredients_name_key").IsUnique();
-
-			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
-			entity.Property(e => e.IsActive)
-				.HasDefaultValue(true)
-				.HasColumnName("is_active");
-			entity.Property(e => e.Name)
-				.HasMaxLength(100)
-				.HasColumnName("name");
-			entity.Property(e => e.Unit)
-				.HasMaxLength(20)
-				.HasDefaultValueSql("'PCS'::character varying")
-				.HasColumnName("unit");
-		});
-
 		modelBuilder.Entity<Order>(entity =>
 		{
-			entity.HasKey(e => e.OrderId).HasName("orders_pkey");
+			entity.HasKey(e => e.Id).HasName("orders_pkey");
 
 			entity.ToTable("orders");
 
@@ -133,7 +110,7 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.HasIndex(e => e.OrderNumber, "orders_order_number_key").IsUnique();
 
-			entity.Property(e => e.OrderId).HasColumnName("order_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.ClosedAt).HasColumnName("closed_at");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
@@ -172,13 +149,13 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<OrderItem>(entity =>
 		{
-			entity.HasKey(e => e.OrderItemId).HasName("order_items_pkey");
+			entity.HasKey(e => e.Id).HasName("order_items_pkey");
 
 			entity.ToTable("order_items");
 
 			entity.HasIndex(e => e.OrderId, "idx_order_items_order");
 
-			entity.Property(e => e.OrderItemId).HasColumnName("order_item_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.DiscountAmount)
 				.HasPrecision(10, 2)
 				.HasDefaultValueSql("0")
@@ -202,11 +179,11 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<Payment>(entity =>
 		{
-			entity.HasKey(e => e.PaymentId).HasName("payments_pkey");
+			entity.HasKey(e => e.Id).HasName("payments_pkey");
 
 			entity.ToTable("payments");
 
-			entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.Amount)
 				.HasPrecision(10, 2)
 				.HasColumnName("amount");
@@ -229,11 +206,11 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<Product>(entity =>
 		{
-			entity.HasKey(e => e.ProductId).HasName("products_pkey");
+			entity.HasKey(e => e.Id).HasName("products_pkey");
 
 			entity.ToTable("products");
 
-			entity.Property(e => e.ProductId).HasColumnName("product_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CategoryId).HasColumnName("category_id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
@@ -255,29 +232,35 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<ProductIngredient>(entity =>
 		{
-			entity.HasKey(e => new { e.VariantId, e.IngredientId }).HasName("product_ingredients_pkey");
+			entity.HasKey(e => new { e.ProductVariantId, e.IngredientVariantId }).HasName("product_ingredients_pkey");
 
 			entity.ToTable("product_ingredients");
 
-			entity.Property(e => e.VariantId).HasColumnName("variant_id");
-			entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
-			entity.Property(e => e.QtyRequired)
-				.HasPrecision(10, 2)
-				.HasColumnName("qty_required");
+			entity.HasIndex(e => e.ProductVariantId, "idx_pi_product_variant");
 
-			entity.HasOne(d => d.Ingredient).WithMany(p => p.ProductIngredients)
-				.HasForeignKey(d => d.IngredientId)
+			entity.Property(e => e.ProductVariantId).HasColumnName("product_variant_id");
+			entity.Property(e => e.IngredientVariantId).HasColumnName("ingredient_variant_id");
+			entity.Property(e => e.CreatedAt)
+				.HasDefaultValueSql("now()")
+				.HasColumnName("created_at");
+			entity.Property(e => e.Quantity)
+				.HasPrecision(10, 3)
+				.HasColumnName("quantity");
+			entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+			entity.HasOne(d => d.IngredientVariant).WithMany(p => p.ProductIngredientIngredientVariants)
+				.HasForeignKey(d => d.IngredientVariantId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("product_ingredients_ingredient_id_fkey");
+				.HasConstraintName("product_ingredients_ingredient_variant_id_fkey");
 
-			entity.HasOne(d => d.Variant).WithMany(p => p.ProductIngredients)
-				.HasForeignKey(d => d.VariantId)
-				.HasConstraintName("product_ingredients_variant_id_fkey");
+			entity.HasOne(d => d.ProductVariant).WithMany(p => p.ProductIngredientProductVariants)
+				.HasForeignKey(d => d.ProductVariantId)
+				.HasConstraintName("product_ingredients_product_variant_id_fkey");
 		});
 
 		modelBuilder.Entity<ProductVariant>(entity =>
 		{
-			entity.HasKey(e => e.VariantId).HasName("product_variants_pkey");
+			entity.HasKey(e => e.Id).HasName("product_variants_pkey");
 
 			entity.ToTable("product_variants");
 
@@ -285,7 +268,7 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.HasIndex(e => new { e.ProductId, e.BrandId, e.VariantName }, "product_variants_product_id_brand_id_variant_name_key").IsUnique();
 
-			entity.Property(e => e.VariantId).HasColumnName("variant_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.BrandId).HasColumnName("brand_id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
@@ -315,11 +298,11 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<RestaurantTable>(entity =>
 		{
-			entity.HasKey(e => e.TableId).HasName("restaurant_tables_pkey");
+			entity.HasKey(e => e.Id).HasName("restaurant_tables_pkey");
 
 			entity.ToTable("restaurant_tables");
 
-			entity.Property(e => e.TableId).HasColumnName("table_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
@@ -333,13 +316,13 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<Role>(entity =>
 		{
-			entity.HasKey(e => e.RoleId).HasName("roles_pkey");
+			entity.HasKey(e => e.Id).HasName("roles_pkey");
 
 			entity.ToTable("roles");
 
 			entity.HasIndex(e => e.RoleName, "roles_role_name_key").IsUnique();
 
-			entity.Property(e => e.RoleId).HasColumnName("role_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.RoleName)
 				.HasMaxLength(50)
 				.HasColumnName("role_name");
@@ -385,6 +368,10 @@ public partial class SmartServeDbContext : DbContext
 
 			entity.ToTable("stock_transactions");
 
+			entity.HasIndex(e => e.CreatedAt, "idx_stock_tx_created");
+
+			entity.HasIndex(e => e.StockId, "idx_stock_tx_stock");
+
 			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
@@ -411,13 +398,13 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<TableStatus>(entity =>
 		{
-			entity.HasKey(e => e.StatusId).HasName("table_status_pkey");
+			entity.HasKey(e => e.Id).HasName("table_status_pkey");
 
 			entity.ToTable("table_status");
 
 			entity.HasIndex(e => e.StatusCode, "table_status_status_code_key").IsUnique();
 
-			entity.Property(e => e.StatusId).HasColumnName("status_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.ColorHex)
 				.HasMaxLength(10)
 				.HasColumnName("color_hex");
@@ -431,11 +418,11 @@ public partial class SmartServeDbContext : DbContext
 
 		modelBuilder.Entity<User>(entity =>
 		{
-			entity.HasKey(e => e.UserId).HasName("users_pkey");
+			entity.HasKey(e => e.Id).HasName("users_pkey");
 
 			entity.ToTable("users");
 
-			entity.Property(e => e.UserId).HasColumnName("user_id");
+			entity.Property(e => e.Id).HasColumnName("id");
 			entity.Property(e => e.CreatedAt)
 				.HasDefaultValueSql("now()")
 				.HasColumnName("created_at");
@@ -457,5 +444,6 @@ public partial class SmartServeDbContext : DbContext
 
 		OnModelCreatingPartial(modelBuilder);
 	}
+
 	partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

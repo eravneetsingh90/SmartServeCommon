@@ -9,14 +9,7 @@ namespace SmartServe.Domain.Stores
 		public ProductIngredientStore(SmartServeDbContext db) : base(db)
 		{
 		}
-		public async Task<IEnumerable<ProductIngredient>> GetIngredientsForVariantAsync(
-			int variantId)
-		{
-			return await Db.ProductIngredients
-				.Where(x => x.VariantId == variantId)
-				.Include(x => x.Ingredient)
-				.AsNoTracking()
-				.ToListAsync();
-		}
+
+
 	}
 }

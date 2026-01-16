@@ -1,15 +1,21 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class ProductIngredientDto
 	{
-		public int VariantId { get; set; }
+		public int ProductVariantId { get; set; }
 
-		public int IngredientId { get; set; }
+		public int IngredientVariantId { get; set; }
 
-		public decimal QtyRequired { get; set; }
+		public decimal Quantity { get; set; }
 
-		public virtual IngredientDto Ingredient { get; set; } = null!;
+		public DateTime? CreatedAt { get; set; }
 
-		public virtual ProductVariantDto Variant { get; set; } = null!;
+		public DateTime? UpdatedAt { get; set; }
+
+		public virtual ProductVariantDto IngredientVariant { get; set; } = null!;
+
+		public virtual ProductVariantDto ProductVariant { get; set; } = null!;
 	}
 }

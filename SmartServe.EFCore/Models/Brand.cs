@@ -5,7 +5,7 @@ namespace SmartServe.EFCore.Models;
 
 public partial class Brand
 {
-    public int BrandId { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 

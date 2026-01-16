@@ -1,8 +1,10 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class OrderItemDto
 	{
-		public int OrderItemId { get; set; }
+		public int Id { get; set; }
 
 		public int? OrderId { get; set; }
 
@@ -14,7 +16,7 @@
 
 		public decimal? DiscountAmount { get; set; }
 
-		//public virtual OrderDto? Order { get; set; }
+		public virtual OrderDto? Order { get; set; }
 
 		public virtual ProductVariantDto? Variant { get; set; }
 	}

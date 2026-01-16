@@ -1,8 +1,10 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class PaymentDto
 	{
-		public int PaymentId { get; set; }
+		public int Id { get; set; }
 
 		public int? OrderId { get; set; }
 
@@ -11,11 +13,10 @@
 		public decimal? Amount { get; set; }
 
 		public decimal? PartPaymentCash { get; set; }
-
-		//public string? Status { get; set; }
+		public string? Status { get; set; }
 
 		public DateTime? CreatedAt { get; set; }
 
-		//public virtual OrderDto? Order { get; set; }
+		public virtual OrderDto? Order { get; set; }
 	}
 }

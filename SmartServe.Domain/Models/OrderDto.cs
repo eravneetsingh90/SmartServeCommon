@@ -1,8 +1,10 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class OrderDto
 	{
-		public int OrderId { get; set; }
+		public int Id { get; set; }
 
 		public string? OrderNumber { get; set; }
 

@@ -5,7 +5,7 @@ namespace SmartServe.EFCore.Models;
 
 public partial class TableStatus
 {
-    public int StatusId { get; set; }
+    public int Id { get; set; }
 
     public string StatusCode { get; set; } = null!;
 

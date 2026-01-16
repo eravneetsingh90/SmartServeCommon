@@ -5,7 +5,7 @@ namespace SmartServe.EFCore.Models;
 
 public partial class RestaurantTable
 {
-    public int TableId { get; set; }
+    public int Id { get; set; }
 
     public string DisplayName { get; set; } = null!;
 

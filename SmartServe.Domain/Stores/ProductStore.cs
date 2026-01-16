@@ -36,20 +36,20 @@ namespace SmartServe.Domain.Stores
 			{
 				foreach (var product in products)
 				{
-					if (product.ProductId == 0)
+					if (product.Id == 0)
 					{
 						Add(product);
 					}
 					else
 					{
 						var tracked = Db.Products.Local
-							.FirstOrDefault(x => x.ProductId == product.ProductId);
+							.FirstOrDefault(x => x.Id == product.Id);
 
 						if (tracked == null)
 						{
 							tracked = new Product
 							{
-								ProductId = product.ProductId
+								Id = product.Id
 							};
 
 							Attach(tracked);
@@ -70,13 +70,13 @@ namespace SmartServe.Domain.Stores
 		public async Task DeleteAsync(int id)
 		{
 			var tracked = Db.Products.Local
-				.FirstOrDefault(x => x.ProductId == id);
+				.FirstOrDefault(x => x.Id == id);
 
 			if (tracked == null)
 			{
 				tracked = new Product
 				{
-					ProductId = id
+					Id = id
 				};
 
 				Attach(tracked);

@@ -1,8 +1,10 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class TableStatusDto
 	{
-		public int StatusId { get; set; }
+		public int Id { get; set; }
 
 		public string StatusCode { get; set; } = null!;
 

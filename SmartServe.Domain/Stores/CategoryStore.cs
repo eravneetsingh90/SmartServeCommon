@@ -49,18 +49,18 @@ namespace SmartServe.Domain.Stores
 			{
 				foreach (var category in categories)
 				{
-					if (category.CategoryId == 0)
+					if (category.Id == 0)
 						Add(category);
 					else
 					{
 						var tracked = Db.Categories.Local
-							.FirstOrDefault(x => x.CategoryId == category.CategoryId);
+							.FirstOrDefault(x => x.Id == category.Id);
 
 						if (tracked == null)
 						{
 							tracked = new Category
 							{
-								CategoryId = category.CategoryId
+								Id = category.Id
 							};
 
 							Attach(tracked);
@@ -80,13 +80,13 @@ namespace SmartServe.Domain.Stores
 		public async Task DeleteAsync(int id)
 		{
 			var tracked = Db.Categories.Local
-				.FirstOrDefault(x => x.CategoryId == id);
+				.FirstOrDefault(x => x.Id == id);
 
 			if (tracked == null)
 			{
 				tracked = new Category
 				{
-					CategoryId = id
+					Id = id
 				};
 
 				Attach(tracked);

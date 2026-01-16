@@ -16,17 +16,17 @@ namespace SmartServe.Domain.Stores
 				.Include(o => o.OrderItems)
 					.ThenInclude(oi => oi.Variant)
 						.ThenInclude(v => v.Product)
-				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+				.FirstOrDefaultAsync(o => o.Id == orderId);
 		}
 		public virtual void Update(Order order)
 		{
-			var tracked = Db.Orders.Local.FirstOrDefault(x => x.OrderId == order.OrderId);
+			var tracked = Db.Orders.Local.FirstOrDefault(x => x.Id == order.Id);
 
 			if (tracked == null)
 			{
 				tracked = new Order
 				{
-					OrderId = order.OrderId
+					Id = order.Id
 				};
 
 				Attach(tracked);

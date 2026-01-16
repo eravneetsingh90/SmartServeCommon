@@ -156,38 +156,52 @@ namespace SmartServe.Domain.Services
 
 			foreach (var item in order.OrderItems)
 			{
-				var variantStockItem = await _stockItemStore
-					.GetStockAsync(
-						StockItemType.VARIANT,
-						Convert.ToInt32(item.VariantId));
+				int variantId = Convert.ToInt32(item.VariantId);
 
-				if (variantStockItem != null)
+				// -------------------------------------------------
+				// 1. Try DIRECT VARIANT stock (sealed / ready item)
+				// -------------------------------------------------
+				var variantStock = await _stockItemStore.GetStockAsync(
+					StockItemType.VARIANT,
+					variantId);
+
+				if (variantStock != null)
 				{
 					await ConsumeStockAsync(
-						variantStockItem.Id,
+						variantStock.Id,
 						item.Quantity,
 						orderId);
 
 					continue;
 				}
 
-				var ingredients = await _productIngredientStore.GetIngredientsForVariantAsync(Convert.ToInt32(item.VariantId));
+				// -------------------------------------------------
+				// 2. Otherwise consume INGREDIENTS (recipe based)
+				// -------------------------------------------------
+				var ingredients = new List<ProductIngredient>();
+				//await _productIngredientStore
+				//	.GetByProductVariantAsync(variantId);
 
-				foreach (var ing in ingredients)
+				if (!ingredients.Any())
+					throw new InvalidOperationException(
+						$"No recipe defined for variantId={variantId}");
+
+				foreach (var ingredient in ingredients)
 				{
-					var ingredientStockItem = await _stockItemStore
-						.GetStockAsync(
-							StockItemType.INGREDIENT,
-							ing.IngredientId);
+					int ingredientVariantId = ingredient.IngredientVariantId;
 
-					if (ingredientStockItem == null)
+					var ingredientStock = await _stockItemStore.GetStockAsync(
+						StockItemType.INGREDIENT,
+						ingredientVariantId);
+
+					if (ingredientStock == null)
 						throw new InvalidOperationException(
-							$"Ingredient stock not configured.");
+							$"Ingredient stock not configured for variantId={ingredientVariantId}");
 
-					var totalQty = ing.QtyRequired * item.Quantity;
+					var totalQty = ingredient.Quantity * item.Quantity;
 
 					await ConsumeStockAsync(
-						ingredientStockItem.Id,
+						ingredientStock.Id,
 						totalQty,
 						orderId);
 				}

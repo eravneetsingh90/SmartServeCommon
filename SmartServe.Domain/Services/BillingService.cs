@@ -51,7 +51,7 @@ namespace SmartServe.Domain.Services
 			order.CreatedAt = DateTime.UtcNow;
 			_orderStore.Add(order);
 			await _orderStore.SaveAsync();
-			return order.OrderId;
+			return order.Id;
 		}
 
 		public async Task CreateOrderItemsAsync(List<OrderItemDto> request)
@@ -81,7 +81,7 @@ namespace SmartServe.Domain.Services
 				if (payment.Mode != PaymentMode.PART)
 				{
 					var finalPayment = _mapper.Map<Payment>(payment);
-					finalPayment.OrderId = order.OrderId;
+					finalPayment.OrderId = order.Id;
 					finalPayment.CreatedAt = DateTime.UtcNow;
 					_paymentStore.Add(finalPayment);
 					await _paymentStore.SaveAsync();
@@ -91,14 +91,14 @@ namespace SmartServe.Domain.Services
 					var payments = new List<Payment>();
 					payments.Add(new Payment
 					{
-						OrderId = order.OrderId,
+						OrderId = order.Id,
 						Mode = PaymentMode.CASH,
 						Amount = payment.PartPaymentCash,
 						CreatedAt = DateTime.UtcNow
 					});
 					payments.Add(new Payment
 					{
-						OrderId = order.OrderId,
+						OrderId = order.Id,
 						Mode = PaymentMode.UPI,
 						Amount = payment.Amount - payment.PartPaymentCash,
 						CreatedAt = DateTime.UtcNow
@@ -107,7 +107,7 @@ namespace SmartServe.Domain.Services
 				}
 				await _paymentStore.SaveAsync();
 				order.ClosedAt = DateTime.UtcNow;
-				order.StatusId = _catalogService.GetTableStatusByCode(TableStatusCodes.BLANK).StatusId;
+				order.StatusId = _catalogService.GetTableStatusByCode(TableStatusCodes.BLANK).Id;
 
 				var finalOrder = _mapper.Map<Order>(order);
 

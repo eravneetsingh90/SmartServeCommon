@@ -56,66 +56,7 @@ namespace SmartServe.Domain.Stores
 			await SaveAsync();
 		}
 
-		public async Task<List<CurrentStockDto>> GetCurrentStockAsync()
-		{
-			var query =
-				from si in Set
-				where si.IsActive == true
-
-				join st in Db.StockTransactions
-					on si.Id equals st.Id into txnGroup
-
-				// VARIANT JOIN
-				join pv in Db.ProductVariants
-					on new { RefId = si.VariantId, Type = si.ItemType }
-					equals new { RefId = pv.VariantId, Type = "SEALED" }
-					into variantJoin
-				from variant in variantJoin.DefaultIfEmpty()
-
-				join p in Db.Products
-					on variant.ProductId equals p.ProductId
-					into productJoin
-				from product in productJoin.DefaultIfEmpty()
-
-				join b in Db.Brands
-					on variant.BrandId equals b.BrandId
-					into brandJoin
-				from brand in brandJoin.DefaultIfEmpty()
-
-					// INGREDIENT JOIN
-				join ing in Db.Ingredients
-					on new { RefId = si.VariantId, Type = si.ItemType }
-					equals new { RefId = ing.IngredientId, Type = "INGREDIENT" }
-					into ingredientJoin
-				from ingredient in ingredientJoin.DefaultIfEmpty()
-
-				select new CurrentStockDto
-				{
-					Id = si.Id,
-					ItemType = si.ItemType,
-					ReferenceId = si.VariantId,
-					Unit = si.Unit,
-					MinStockLevel = si.MinStockLevel ?? 0,
-
-					ItemName =
-						si.ItemType == "VARIANT"
-							? (brand != null
-								? $"{product.Name} - {variant.VariantName} ({brand.Name})"
-								: $"{product.Name} - {variant.VariantName}")
-							: ingredient.Name,
-
-					CurrentQuantity =
-						txnGroup.Sum(t =>
-							t.TransactionType == "IN" ? t.Quantity :
-							t.TransactionType == "OUT" ? -t.Quantity :
-							t.Quantity)
-				};
-
-			return await query
-				.AsNoTracking()
-				.ToListAsync();
-		}
-
+		
 		public async Task<decimal> GetCurrentStockQuantityAsync(int stockItemId)
 		{
 			var qty = await Db.StockTransactions
@@ -128,6 +69,10 @@ namespace SmartServe.Domain.Stores
 			return qty;
 		}
 
+		public Task<List<CurrentStockDto>> GetCurrentStockAsync()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 }

@@ -1,8 +1,10 @@
-﻿namespace SmartServe.Domain.Models
+﻿using SmartServe.EFCore.Models;
+
+namespace SmartServe.Domain.Models
 {
 	public class RestaurantTableDto
 	{
-		public int TableId { get; set; }
+		public int Id { get; set; }
 
 		public string DisplayName { get; set; } = null!;
 

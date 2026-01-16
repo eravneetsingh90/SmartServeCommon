@@ -61,13 +61,13 @@ namespace SmartServe.Domain.Services
 			// 🔍 Build search index
 			_searchIndex =
 				(from v in _variants
-				 join p in _products on v.ProductId equals p.ProductId
-				 join c in _categories on p.CategoryId equals c.CategoryId
+				 join p in _products on v.ProductId equals p.Id
+				 join c in _categories on p.CategoryId equals c.Id
 				 select new CatalogSearchItemDto
 				 {
-					 CategoryId = c.CategoryId,
-					 ProductId = p.ProductId,
-					 VariantId = v.VariantId,
+					 CategoryId = c.Id,
+					 ProductId = p.Id,
+					 VariantId = v.Id,
 					 CategoryName = c.Name,
 					 ProductName = p.Name,
 					 VariantName = v.VariantName,

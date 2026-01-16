@@ -32,13 +32,13 @@ namespace SmartServe.Domain.Stores
 				// ✅ Open order = ClosedAt IS NULL
 				let activeOrder = Db.Orders
 					.Where(o =>
-						o.TableId == table.TableId &&
+						o.TableId == table.Id &&
 						o.ClosedAt == null &&
 						o.OrderType == "DINE_IN")
 					.OrderByDescending(o => o.CreatedAt)
 					.Select(o => new
 					{
-						o.OrderId,
+						o.Id,
 						o.TotalAmount,
 						o.StatusId
 					})
@@ -46,15 +46,15 @@ namespace SmartServe.Domain.Stores
 
 				// ✅ Resolve table status only if order exists
 				let tableStatus = activeOrder != null
-					? Db.TableStatuses.FirstOrDefault(s => s.StatusId == activeOrder.StatusId)
+					? Db.TableStatuses.FirstOrDefault(s => s.Id == activeOrder.StatusId)
 					: null
 
 				select new GetTableView
 				{
-					TableId = table.TableId,
+					TableId = table.Id,
 					DisplayName = table.DisplayName ?? string.Empty,
 
-					OrderId = activeOrder != null ? activeOrder.OrderId : null,
+					OrderId = activeOrder != null ? activeOrder.Id : null,
 					Amount = activeOrder != null ? activeOrder.TotalAmount ?? 0 : 0,
 
 					StatusCode = tableStatus.StatusCode ?? "BLANK",
