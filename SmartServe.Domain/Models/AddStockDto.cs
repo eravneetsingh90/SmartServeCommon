@@ -4,7 +4,7 @@
 	{
 		public string ItemType { get; set; }
 
-		public int ReferenceId { get; set; }
+		public int VariantId { get; set; }
 
 		public string DisplayName { get; set; }
 

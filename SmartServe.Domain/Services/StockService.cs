@@ -97,28 +97,38 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.UpdateStockAsync(stockItem);
 		}
 
-		public async Task AddStockAsync(List<AddStockDto> rows)
+		public async Task<BaseResponse> AddStockAsync(List<AddStockDto> rows)
 		{
-			await _uow.BeginAsync();
-			foreach (var row in rows)
+			var response = BaseResponse.New();
+			try
 			{
-				var stockItem = await _stockItemStore.GetStockAsync(row.ItemType.ToString(), row.ReferenceId);
-
-				if (stockItem == null)
-					throw new Exception("Stock item not found.");
-
-				_stockTransactionStore.Add(new StockTransaction
+				await _uow.BeginAsync();
+				foreach (var row in rows)
 				{
-					StockId = stockItem.Id,
-					TransactionType = StockTxnType.IN,
-					Quantity = row.Quantity,
-					Reason = row.Reason,
-					CreatedAt = DateTime.UtcNow
-				});
-			}
+					var stockItem = await _stockItemStore.GetStockAsync(row.ItemType.ToString(), row.VariantId);
 
-			await _stockTransactionStore.SaveAsync();
-			await _uow.CommitAsync();
+					if (stockItem == null)
+						throw new Exception("Stock item not found.");
+
+					_stockTransactionStore.Add(new StockTransaction
+					{
+						StockId = stockItem.Id,
+						TransactionType = StockTxnType.IN,
+						Quantity = row.Quantity,
+						Reason = row.Reason,
+						CreatedAt = DateTime.UtcNow
+					});
+				}
+
+				await _stockTransactionStore.SaveAsync();
+				await _uow.CommitAsync();
+			}
+			catch (Exception ex)
+			{
+				response.MetaData.ResultCode = ResultCodes.Error;
+				response.MetaData.ResultMessage = ResultMessages.Error;
+			}
+			return response;
 		}
 
 		public async Task AdjustStockAsync(int stockItemId, decimal quantity, string reason)
