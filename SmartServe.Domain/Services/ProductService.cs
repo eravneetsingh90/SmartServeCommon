@@ -41,15 +41,6 @@ namespace SmartServe.Domain.Services
 			var items = await _categoryStore.GetAllAsync();
 			return _mapper.Map<List<CategoryDto>>(items);
 		}
-		public async Task<List<CategoryDto>> GetIsStockCategoriesAsync()
-		{
-			var items = (await _categoryStore.GetAllAsync())
-				.Where(c=>c.IsStock == true)
-				.OrderBy(c => c.DisplayOrder)
-				.ToList();
-			return _mapper.Map<List<CategoryDto>>(items);
-		}
-		
 		public async Task<List<ProductDto>> GetProductsAsync()
 		{
 			var items = await _productStore.GetAllAsync();
@@ -63,14 +54,6 @@ namespace SmartServe.Domain.Services
 		public async Task<List<ProductDto>> GetProductByCategoryIdAsync(int categoryId)
 		{
 			var items = await _productStore.GetByCategoryIdAsync(categoryId);
-			return _mapper.Map<List<ProductDto>>(items);
-		}
-		public async Task<List<ProductDto>> GetIsStockProductByCategoryIdAsync(int categoryId)
-		{
-			var items = (await _productStore.GetByCategoryIdAsync(categoryId))
-				.Where(c => c.IsStock == true)
-				.OrderBy(c => c.DisplayOrder)
-				.ToList();
 			return _mapper.Map<List<ProductDto>>(items);
 		}
 		public async Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId)

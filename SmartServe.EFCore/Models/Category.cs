@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SmartServe.EFCore.Models;
-
+﻿namespace SmartServe.EFCore.Models;
 public partial class Category
 {
     public int CategoryId { get; set; }
@@ -12,8 +8,6 @@ public partial class Category
     public bool? IsActive { get; set; }
 
     public int DisplayOrder { get; set; }
-
-    public bool? IsStock { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
