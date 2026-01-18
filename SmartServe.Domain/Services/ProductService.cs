@@ -35,10 +35,17 @@ namespace SmartServe.Domain.Services
 			_stockStore = stockStore;
 		}
 		#endregion
-
 		public async Task<List<Category>> GetCategoriesAsync()
 		{
 			var items = await _categoryStore.GetAllAsync();
+			return _mapper.Map<List<Category>>(items);
+		}
+		public async Task<List<Category>> GetActiveCategoriesAsync()
+		{
+			var items = (await _categoryStore.GetAllAsync())
+				.Where(c => c.IsActive == true)
+				.OrderBy(c => c.DisplayOrder)
+				.ToList();
 			return _mapper.Map<List<Category>>(items);
 		}
 		public async Task<List<Product>> GetProductsAsync()
