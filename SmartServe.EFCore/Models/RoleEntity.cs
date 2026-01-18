@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Role
+public partial class RoleEntity
 {
     public int Id { get; set; }
 
     public string RoleName { get; set; } = null!;
 
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<UserEntity> Users { get; set; } = new List<UserEntity>();
 }

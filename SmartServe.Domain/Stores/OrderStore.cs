@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace SmartServe.Domain.Stores
 {
-	public class OrderStore : BaseStore<Order>, IOrderStore
+	public class OrderStore : BaseStore<OrderEntity>, IOrderStore
 	{
 		public OrderStore(SmartServeDbContext db) : base(db) { }
 
-		public async Task<Order?> GetOrderAsync(int orderId)
+		public async Task<OrderEntity?> GetOrderAsync(int orderId)
 		{
 			return await Set
 				.AsNoTracking()
@@ -18,13 +18,13 @@ namespace SmartServe.Domain.Stores
 						.ThenInclude(v => v.Product)
 				.FirstOrDefaultAsync(o => o.Id == orderId);
 		}
-		public virtual void Update(Order order)
+		public virtual void Update(OrderEntity order)
 		{
 			var tracked = Db.Orders.Local.FirstOrDefault(x => x.Id == order.Id);
 
 			if (tracked == null)
 			{
-				tracked = new Order
+				tracked = new OrderEntity
 				{
 					Id = order.Id
 				};

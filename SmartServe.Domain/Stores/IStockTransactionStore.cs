@@ -3,7 +3,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IStockTransactionStore : IBaseStore<StockTransaction>
+	public interface IStockTransactionStore : IBaseStore<StockTransactionEntity>
 	{
 
 	}

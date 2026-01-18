@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Payment
+public partial class PaymentEntity
 {
     public int Id { get; set; }
 
@@ -17,5 +17,5 @@ public partial class Payment
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual Order? Order { get; set; }
+    public virtual OrderEntity? Order { get; set; }
 }

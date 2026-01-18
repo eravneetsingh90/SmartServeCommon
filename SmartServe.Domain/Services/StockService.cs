@@ -40,14 +40,14 @@ namespace SmartServe.Domain.Services
 		#endregion
 
 		#region methods
-		public async Task<List<StockDto>> GetStockItemAsync(string itemType)
+		public async Task<List<Stock>> GetStockItemAsync(string itemType)
 		{
-			return _mapper.Map<List<StockDto>>(await _stockItemStore.GetStockAsync(itemType));
+			return _mapper.Map<List<Stock>>(await _stockItemStore.GetStockAsync(itemType));
 		}
 
 		public async Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel)
 		{
-			var stockItem = new Stock
+			var stockItem = new StockEntity
 			{
 				ItemType = itemType,
 				VariantId = referenceId,
@@ -97,7 +97,7 @@ namespace SmartServe.Domain.Services
 			await _stockItemStore.UpdateStockAsync(stockItem);
 		}
 
-		public async Task<BaseResponse> AddStockAsync(List<AddStockDto> rows)
+		public async Task<BaseResponse> AddStockAsync(List<AddStock> rows)
 		{
 			var response = BaseResponse.New();
 			try
@@ -110,7 +110,7 @@ namespace SmartServe.Domain.Services
 					if (stockItem == null)
 						throw new Exception("Stock item not found.");
 
-					_stockTransactionStore.Add(new StockTransaction
+					_stockTransactionStore.Add(new StockTransactionEntity
 					{
 						StockId = stockItem.Id,
 						TransactionType = StockTxnType.IN,
@@ -136,7 +136,7 @@ namespace SmartServe.Domain.Services
 			if (quantity == 0)
 				return;
 
-			_stockTransactionStore.Add(new StockTransaction
+			_stockTransactionStore.Add(new StockTransactionEntity
 			{
 				Id = stockItemId,
 				TransactionType = StockTxnType.ADJUST,
@@ -178,7 +178,7 @@ namespace SmartServe.Domain.Services
 				// -------------------------------------------------
 				// 2. Otherwise consume INGREDIENTS (recipe based)
 				// -------------------------------------------------
-				var ingredients = new List<ProductIngredient>();
+				var ingredients = new List<ProductIngredientEntity>();
 				//await _productIngredientStore
 				//	.GetByProductVariantAsync(variantId);
 
@@ -220,7 +220,7 @@ namespace SmartServe.Domain.Services
 				throw new InvalidOperationException(
 					"Insufficient stock.");
 
-			_stockTransactionStore.Add(new StockTransaction
+			_stockTransactionStore.Add(new StockTransactionEntity
 			{
 				Id = stockItemId,
 				TransactionType = StockTxnType.OUT,
@@ -233,10 +233,10 @@ namespace SmartServe.Domain.Services
 			await _stockTransactionStore.SaveAsync();
 		}
 
-		public async Task<List<IngredientDto>> GetIngredients()
+		public async Task<List<Ingredient>> GetIngredients()
 		{
 			var items = await _ingredientStore.GetAllAsync();
-			return _mapper.Map<List<IngredientDto>>(items);
+			return _mapper.Map<List<Ingredient>>(items);
 		}
 
 		#endregion

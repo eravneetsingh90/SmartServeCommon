@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SmartServe.Domain.Models
 {
-	public class StockDto
+	public class Stock
 	{
 		public int Id { get; set; }
 
@@ -23,9 +23,9 @@ namespace SmartServe.Domain.Models
 
 		public DateTime? CreatedAt { get; set; }
 
-		public virtual ICollection<StockTransactionDto> StockTransactions { get; set; } = new List<StockTransactionDto>();
+		public virtual ICollection<StockTransaction> StockTransactions { get; set; } = new List<StockTransaction>();
 
-		public virtual ProductVariantDto Variant { get; set; } = null!;
+		public virtual ProductVariant Variant { get; set; } = null!;
 	}
 
 }

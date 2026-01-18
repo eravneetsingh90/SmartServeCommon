@@ -5,18 +5,18 @@ namespace SmartServe.Domain.Services
 	public interface IProductService
 	{
 		Task<List<BrandDto>> GetBrandsAsync();
-		Task<List<CategoryDto>> GetCategoriesAsync();
-		Task<List<ProductDto>> GetProductsAsync();
-		Task<List<ProductVariantDto>> GetProductVariantsAsync();
-		Task<List<ProductDto>> GetProductByCategoryIdAsync(int categoryId);
-		Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId);
-		Task<List<ProductVariantDto>> GetVariantsByBrandIdAsync(int brandId);
-		Task<List<StockDto>> GetAllStockAsync();
+		Task<List<Category>> GetCategoriesAsync();
+		Task<List<Product>> GetProductsAsync();
+		Task<List<ProductVariant>> GetProductVariantsAsync();
+		Task<List<Product>> GetProductByCategoryIdAsync(int categoryId);
+		Task<List<ProductVariant>> GetVariantByProductIdAsync(int productId);
+		Task<List<ProductVariant>> GetVariantsByBrandIdAsync(int brandId);
+		Task<List<Stock>> GetAllStockAsync();
 		Task<BaseResponse> DeleteCategoryAsync(int id);
 		Task<BaseResponse> DeleteProductAsync(int id);
 		Task<BaseResponse> DeleteVariantAsync(int id);
-		Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<CategoryDto> items);
-		Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<ProductDto> items);
-		Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariantDto> incoming);
+		Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<Category> items);
+		Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<Product> items);
+		Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariant> incoming);
 	}
 }

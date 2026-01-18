@@ -3,10 +3,10 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IProductStore : IBaseStore<Product>
+	public interface IProductStore : IBaseStore<ProductEntity>
 	{
-		Task<List<Product>> GetByCategoryIdAsync(int categoryId);
-		Task SaveBulkAsync(IEnumerable<Product> products);
+		Task<List<ProductEntity>> GetByCategoryIdAsync(int categoryId);
+		Task SaveBulkAsync(IEnumerable<ProductEntity> products);
 		Task DeleteAsync(int id);
 	}
 }

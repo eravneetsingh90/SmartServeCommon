@@ -5,28 +5,28 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class OrderItemStore : BaseStore<OrderItem>,IOrderItemStore
+	public class OrderItemStore : BaseStore<OrderItemEntity>,IOrderItemStore
 	{
 		public OrderItemStore(SmartServeDbContext db) : base(db) { }
 
-		public async Task<List<OrderItem>> GetOrderItemsAsync(int orderId)
+		public async Task<List<OrderItemEntity>> GetOrderItemsAsync(int orderId)
 		{
 			return await Set
 				.Where(i => i.OrderId == orderId)
 				.ToListAsync();
 		}
-		public async Task AddOrderItemsAsync(List<OrderItem> items)
+		public async Task AddOrderItemsAsync(List<OrderItemEntity> items)
 		{
 			AddRange(items);
 			await SaveAsync();
 		}
 
-		public async Task RemoveOrderItemsAsync(List<OrderItem> items)
+		public async Task RemoveOrderItemsAsync(List<OrderItemEntity> items)
 		{
 			RemoveRange(items);
 			await SaveAsync();
 		}
-		public async Task UpdateOrderItemsAsync(int orderId, List<OrderItem> orderItems)
+		public async Task UpdateOrderItemsAsync(int orderId, List<OrderItemEntity> orderItems)
 		{
 			var existingItems = await GetOrderItemsAsync(orderId);
 

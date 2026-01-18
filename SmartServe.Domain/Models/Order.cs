@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class OrderDto
+	public class Order
 	{
 		public int Id { get; set; }
 
@@ -26,13 +26,13 @@ namespace SmartServe.Domain.Models
 
 		public DateTime? ClosedAt { get; set; }
 
-		public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+		public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-		public virtual ICollection<PaymentDto> Payments { get; set; } = new List<PaymentDto>();
+		public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-		public virtual TableStatusDto? Status { get; set; }
+		public virtual TableStatus? Status { get; set; }
 
-		public virtual RestaurantTableDto? Table { get; set; }
+		public virtual RestaurantTable? Table { get; set; }
 
 	}
 

@@ -14,33 +14,33 @@ public partial class SmartServeDbContext : DbContext
     {
     }
 
-	public virtual DbSet<Brand> Brands { get; set; }
+	public virtual DbSet<BrandEntity> Brands { get; set; }
 
-	public virtual DbSet<Category> Categories { get; set; }
+	public virtual DbSet<CategoryEntity> Categories { get; set; }
 
-	public virtual DbSet<Order> Orders { get; set; }
+	public virtual DbSet<OrderEntity> Orders { get; set; }
 
-	public virtual DbSet<OrderItem> OrderItems { get; set; }
+	public virtual DbSet<OrderItemEntity> OrderItems { get; set; }
 
-	public virtual DbSet<Payment> Payments { get; set; }
+	public virtual DbSet<PaymentEntity> Payments { get; set; }
 
-	public virtual DbSet<Product> Products { get; set; }
+	public virtual DbSet<ProductEntity> Products { get; set; }
 
-	public virtual DbSet<ProductIngredient> ProductIngredients { get; set; }
+	public virtual DbSet<ProductIngredientEntity> ProductIngredients { get; set; }
 
-	public virtual DbSet<ProductVariant> ProductVariants { get; set; }
+	public virtual DbSet<ProductVariantEntity> ProductVariants { get; set; }
 
-	public virtual DbSet<RestaurantTable> RestaurantTables { get; set; }
+	public virtual DbSet<RestaurantTableEntity> RestaurantTables { get; set; }
 
-	public virtual DbSet<Role> Roles { get; set; }
+	public virtual DbSet<RoleEntity> Roles { get; set; }
 
-	public virtual DbSet<Stock> Stocks { get; set; }
+	public virtual DbSet<StockEntity> Stocks { get; set; }
 
-	public virtual DbSet<StockTransaction> StockTransactions { get; set; }
+	public virtual DbSet<StockTransactionEntity> StockTransactions { get; set; }
 
-	public virtual DbSet<TableStatus> TableStatuses { get; set; }
+	public virtual DbSet<TableStatusEntity> TableStatuses { get; set; }
 
-	public virtual DbSet<User> Users { get; set; }
+	public virtual DbSet<UserEntity> Users { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -63,7 +63,7 @@ public partial class SmartServeDbContext : DbContext
 			.HasPostgresExtension("graphql", "pg_graphql")
 			.HasPostgresExtension("vault", "supabase_vault");
 
-		modelBuilder.Entity<Brand>(entity =>
+		modelBuilder.Entity<BrandEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("brands_pkey");
 
@@ -80,7 +80,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("name");
 		});
 
-		modelBuilder.Entity<Category>(entity =>
+		modelBuilder.Entity<CategoryEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("categories_pkey");
 
@@ -100,7 +100,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("name");
 		});
 
-		modelBuilder.Entity<Order>(entity =>
+		modelBuilder.Entity<OrderEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("orders_pkey");
 
@@ -147,7 +147,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("orders_table_id_fkey");
 		});
 
-		modelBuilder.Entity<OrderItem>(entity =>
+		modelBuilder.Entity<OrderItemEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("order_items_pkey");
 
@@ -177,7 +177,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("order_items_variant_id_fkey");
 		});
 
-		modelBuilder.Entity<Payment>(entity =>
+		modelBuilder.Entity<PaymentEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("payments_pkey");
 
@@ -204,7 +204,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("payments_order_id_fkey");
 		});
 
-		modelBuilder.Entity<Product>(entity =>
+		modelBuilder.Entity<ProductEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("products_pkey");
 
@@ -233,7 +233,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("products_category_id_fkey");
 		});
 
-		modelBuilder.Entity<ProductIngredient>(entity =>
+		modelBuilder.Entity<ProductIngredientEntity>(entity =>
 		{
 			entity.HasKey(e => new { e.ProductVariantId, e.IngredientVariantId }).HasName("product_ingredients_pkey");
 
@@ -261,7 +261,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("product_ingredients_product_variant_id_fkey");
 		});
 
-		modelBuilder.Entity<ProductVariant>(entity =>
+		modelBuilder.Entity<ProductVariantEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("product_variants_pkey");
 
@@ -299,7 +299,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("product_variants_product_id_fkey");
 		});
 
-		modelBuilder.Entity<RestaurantTable>(entity =>
+		modelBuilder.Entity<RestaurantTableEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("restaurant_tables_pkey");
 
@@ -317,7 +317,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("is_active");
 		});
 
-		modelBuilder.Entity<Role>(entity =>
+		modelBuilder.Entity<RoleEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("roles_pkey");
 
@@ -331,7 +331,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("role_name");
 		});
 
-		modelBuilder.Entity<Stock>(entity =>
+		modelBuilder.Entity<StockEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("stock_pkey");
 
@@ -365,7 +365,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("stock_variant_id_fkey");
 		});
 
-		modelBuilder.Entity<StockTransaction>(entity =>
+		modelBuilder.Entity<StockTransactionEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("stock_transactions_pkey");
 
@@ -399,7 +399,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasConstraintName("stock_transactions_stock_id_fkey");
 		});
 
-		modelBuilder.Entity<TableStatus>(entity =>
+		modelBuilder.Entity<TableStatusEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("table_status_pkey");
 
@@ -419,7 +419,7 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("status_name");
 		});
 
-		modelBuilder.Entity<User>(entity =>
+		modelBuilder.Entity<UserEntity>(entity =>
 		{
 			entity.HasKey(e => e.Id).HasName("users_pkey");
 

@@ -3,7 +3,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IPaymentStore : IBaseStore<Payment>
+	public interface IPaymentStore : IBaseStore<PaymentEntity>
 	{
 	}
 }

@@ -3,11 +3,11 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface ICategoryStore : IBaseStore<Category>
+	public interface ICategoryStore : IBaseStore<CategoryEntity>
 	{
-		Task<List<Category>> GetActiveAsync();
-		Task<List<Category>> GetAllAsync();
-		Task SaveBulkAsync(IEnumerable<Category> categories);
+		Task<List<CategoryEntity>> GetActiveAsync();
+		Task<List<CategoryEntity>> GetAllAsync();
+		Task SaveBulkAsync(IEnumerable<CategoryEntity> categories);
 		Task DeleteAsync(int id);
 	}
 }

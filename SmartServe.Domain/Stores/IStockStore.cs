@@ -4,15 +4,15 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IStockStore : IBaseStore<Stock>
+	public interface IStockStore : IBaseStore<StockEntity>
 	{
-		Task<List<Stock>> GetAllStockAsync();
-		Task<List<Stock>> GetStockAsync();
-		Task<List<Stock>> GetStockAsync(string itemType);
-		Task<Stock?> GetStockAsync(string itemType, int referenceId);
-		Task UpdateStockAsync(Stock stockItem);
-		Task AddStockAsync(Stock stockItem);
-		Task<List<CurrentStockDto>> GetCurrentStockAsync();
+		Task<List<StockEntity>> GetAllStockAsync();
+		Task<List<StockEntity>> GetStockAsync();
+		Task<List<StockEntity>> GetStockAsync(string itemType);
+		Task<StockEntity?> GetStockAsync(string itemType, int referenceId);
+		Task UpdateStockAsync(StockEntity stockItem);
+		Task AddStockAsync(StockEntity stockItem);
+		Task<List<CurrentStock>> GetCurrentStockAsync();
 		Task<decimal> GetCurrentStockQuantityAsync(int id);
 	}
 }

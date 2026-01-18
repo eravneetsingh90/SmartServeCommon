@@ -3,7 +3,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class BrandStore: BaseStore<Brand>,IBrandStore
+	public class BrandStore: BaseStore<BrandEntity>,IBrandStore
 	{
 		public BrandStore(SmartServeDbContext db) : base(db)
 		{

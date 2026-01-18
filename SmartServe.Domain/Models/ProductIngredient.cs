@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class ProductIngredientDto
+	public class ProductIngredient
 	{
 		public int ProductVariantId { get; set; }
 
@@ -14,8 +14,8 @@ namespace SmartServe.Domain.Models
 
 		public DateTime? UpdatedAt { get; set; }
 
-		public virtual ProductVariantDto IngredientVariant { get; set; } = null!;
+		public virtual ProductVariant IngredientVariant { get; set; } = null!;
 
-		public virtual ProductVariantDto ProductVariant { get; set; } = null!;
+		public virtual ProductVariant ProductVariant { get; set; } = null!;
 	}
 }

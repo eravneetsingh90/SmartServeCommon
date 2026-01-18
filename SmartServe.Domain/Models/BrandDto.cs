@@ -8,6 +8,6 @@
 
 		public bool? IsActive { get; set; }
 
-		public virtual ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
+		public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
 	}
 }

@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public class AddStockDto
+	public class AddStock
 	{
 		public string ItemType { get; set; }
 

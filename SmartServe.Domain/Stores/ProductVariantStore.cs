@@ -5,7 +5,7 @@ using SmartServe.EFCore.Models;
 namespace SmartServe.Domain.Stores
 {
 	public class ProductVariantStore
-		: BaseStore<ProductVariant>, IProductVariantStore
+		: BaseStore<ProductVariantEntity>, IProductVariantStore
 	{
 		private readonly IUnitOfWork _uow;
 
@@ -16,7 +16,7 @@ namespace SmartServe.Domain.Stores
 			_uow = uow;
 		}
 
-		public async Task<List<ProductVariant>> GetByProductIdAsync(int productId)
+		public async Task<List<ProductVariantEntity>> GetByProductIdAsync(int productId)
 		{
 			return await Set
 				.AsNoTracking()
@@ -25,7 +25,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task<List<ProductVariant>> GetByBrandIdAsync(int brandId)
+		public async Task<List<ProductVariantEntity>> GetByBrandIdAsync(int brandId)
 		{
 			return await Set
 				.AsNoTracking()
@@ -35,7 +35,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task<IEnumerable<ProductVariant>> SaveBulkAsync(IEnumerable<ProductVariant> incoming)
+		public async Task<IEnumerable<ProductVariantEntity>> SaveBulkAsync(IEnumerable<ProductVariantEntity> incoming)
 		{
 			var duplicate = incoming
 				.GroupBy(x => x.VariantName.Trim().ToLower())
@@ -61,7 +61,7 @@ namespace SmartServe.Domain.Stores
 
 						if (tracked == null)
 						{
-							tracked = new ProductVariant
+							tracked = new ProductVariantEntity
 							{
 								Id = variant.Id
 							};
@@ -92,7 +92,7 @@ namespace SmartServe.Domain.Stores
 
 			if (tracked == null)
 			{
-				tracked = new ProductVariant
+				tracked = new ProductVariantEntity
 				{
 					Id = productVariantId
 				};

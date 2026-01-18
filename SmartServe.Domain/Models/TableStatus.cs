@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class TableStatusDto
+	public class TableStatus
 	{
 		public int Id { get; set; }
 
@@ -12,6 +12,6 @@ namespace SmartServe.Domain.Models
 
 		public string? ColorHex { get; set; }
 
-		public virtual ICollection<OrderDto> Orders { get; set; } = new List<OrderDto>();
+		public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 	}
 }

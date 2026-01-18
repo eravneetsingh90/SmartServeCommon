@@ -3,10 +3,10 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IOrderStore : IBaseStore<Order>
+	public interface IOrderStore : IBaseStore<OrderEntity>
 	{
-		Task<Order?> GetOrderAsync(int orderId);
-		void Update(Order order);
+		Task<OrderEntity?> GetOrderAsync(int orderId);
+		void Update(OrderEntity order);
 	}
 
 }

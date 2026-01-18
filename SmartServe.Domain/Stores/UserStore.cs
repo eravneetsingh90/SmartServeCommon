@@ -4,14 +4,14 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class UserStore : BaseStore<User>
+	public class UserStore : BaseStore<UserEntity>
 	{
 		public UserStore(SmartServeDbContext db)
 			: base(db)
 		{
 		}
 
-		public async Task<User?> GetActiveUserByUsernameAsync(string username)
+		public async Task<UserEntity?> GetActiveUserByUsernameAsync(string username)
 		{
 			var result = await Set
 				.AsNoTracking()

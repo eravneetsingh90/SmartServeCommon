@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Stock
+public partial class StockEntity
 {
     public int Id { get; set; }
 
@@ -19,7 +19,7 @@ public partial class Stock
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual ICollection<StockTransaction> StockTransactions { get; set; } = new List<StockTransaction>();
+    public virtual ICollection<StockTransactionEntity> StockTransactions { get; set; } = new List<StockTransactionEntity>();
 
-    public virtual ProductVariant Variant { get; set; } = null!;
+    public virtual ProductVariantEntity Variant { get; set; } = null!;
 }

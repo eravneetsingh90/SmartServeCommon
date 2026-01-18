@@ -3,8 +3,8 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface ITableStatusStore : IBaseStore<TableStatus>
+	public interface ITableStatusStore : IBaseStore<TableStatusEntity>
 	{
-		Task<TableStatus> GetTableStatusByCode(string code);
+		Task<TableStatusEntity> GetTableStatusByCode(string code);
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class TableStatus
+public partial class TableStatusEntity
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public partial class TableStatus
 
     public string? ColorHex { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
 }

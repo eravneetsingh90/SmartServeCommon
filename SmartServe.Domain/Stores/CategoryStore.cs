@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace SmartServe.Domain.Stores
 {
-	public class CategoryStore : BaseStore<Category>, ICategoryStore
+	public class CategoryStore : BaseStore<CategoryEntity>, ICategoryStore
 	{
 		private readonly IUnitOfWork _uow;
 		public CategoryStore(SmartServeDbContext db, IUnitOfWork uow) : base(db) 
@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Stores
 			_uow = uow;
 		}
 
-		public async Task<List<Category>> GetActiveAsync()
+		public async Task<List<CategoryEntity>> GetActiveAsync()
 		{
 			return await Set
 				.AsNoTracking()
@@ -22,7 +22,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task<List<Category>> GetAllAsync()
+		public async Task<List<CategoryEntity>> GetAllAsync()
 		{
 			return await Set
 				.AsNoTracking()
@@ -30,7 +30,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task SaveBulkAsync(IEnumerable<Category> categories)
+		public async Task SaveBulkAsync(IEnumerable<CategoryEntity> categories)
 		{
 			var duplicateNames = categories
 				.Where(c => !string.IsNullOrWhiteSpace(c.Name))
@@ -58,7 +58,7 @@ namespace SmartServe.Domain.Stores
 
 						if (tracked == null)
 						{
-							tracked = new Category
+							tracked = new CategoryEntity
 							{
 								Id = category.Id
 							};
@@ -84,7 +84,7 @@ namespace SmartServe.Domain.Stores
 
 			if (tracked == null)
 			{
-				tracked = new Category
+				tracked = new CategoryEntity
 				{
 					Id = id
 				};

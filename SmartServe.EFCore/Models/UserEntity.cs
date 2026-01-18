@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class User
+public partial class UserEntity
 {
     public int Id { get; set; }
 
@@ -17,5 +17,5 @@ public partial class User
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual Role? Role { get; set; }
+    public virtual RoleEntity? Role { get; set; }
 }

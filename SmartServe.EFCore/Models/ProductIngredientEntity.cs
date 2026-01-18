@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class ProductIngredient
+public partial class ProductIngredientEntity
 {
     public int ProductVariantId { get; set; }
 
@@ -15,7 +15,7 @@ public partial class ProductIngredient
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual ProductVariant IngredientVariant { get; set; } = null!;
+    public virtual ProductVariantEntity IngredientVariant { get; set; } = null!;
 
-    public virtual ProductVariant ProductVariant { get; set; } = null!;
+    public virtual ProductVariantEntity ProductVariant { get; set; } = null!;
 }

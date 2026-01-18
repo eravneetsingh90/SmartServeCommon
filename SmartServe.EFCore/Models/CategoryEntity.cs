@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Category
+public partial class CategoryEntity
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public partial class Category
 
     public int DisplayOrder { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public virtual ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
 }

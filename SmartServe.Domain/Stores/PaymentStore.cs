@@ -3,7 +3,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class PaymentStore : BaseStore<Payment>, IPaymentStore
+	public class PaymentStore : BaseStore<PaymentEntity>, IPaymentStore
 	{
 		public PaymentStore(SmartServeDbContext db) : base(db)
 		{

@@ -8,28 +8,28 @@ namespace SmartServe.Domain.Mapping
 	{
 		public MappingProfile()
 		{
-			CreateMap<OrderDto, Order>()
+			CreateMap<Order, OrderEntity>()
 				.ForMember(d => d.OrderItems, opt => opt.Ignore())
 				.ForMember(d => d.Payments, opt => opt.Ignore())
 				.ForMember(d => d.Table, opt => opt.Ignore())
 				.ForMember(d => d.Status, opt => opt.Ignore());
-			CreateMap<Order, OrderDto>();
-			CreateMap<OrderItem, OrderItemDto>();
-			CreateMap<OrderItemDto, OrderItem>()
+			CreateMap<OrderEntity, Order>();
+			CreateMap<OrderItemEntity, OrderItem>();
+			CreateMap<OrderItem, OrderItemEntity>()
 				.ForMember(d => d.Variant, opt => opt.Ignore());
-			CreateMap<TableStatus, TableStatusDto>().ReverseMap();
-			CreateMap<RestaurantTable, RestaurantTableDto>().ReverseMap();
-			CreateMap<Payment, PaymentDto>().ReverseMap();
-			CreateMap<ProductVariant, ProductVariantDto>();
-			CreateMap<ProductVariantDto, ProductVariant>()
+			CreateMap<TableStatusEntity, TableStatus>().ReverseMap();
+			CreateMap<RestaurantTableEntity, RestaurantTable>().ReverseMap();
+			CreateMap<PaymentEntity, Payment>().ReverseMap();
+			CreateMap<ProductVariantEntity, ProductVariant>();
+			CreateMap<ProductVariant, ProductVariantEntity>()
 				.ForMember(d => d.Product, opt => opt.Ignore());
-			CreateMap<Product, ProductDto>().ReverseMap();
-			CreateMap<Category, CategoryDto>().ReverseMap();
-			CreateMap<Brand, BrandDto>().ReverseMap();
-			CreateMap<Stock, StockDto>().ReverseMap();
-			CreateMap<StockTransaction, StockTransactionDto>().ReverseMap();
-			CreateMap<Ingredient, IngredientDto>().ReverseMap();
-			CreateMap<ProductIngredient, ProductIngredientDto>().ReverseMap();
+			CreateMap<ProductEntity, Product>().ReverseMap();
+			CreateMap<CategoryEntity, Category>().ReverseMap();
+			CreateMap<BrandEntity, BrandDto>().ReverseMap();
+			CreateMap<StockEntity, Stock>().ReverseMap();
+			CreateMap<StockTransactionEntity, StockTransaction>().ReverseMap();
+			CreateMap<IngredientEntity, Ingredient>().ReverseMap();
+			CreateMap<ProductIngredientEntity, ProductIngredient>().ReverseMap();
 
 		}
 	}

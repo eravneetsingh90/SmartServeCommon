@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class CategoryDto
+	public class Category
 	{
 		public int Id { get; set; }
 
@@ -12,6 +12,6 @@ namespace SmartServe.Domain.Models
 
 		public int DisplayOrder { get; set; }
 
-		public virtual ICollection<ProductDto> Products { get; set; } = new List<ProductDto>();
+		public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 	}
 }

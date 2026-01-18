@@ -5,7 +5,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class RestaurantTableStore : BaseStore<RestaurantTable>, IRestaurantTableStore
+	public class RestaurantTableStore : BaseStore<RestaurantTableEntity>, IRestaurantTableStore
 	{
 		public RestaurantTableStore(SmartServeDbContext db) : base(db)
 		{
@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Stores
 
 		public async Task CreateTableAsync(string displayName)
 		{
-			var table = new RestaurantTable
+			var table = new RestaurantTableEntity
 			{
 				DisplayName = displayName,
 				IsActive = true,

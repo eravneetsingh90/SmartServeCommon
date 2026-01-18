@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class IngredientDto
+	public class Ingredient
 	{
 		public int IngredientId { get; set; }
 
@@ -12,6 +12,6 @@ namespace SmartServe.Domain.Models
 
 		public bool? IsActive { get; set; }
 
-		public virtual ICollection<ProductIngredientDto> ProductIngredients { get; set; } = new List<ProductIngredientDto>();
+		public virtual ICollection<ProductIngredient> ProductIngredients { get; set; } = new List<ProductIngredient>();
 	}
 }

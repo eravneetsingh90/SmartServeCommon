@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class RestaurantTable
+public partial class RestaurantTableEntity
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public partial class RestaurantTable
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
 }

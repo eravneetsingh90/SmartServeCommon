@@ -4,7 +4,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class IngredientStore : BaseStore<Ingredient>, IIngredientStore
+	public class IngredientStore : BaseStore<IngredientEntity>, IIngredientStore
 	{
 		public IngredientStore(SmartServeDbContext db) : base(db)
 		{

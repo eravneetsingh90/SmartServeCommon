@@ -3,7 +3,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IProductIngredientStore : IBaseStore<ProductIngredient>
+	public interface IProductIngredientStore : IBaseStore<ProductIngredientEntity>
 	{
 		
 

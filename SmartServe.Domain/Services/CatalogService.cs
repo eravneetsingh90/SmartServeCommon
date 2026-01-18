@@ -10,11 +10,11 @@ namespace SmartServe.Domain.Services
 		private readonly IMapper _mapper;
 		private readonly IProductService _productService;
 		private readonly ITableStatusStore _tableStatusStore;
-		private List<CategoryDto> _categories = new();
-		private List<ProductDto> _products = new();
-		private List<ProductVariantDto> _variants = new();
-		private List<CatalogSearchItemDto> _searchIndex = new();
-		private List<TableStatusDto> _tableStatus = new();
+		private List<Category> _categories = new();
+		private List<Product> _products = new();
+		private List<ProductVariant> _variants = new();
+		private List<CatalogSearchItem> _searchIndex = new();
+		private List<TableStatus> _tableStatus = new();
 		private List<BrandDto> _brands = new();
 		private bool _loaded;
 		#endregion
@@ -52,7 +52,7 @@ namespace SmartServe.Domain.Services
 
 			// Table Statuses
 			var tableStatus = (await _tableStatusStore.GetAllAsync()).ToList();
-			_tableStatus = _mapper.Map<List<TableStatusDto>>(tableStatus);
+			_tableStatus = _mapper.Map<List<TableStatus>>(tableStatus);
 
 			var brands = (await _productService.GetBrandsAsync())
 				.Where(v => v.IsActive == true)
@@ -63,7 +63,7 @@ namespace SmartServe.Domain.Services
 				(from v in _variants
 				 join p in _products on v.ProductId equals p.Id
 				 join c in _categories on p.CategoryId equals c.Id
-				 select new CatalogSearchItemDto
+				 select new CatalogSearchItem
 				 {
 					 CategoryId = c.Id,
 					 ProductId = p.Id,
@@ -80,25 +80,25 @@ namespace SmartServe.Domain.Services
 			_loaded = true;
 		}
 
-		public IReadOnlyList<CategoryDto> GetCategories()
+		public IReadOnlyList<Category> GetCategories()
 			=> _categories;
 
-		public IReadOnlyList<ProductDto> GetProductsByCategory(int categoryId)
+		public IReadOnlyList<Product> GetProductsByCategory(int categoryId)
 			=> _products
 				.Where(p => p.CategoryId == categoryId)
 				.OrderBy(p => p.DisplayOrder)
 				.ToList();
 
-		public IReadOnlyList<ProductVariantDto> GetVariantsByProduct(int productId)
+		public IReadOnlyList<ProductVariant> GetVariantsByProduct(int productId)
 			=> _variants
 				.Where(v => v.ProductId == productId)
 				.OrderBy(v => v.DisplayOrder)
 				.ToList();
 
-		public IReadOnlyList<CatalogSearchItemDto> Search(string term, int maxResults = 30)
+		public IReadOnlyList<CatalogSearchItem> Search(string term, int maxResults = 30)
 		{
 			if (string.IsNullOrWhiteSpace(term))
-				return Array.Empty<CatalogSearchItemDto>();
+				return Array.Empty<CatalogSearchItem>();
 
 			term = term.Trim().ToLower();
 
@@ -114,7 +114,7 @@ namespace SmartServe.Domain.Services
 			await LoadAsync();
 		}
 
-		public TableStatusDto GetTableStatusByCode(string statusCode)
+		public TableStatus GetTableStatusByCode(string statusCode)
 			=> _tableStatus
 				.Where(v => v.StatusCode.Equals(statusCode)).FirstOrDefault();
 

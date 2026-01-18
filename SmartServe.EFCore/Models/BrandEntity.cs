@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Brand
+public partial class BrandEntity
 {
     public int Id { get; set; }
 
@@ -11,5 +11,5 @@ public partial class Brand
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
+    public virtual ICollection<ProductVariantEntity> ProductVariants { get; set; } = new List<ProductVariantEntity>();
 }

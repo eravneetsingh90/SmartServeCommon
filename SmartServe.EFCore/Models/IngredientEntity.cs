@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Ingredient
+public partial class IngredientEntity
 {
     public int IngredientId { get; set; }
 
@@ -13,5 +13,5 @@ public partial class Ingredient
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<ProductIngredient> ProductIngredients { get; set; } = new List<ProductIngredient>();
+    public virtual ICollection<ProductIngredientEntity> ProductIngredients { get; set; } = new List<ProductIngredientEntity>();
 }

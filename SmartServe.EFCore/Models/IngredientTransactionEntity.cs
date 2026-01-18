@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class IngredientTransaction
+public partial class IngredientTransactionEntity
 {
     public int IngredientTxnId { get; set; }
 
@@ -17,5 +17,5 @@ public partial class IngredientTransaction
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual Ingredient? Ingredient { get; set; }
+    public virtual IngredientEntity? Ingredient { get; set; }
 }

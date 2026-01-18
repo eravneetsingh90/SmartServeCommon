@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Product
+public partial class ProductEntity
 {
     public int Id { get; set; }
 
@@ -19,7 +19,7 @@ public partial class Product
 
     public string? FoodType { get; set; }
 
-    public virtual Category? Category { get; set; }
+    public virtual CategoryEntity? Category { get; set; }
 
-    public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
+    public virtual ICollection<ProductVariantEntity> ProductVariants { get; set; } = new List<ProductVariantEntity>();
 }

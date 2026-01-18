@@ -28,7 +28,7 @@ namespace SmartServe.API.Test.Controllers
 
 		[HttpGet]
 		[Route("get-all-product")]
-		public async Task<IEnumerable<Product>> GetAllProduct()
+		public async Task<IEnumerable<ProductEntity>> GetAllProduct()
 		{
 			var products = await _product.GetAllAsync();
 			return products;
@@ -36,7 +36,7 @@ namespace SmartServe.API.Test.Controllers
 
 		[HttpGet]
 		[Route("get-all-user")]
-		public async Task<IEnumerable<User>> GetAllUser()
+		public async Task<IEnumerable<UserEntity>> GetAllUser()
 		{
 			var users = await _user.GetAllAsync();
 			return users;
@@ -44,7 +44,7 @@ namespace SmartServe.API.Test.Controllers
 
 		[HttpGet]
 		[Route("get-active-user")]
-		public async Task<User> GetActiveUser(string username)
+		public async Task<UserEntity> GetActiveUser(string username)
 		{
 			var user = await _user.GetActiveUserByUsernameAsync(username);
 			return user;

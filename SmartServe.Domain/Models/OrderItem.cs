@@ -2,7 +2,7 @@
 
 namespace SmartServe.Domain.Models
 {
-	public class OrderItemDto
+	public class OrderItem
 	{
 		public int Id { get; set; }
 
@@ -16,8 +16,8 @@ namespace SmartServe.Domain.Models
 
 		public decimal? DiscountAmount { get; set; }
 
-		public virtual OrderDto? Order { get; set; }
+		public virtual Order? Order { get; set; }
 
-		public virtual ProductVariantDto? Variant { get; set; }
+		public virtual ProductVariant? Variant { get; set; }
 	}
 }

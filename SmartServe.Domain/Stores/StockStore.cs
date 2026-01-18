@@ -6,35 +6,35 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class StockStore : BaseStore<Stock>, IStockStore
+	public class StockStore : BaseStore<StockEntity>, IStockStore
 	{
 
 		public StockStore(SmartServeDbContext db) : base(db)
 		{
 		}
 
-		public async Task<List<Stock>> GetStockAsync()
+		public async Task<List<StockEntity>> GetStockAsync()
 		{
 			return await Set
 				.Where(x => x.IsActive == true)
 				.AsNoTracking()
 				.ToListAsync();
 		}
-		public async Task<List<Stock>> GetStockAsync(string itemType)
+		public async Task<List<StockEntity>> GetStockAsync(string itemType)
 		{
 			return await Set
 				.Where(x => x.ItemType == itemType)
 				.AsNoTracking()
 				.ToListAsync();
 		}
-		public async Task<Stock?> GetStockAsync(string itemType, int referenceId)
+		public async Task<StockEntity?> GetStockAsync(string itemType, int referenceId)
 		{
 			return await Set
 				.FirstOrDefaultAsync(x =>
 					x.ItemType == itemType &&
 					x.VariantId == referenceId);
 		}
-		public async Task<List<Stock>> GetAllStockAsync()
+		public async Task<List<StockEntity>> GetAllStockAsync()
 		{
 			return await Set
 				.AsNoTracking()
@@ -44,13 +44,13 @@ namespace SmartServe.Domain.Stores
 				.Where(x => x.IsActive == true)
 				.ToListAsync();
 		}
-		public async Task AddStockAsync(Stock stockItem)
+		public async Task AddStockAsync(StockEntity stockItem)
 		{
 			Set.Add(stockItem);
 			await SaveAsync();
 		}
 
-		public async Task UpdateStockAsync(Stock stockItem)
+		public async Task UpdateStockAsync(StockEntity stockItem)
 		{
 			Set.Update(stockItem);
 			await SaveAsync();
@@ -69,7 +69,7 @@ namespace SmartServe.Domain.Stores
 			return qty;
 		}
 
-		public Task<List<CurrentStockDto>> GetCurrentStockAsync()
+		public Task<List<CurrentStock>> GetCurrentStockAsync()
 		{
 			throw new NotImplementedException();
 		}

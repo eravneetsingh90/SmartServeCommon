@@ -4,12 +4,12 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class ProductStore : BaseStore<Product>, IProductStore
+	public class ProductStore : BaseStore<ProductEntity>, IProductStore
 	{
 		private readonly IUnitOfWork _uow;
 		public ProductStore(SmartServeDbContext db, IUnitOfWork uow) : base(db) { _uow = uow; }
 
-		public async Task<List<Product>> GetByCategoryIdAsync(int categoryId)
+		public async Task<List<ProductEntity>> GetByCategoryIdAsync(int categoryId)
 		{
 			return await Set
 				.AsNoTracking()
@@ -18,7 +18,7 @@ namespace SmartServe.Domain.Stores
 				.ToListAsync();
 		}
 
-		public async Task SaveBulkAsync(IEnumerable<Product> products)
+		public async Task SaveBulkAsync(IEnumerable<ProductEntity> products)
 		{
 			var duplicateNames = products
 				.Where(p => !string.IsNullOrWhiteSpace(p.Name))
@@ -47,7 +47,7 @@ namespace SmartServe.Domain.Stores
 
 						if (tracked == null)
 						{
-							tracked = new Product
+							tracked = new ProductEntity
 							{
 								Id = product.Id
 							};
@@ -74,7 +74,7 @@ namespace SmartServe.Domain.Stores
 
 			if (tracked == null)
 			{
-				tracked = new Product
+				tracked = new ProductEntity
 				{
 					Id = id
 				};

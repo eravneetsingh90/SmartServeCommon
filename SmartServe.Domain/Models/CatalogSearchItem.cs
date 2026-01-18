@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public sealed class CatalogSearchItemDto
+	public sealed class CatalogSearchItem
 	{
 		public int CategoryId { get; init; }
 		public int ProductId { get; init; }

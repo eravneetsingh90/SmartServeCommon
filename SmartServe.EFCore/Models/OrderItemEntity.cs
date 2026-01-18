@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class OrderItem
+public partial class OrderItemEntity
 {
     public int Id { get; set; }
 
@@ -17,7 +17,7 @@ public partial class OrderItem
 
     public decimal? DiscountAmount { get; set; }
 
-    public virtual Order? Order { get; set; }
+    public virtual OrderEntity? Order { get; set; }
 
-    public virtual ProductVariant? Variant { get; set; }
+    public virtual ProductVariantEntity? Variant { get; set; }
 }

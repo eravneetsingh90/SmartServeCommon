@@ -36,45 +36,45 @@ namespace SmartServe.Domain.Services
 		}
 		#endregion
 
-		public async Task<List<CategoryDto>> GetCategoriesAsync()
+		public async Task<List<Category>> GetCategoriesAsync()
 		{
 			var items = await _categoryStore.GetAllAsync();
-			return _mapper.Map<List<CategoryDto>>(items);
+			return _mapper.Map<List<Category>>(items);
 		}
-		public async Task<List<ProductDto>> GetProductsAsync()
+		public async Task<List<Product>> GetProductsAsync()
 		{
 			var items = await _productStore.GetAllAsync();
-			return _mapper.Map<List<ProductDto>>(items);
+			return _mapper.Map<List<Product>>(items);
 		}
-		public async Task<List<ProductVariantDto>> GetProductVariantsAsync()
+		public async Task<List<ProductVariant>> GetProductVariantsAsync()
 		{
 			var items = await _variantStore.GetAllAsync();
-			return _mapper.Map<List<ProductVariantDto>>(items);
+			return _mapper.Map<List<ProductVariant>>(items);
 		}
-		public async Task<List<ProductDto>> GetProductByCategoryIdAsync(int categoryId)
+		public async Task<List<Product>> GetProductByCategoryIdAsync(int categoryId)
 		{
 			var items = await _productStore.GetByCategoryIdAsync(categoryId);
-			return _mapper.Map<List<ProductDto>>(items);
+			return _mapper.Map<List<Product>>(items);
 		}
-		public async Task<List<ProductVariantDto>> GetVariantByProductIdAsync(int productId)
+		public async Task<List<ProductVariant>> GetVariantByProductIdAsync(int productId)
 		{
 			var items = await _variantStore.GetByProductIdAsync(productId);
-			return _mapper.Map<List<ProductVariantDto>>(items);
+			return _mapper.Map<List<ProductVariant>>(items);
 		}
-		public async Task<List<ProductVariantDto>> GetVariantsByBrandIdAsync(int brandId)
+		public async Task<List<ProductVariant>> GetVariantsByBrandIdAsync(int brandId)
 		{
 			var items = await _variantStore.GetByBrandIdAsync(brandId);
-			return _mapper.Map<List<ProductVariantDto>>(items);
+			return _mapper.Map<List<ProductVariant>>(items);
 		}
 		public async Task<List<BrandDto>> GetBrandsAsync()
 		{
 			var items = await _brandStore.GetAllAsync();
 			return _mapper.Map<List<BrandDto>>(items);
 		}
-		public async Task<List<StockDto>> GetAllStockAsync()
+		public async Task<List<Stock>> GetAllStockAsync()
 		{
 			var items = await _stockStore.GetAllStockAsync();
-			return _mapper.Map<List<StockDto>>(items);
+			return _mapper.Map<List<Stock>>(items);
 		}
 		public async Task<BaseResponse> DeleteCategoryAsync(int productVariantId)
 		{
@@ -118,12 +118,12 @@ namespace SmartServe.Domain.Services
 			}
 			return response;
 		}
-		public async Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<CategoryDto> items)
+		public async Task<BaseResponse> SaveBulkCategoriesAsync(IEnumerable<Category> items)
 		{
 			var response = BaseResponse.New();
 			try
 			{
-				await _categoryStore.SaveBulkAsync(_mapper.Map<List<Category>>(items));
+				await _categoryStore.SaveBulkAsync(_mapper.Map<List<CategoryEntity>>(items));
 			}
 			catch (DuplicateWaitObjectException ex)
 			{
@@ -137,12 +137,12 @@ namespace SmartServe.Domain.Services
 			}
 			return response;
 		}
-		public async Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<ProductDto> items)
+		public async Task<BaseResponse> SaveBulkProductsAsync(IEnumerable<Product> items)
 		{
 			var response = BaseResponse.New();
 			try
 			{
-				await _productStore.SaveBulkAsync(_mapper.Map<List<Product>>(items));
+				await _productStore.SaveBulkAsync(_mapper.Map<List<ProductEntity>>(items));
 			}
 			catch (DuplicateWaitObjectException ex)
 			{
@@ -156,12 +156,12 @@ namespace SmartServe.Domain.Services
 			}
 			return response;
 		}
-		public async Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariantDto> productVariants)
+		public async Task<BaseResponse> SaveBulkVariantAsync(IEnumerable<ProductVariant> productVariants)
 		{
 			var response = BaseResponse.New();
 			try
 			{
-				await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariant>>(productVariants));
+				await _variantStore.SaveBulkAsync(_mapper.Map<List<ProductVariantEntity>>(productVariants));
 			}
 			catch (DuplicateWaitObjectException ex)
 			{

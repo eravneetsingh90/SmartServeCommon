@@ -3,11 +3,11 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public interface IProductVariantStore : IBaseStore<ProductVariant>
+	public interface IProductVariantStore : IBaseStore<ProductVariantEntity>
 	{
-		Task<List<ProductVariant>> GetByProductIdAsync(int productId);
-		Task<List<ProductVariant>> GetByBrandIdAsync(int brandId);
-		Task<IEnumerable<ProductVariant>> SaveBulkAsync(IEnumerable<ProductVariant> incoming);
+		Task<List<ProductVariantEntity>> GetByProductIdAsync(int productId);
+		Task<List<ProductVariantEntity>> GetByBrandIdAsync(int brandId);
+		Task<IEnumerable<ProductVariantEntity>> SaveBulkAsync(IEnumerable<ProductVariantEntity> incoming);
 		Task DeleteAsync(int id);
 	}
 }

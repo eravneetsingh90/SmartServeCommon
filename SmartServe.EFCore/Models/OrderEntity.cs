@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class Order
+public partial class OrderEntity
 {
     public int Id { get; set; }
 
@@ -27,11 +27,11 @@ public partial class Order
 
     public DateTime? ClosedAt { get; set; }
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual ICollection<OrderItemEntity> OrderItems { get; set; } = new List<OrderItemEntity>();
 
-    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<PaymentEntity> Payments { get; set; } = new List<PaymentEntity>();
 
-    public virtual TableStatus? Status { get; set; }
+    public virtual TableStatusEntity? Status { get; set; }
 
-    public virtual RestaurantTable? Table { get; set; }
+    public virtual RestaurantTableEntity? Table { get; set; }
 }

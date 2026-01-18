@@ -5,11 +5,11 @@ namespace SmartServe.Domain.Services
 {
 	public interface IBillingService
 	{
-		Task<OrderDto> GetOrderAsync(int orderId);
-		Task<int> CreateOrderAsync(OrderDto request);
-		Task UpdateOrderAsync(OrderDto dto);
-		Task CreateOrderItemsAsync(List<OrderItemDto> orderItems);
-		Task UpdateOrderItemsAsync(int orderId, List<OrderItemDto> items);
-		Task CloseOrderAsync(int orderId, PaymentDto payment);
+		Task<Order> GetOrderAsync(int orderId);
+		Task<int> CreateOrderAsync(Order request);
+		Task UpdateOrderAsync(Order dto);
+		Task CreateOrderItemsAsync(List<OrderItem> orderItems);
+		Task UpdateOrderItemsAsync(int orderId, List<OrderItem> items);
+		Task CloseOrderAsync(int orderId, Payment payment);
 	}
 }

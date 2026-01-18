@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public partial class StockTransactionDto
+	public partial class StockTransaction
 	{
 		public int Id { get; set; }
 
@@ -17,6 +17,6 @@
 
 		public DateTime? CreatedAt { get; set; }
 
-		public virtual StockDto Stock { get; set; } = null!;
+		public virtual Stock Stock { get; set; } = null!;
 	}
 }

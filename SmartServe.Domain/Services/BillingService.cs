@@ -33,43 +33,43 @@ namespace SmartServe.Domain.Services
 			_catalogService = catalogService;
 		}
 
-		public async Task<OrderDto> GetOrderAsync(int orderId)
+		public async Task<Order> GetOrderAsync(int orderId)
 		{
 			var order = await _orderStore.GetOrderAsync(orderId);
-			return _mapper.Map<OrderDto>(order);
+			return _mapper.Map<Order>(order);
 		}
 
-		public async Task UpdateOrderAsync(OrderDto order)
+		public async Task UpdateOrderAsync(Order order)
 		{
-			_orderStore.Update(_mapper.Map<Order>(order));
+			_orderStore.Update(_mapper.Map<OrderEntity>(order));
 			await _orderStore.SaveAsync();
 		}
 
-		public async Task<int> CreateOrderAsync(OrderDto request)
+		public async Task<int> CreateOrderAsync(Order request)
 		{
-			var order = _mapper.Map<Order>(request);
+			var order = _mapper.Map<OrderEntity>(request);
 			order.CreatedAt = DateTime.UtcNow;
 			_orderStore.Add(order);
 			await _orderStore.SaveAsync();
 			return order.Id;
 		}
 
-		public async Task CreateOrderItemsAsync(List<OrderItemDto> request)
+		public async Task CreateOrderItemsAsync(List<OrderItem> request)
 		{
-			var orderItems = _mapper.Map<List<OrderItem>>(request);
+			var orderItems = _mapper.Map<List<OrderItemEntity>>(request);
 
 			await _orderItemStore.AddOrderItemsAsync(orderItems);
 
 		}
 
-		public async Task UpdateOrderItemsAsync(int orderId, List<OrderItemDto> items)
+		public async Task UpdateOrderItemsAsync(int orderId, List<OrderItem> items)
 		{
-			var orderItems = _mapper.Map<List<OrderItem>>(items);
+			var orderItems = _mapper.Map<List<OrderItemEntity>>(items);
 
 			await _orderItemStore.UpdateOrderItemsAsync(orderId, orderItems);
 		}
 
-		public async Task CloseOrderAsync(int orderId, PaymentDto payment)
+		public async Task CloseOrderAsync(int orderId, Payment payment)
 		{
 			await _uow.BeginAsync();
 			try
@@ -80,7 +80,7 @@ namespace SmartServe.Domain.Services
 
 				if (payment.Mode != PaymentMode.PART)
 				{
-					var finalPayment = _mapper.Map<Payment>(payment);
+					var finalPayment = _mapper.Map<PaymentEntity>(payment);
 					finalPayment.OrderId = order.Id;
 					finalPayment.CreatedAt = DateTime.UtcNow;
 					_paymentStore.Add(finalPayment);
@@ -88,15 +88,15 @@ namespace SmartServe.Domain.Services
 				}
 				else
 				{
-					var payments = new List<Payment>();
-					payments.Add(new Payment
+					var payments = new List<PaymentEntity>();
+					payments.Add(new PaymentEntity
 					{
 						OrderId = order.Id,
 						Mode = PaymentMode.CASH,
 						Amount = payment.PartPaymentCash,
 						CreatedAt = DateTime.UtcNow
 					});
-					payments.Add(new Payment
+					payments.Add(new PaymentEntity
 					{
 						OrderId = order.Id,
 						Mode = PaymentMode.UPI,
@@ -109,7 +109,7 @@ namespace SmartServe.Domain.Services
 				order.ClosedAt = DateTime.UtcNow;
 				order.StatusId = _catalogService.GetTableStatusByCode(TableStatusCodes.BLANK).Id;
 
-				var finalOrder = _mapper.Map<Order>(order);
+				var finalOrder = _mapper.Map<OrderEntity>(order);
 
 				_orderStore.Update(finalOrder);
 				await _orderStore.SaveAsync();

@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public class ProductDto
+	public class Product
 	{
 		public int Id { get; set; }
 
@@ -14,8 +14,8 @@
 
 		public DateTime? CreatedAt { get; set; }
 		public string? FoodType { get; set; }
-		public virtual CategoryDto? Category { get; set; }
+		public virtual Category? Category { get; set; }
 
-		public virtual ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
+		public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
 	}
 }
