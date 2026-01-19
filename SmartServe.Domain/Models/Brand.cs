@@ -1,6 +1,6 @@
 ﻿namespace SmartServe.Domain.Models
 {
-	public class BrandDto
+	public class Brand
 	{
 		public int Id { get; set; }
 

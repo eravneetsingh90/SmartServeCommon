@@ -48,6 +48,24 @@ namespace SmartServe.Domain.Services
 				.ToList();
 			return _mapper.Map<List<Category>>(items);
 		}
+
+		public async Task<List<Product>> GetActiveProductsAsync()
+		{
+			var items = (await _productStore.GetAllAsync())
+				.Where(c => c.IsActive == true)
+				.OrderBy(c => c.DisplayOrder)
+				.ToList();
+			return _mapper.Map<List<Product>>(items);
+		}
+
+		public async Task<List<ProductVariant>> GetActiveProductVariantsAsync()
+		{
+			var items = (await _variantStore.GetAllAsync())
+				.Where(c => c.IsActive == true)
+				.OrderBy(c => c.DisplayOrder)
+				.ToList();
+			return _mapper.Map<List<ProductVariant>>(items);
+		}
 		public async Task<List<Product>> GetProductsAsync()
 		{
 			var items = await _productStore.GetAllAsync();
@@ -73,10 +91,10 @@ namespace SmartServe.Domain.Services
 			var items = await _variantStore.GetByBrandIdAsync(brandId);
 			return _mapper.Map<List<ProductVariant>>(items);
 		}
-		public async Task<List<BrandDto>> GetBrandsAsync()
+		public async Task<List<Brand>> GetBrandsAsync()
 		{
 			var items = await _brandStore.GetAllAsync();
-			return _mapper.Map<List<BrandDto>>(items);
+			return _mapper.Map<List<Brand>>(items);
 		}
 		public async Task<List<Stock>> GetAllStockAsync()
 		{

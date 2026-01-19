@@ -12,25 +12,23 @@ namespace SmartServe.Domain.Services
 		private readonly IOrderStore _orderStore;
 		private readonly IOrderItemStore _orderItemStore;
 		private readonly IPaymentStore _paymentStore;
-		private readonly ICatalogService _catalogService;
 		private readonly IMapper _mapper;
-
+		private readonly ITableStatusStore _tableStatusStore;
 
 		public BillingService(
 			IMapper mapper,
 			IOrderStore orderStore,
-			ITableStatusStore tableStatusStore,
 			IOrderItemStore orderItemStore,
 			IUnitOfWork uow,
 			IPaymentStore paymentStore,
-			ICatalogService catalogService)
+			ITableStatusStore tableStatusStore)
 		{
 			_mapper = mapper;
 			_orderStore = orderStore;
 			_orderItemStore = orderItemStore;
 			_uow = uow;
 			_paymentStore = paymentStore;
-			_catalogService = catalogService;
+			_tableStatusStore = tableStatusStore;
 		}
 
 		public async Task<Order> GetOrderAsync(int orderId)
@@ -107,7 +105,7 @@ namespace SmartServe.Domain.Services
 				}
 				await _paymentStore.SaveAsync();
 				order.ClosedAt = DateTime.UtcNow;
-				order.StatusId = _catalogService.GetTableStatusByCode(TableStatusCodes.BLANK).Id;
+				order.StatusId = (await _tableStatusStore.GetAllAsync()).FirstOrDefault(a=>a.StatusCode.Equals(TableStatusCodes.BLANK)).Id;
 
 				var finalOrder = _mapper.Map<OrderEntity>(order);
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
@@ -7,8 +8,18 @@ namespace SmartServe.Domain.Stores
 {
 	public class RestaurantTableStore : BaseStore<RestaurantTableEntity>, IRestaurantTableStore
 	{
-		public RestaurantTableStore(SmartServeDbContext db) : base(db)
+		private readonly IMapper _mapper;
+		public RestaurantTableStore(SmartServeDbContext db, IMapper mapper) : base(db)
 		{
+			_mapper = mapper;
+		}
+
+		public async Task<List<RestaurantTable>> GetActiveRestaurantTablesAsync()
+		{
+			var items = (await GetAllAsync())
+				.Where(c => c.IsActive == true)
+				.ToList();
+			return _mapper.Map<List<RestaurantTable>>(items);
 		}
 
 		public async Task CreateTableAsync(string displayName)

@@ -20,7 +20,7 @@ namespace SmartServe.Domain.Models
 
 		public DateTime? CreatedAt { get; set; }
 
-		public virtual BrandDto? Brand { get; set; }
+		public virtual Brand? Brand { get; set; }
 
 		public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

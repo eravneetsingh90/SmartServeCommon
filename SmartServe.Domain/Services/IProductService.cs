@@ -4,11 +4,13 @@ namespace SmartServe.Domain.Services
 {
 	public interface IProductService
 	{
-		Task<List<BrandDto>> GetBrandsAsync();
+		Task<List<Brand>> GetBrandsAsync();
 		Task<List<Category>> GetActiveCategoriesAsync();
 		Task<List<Category>> GetCategoriesAsync();
 		Task<List<Product>> GetProductsAsync();
+		Task<List<Product>> GetActiveProductsAsync();
 		Task<List<ProductVariant>> GetProductVariantsAsync();
+		Task<List<ProductVariant>> GetActiveProductVariantsAsync();
 		Task<List<Product>> GetProductByCategoryIdAsync(int categoryId);
 		Task<List<ProductVariant>> GetVariantByProductIdAsync(int productId);
 		Task<List<ProductVariant>> GetVariantsByBrandIdAsync(int brandId);

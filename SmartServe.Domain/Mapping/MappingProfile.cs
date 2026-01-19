@@ -25,7 +25,7 @@ namespace SmartServe.Domain.Mapping
 				.ForMember(d => d.Product, opt => opt.Ignore());
 			CreateMap<ProductEntity, Product>().ReverseMap();
 			CreateMap<CategoryEntity, Category>().ReverseMap();
-			CreateMap<BrandEntity, BrandDto>().ReverseMap();
+			CreateMap<BrandEntity, Brand>().ReverseMap();
 			CreateMap<StockEntity, Stock>().ReverseMap();
 			CreateMap<StockTransactionEntity, StockTransaction>().ReverseMap();
 			CreateMap<IngredientEntity, Ingredient>().ReverseMap();
