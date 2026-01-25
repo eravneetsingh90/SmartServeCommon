@@ -28,7 +28,6 @@ namespace SmartServe.Domain.Stores
 				.FirstOrDefaultAsync(e =>
 					EF.Property<TKey>(e, "Id")!.Equals(id));
 		}
-
 		public virtual void Add(T entity)
 		{
 			Set.Add(entity);

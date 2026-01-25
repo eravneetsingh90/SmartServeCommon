@@ -45,13 +45,30 @@ namespace SmartServe.Domain.Services
 
 		public async Task<int> CreateOrderAsync(Order request)
 		{
+			if (!string.IsNullOrWhiteSpace(request.OrderNumber))
+			{
+				var existingOrder = await _orderStore.GetByOrderNumberAsync(request.OrderNumber);
+				if (existingOrder != null)
+					return existingOrder.Id;
+			}
 			var order = _mapper.Map<OrderEntity>(request);
-			order.CreatedAt = DateTime.UtcNow;
+			order.CreatedAt = ToUtc(order.CreatedAt ?? DateTime.UtcNow);
+			order.ClosedAt = ToUtc(order.ClosedAt ?? DateTime.UtcNow);
 			_orderStore.Add(order);
 			await _orderStore.SaveAsync();
 			return order.Id;
 		}
 
+		private static DateTime ToUtc(DateTime dt)
+		{
+			return dt.Kind switch
+			{
+				DateTimeKind.Utc => dt,
+				DateTimeKind.Local => dt.ToUniversalTime(),
+				DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+				_ => dt
+			};
+		}
 		public async Task CreateOrderItemsAsync(List<OrderItem> request)
 		{
 			var orderItems = _mapper.Map<List<OrderItemEntity>>(request);

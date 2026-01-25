@@ -7,6 +7,7 @@ namespace SmartServe.Domain.Stores
 	{
 		Task<OrderEntity?> GetOrderAsync(int orderId);
 		void Update(OrderEntity order);
+		Task<OrderEntity?> GetByOrderNumberAsync(string orderNumber);
 	}
 
 }

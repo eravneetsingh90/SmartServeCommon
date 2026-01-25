@@ -18,6 +18,11 @@ namespace SmartServe.Domain.Stores
 						.ThenInclude(v => v.Product)
 				.FirstOrDefaultAsync(o => o.Id == orderId);
 		}
+		public async Task<OrderEntity?> GetByOrderNumberAsync(string orderNumber)
+		{
+			return await Set.AsNoTracking()
+				.FirstOrDefaultAsync(e => e.OrderNumber == orderNumber);
+		}
 		public virtual void Update(OrderEntity order)
 		{
 			var tracked = Db.Orders.Local.FirstOrDefault(x => x.Id == order.Id);
