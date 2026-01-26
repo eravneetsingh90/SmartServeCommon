@@ -19,6 +19,7 @@ namespace SmartServe.Domain.Dependencies
 			services.AddSingleton<IBillingService, BillingService>();
 			services.AddScoped<IProductService, ProductService>();
 			services.AddScoped<ICatalogService, CatalogService>();
+			services.AddScoped<IOrderReportService, OrderReportService>();
 			//stores
 			services.AddScoped<IProductStore, ProductStore>();
 			services.AddScoped<IProductVariantStore, ProductVariantStore>();

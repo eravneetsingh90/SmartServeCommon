@@ -2,7 +2,9 @@
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 using System.Collections.Generic;
-
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 namespace SmartServe.Domain.Stores
 {
 	public class OrderStore : BaseStore<OrderEntity>, IOrderStore
@@ -22,6 +24,16 @@ namespace SmartServe.Domain.Stores
 		{
 			return await Set.AsNoTracking()
 				.FirstOrDefaultAsync(e => e.OrderNumber == orderNumber);
+		}
+		public async Task<List<OrderEntity>> GetByDateFilterAsync(DateTime fromUtc,DateTime toUtc)
+		{
+			var result = await Set
+				.AsNoTracking()
+				.Where(o => o.CreatedAt >= fromUtc && o.CreatedAt < toUtc)
+				.Include(o=>o.Status)
+				.OrderByDescending(o=> o.CreatedAt)
+				.ToListAsync();
+			return result;
 		}
 		public virtual void Update(OrderEntity order)
 		{

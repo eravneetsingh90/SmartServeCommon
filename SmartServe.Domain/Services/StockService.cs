@@ -162,7 +162,7 @@ namespace SmartServe.Domain.Services
 				// 1. Try DIRECT VARIANT stock (sealed / ready item)
 				// -------------------------------------------------
 				var variantStock = await _stockItemStore.GetStockAsync(
-					StockItemType.VARIANT,
+					StockItem.VARIANT,
 					variantId);
 
 				if (variantStock != null)
@@ -191,7 +191,7 @@ namespace SmartServe.Domain.Services
 					int ingredientVariantId = ingredient.IngredientVariantId;
 
 					var ingredientStock = await _stockItemStore.GetStockAsync(
-						StockItemType.INGREDIENT,
+						StockItem.INGREDIENT,
 						ingredientVariantId);
 
 					if (ingredientStock == null)

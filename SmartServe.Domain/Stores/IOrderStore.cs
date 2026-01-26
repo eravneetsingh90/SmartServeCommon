@@ -8,6 +8,7 @@ namespace SmartServe.Domain.Stores
 		Task<OrderEntity?> GetOrderAsync(int orderId);
 		void Update(OrderEntity order);
 		Task<OrderEntity?> GetByOrderNumberAsync(string orderNumber);
+		Task<List<OrderEntity>> GetByDateFilterAsync(DateTime fromUtc, DateTime toUtc);
 	}
 
 }

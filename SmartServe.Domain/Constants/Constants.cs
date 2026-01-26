@@ -29,7 +29,7 @@
 		public const string CARD = "CARD";
 		public const string PART = "PART";
 	}
-	public static class StockItemType
+	public static class StockItem
 	{
 		public const string VARIANT = "VARIANT";
 		public const string INGREDIENT = "INGREDIENT";
