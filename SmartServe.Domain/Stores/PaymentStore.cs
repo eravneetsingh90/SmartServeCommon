@@ -1,4 +1,5 @@
-﻿using SmartServe.EFCore.Db;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
@@ -7,7 +8,16 @@ namespace SmartServe.Domain.Stores
 	{
 		public PaymentStore(SmartServeDbContext db) : base(db)
 		{
+
 		}
-		
+		public async Task<List<PaymentEntity>> GetByDateFilterAsync(DateTime fromUtc, DateTime toUtc)
+		{
+			var result = await Set
+				.AsNoTracking()
+				.Where(o => o.CreatedAt >= fromUtc && o.CreatedAt < toUtc)
+				.OrderByDescending(o => o.CreatedAt)
+				.ToListAsync();
+			return result;
+		}
 	}
 }

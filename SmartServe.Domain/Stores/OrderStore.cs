@@ -30,7 +30,6 @@ namespace SmartServe.Domain.Stores
 			var result = await Set
 				.AsNoTracking()
 				.Where(o => o.CreatedAt >= fromUtc && o.CreatedAt < toUtc)
-				.Include(o=>o.Status)
 				.OrderByDescending(o=> o.CreatedAt)
 				.ToListAsync();
 			return result;

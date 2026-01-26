@@ -5,5 +5,6 @@ namespace SmartServe.Domain.Stores
 {
 	public interface IPaymentStore : IBaseStore<PaymentEntity>
 	{
+		Task<List<PaymentEntity>> GetByDateFilterAsync(DateTime fromUtc, DateTime toUtc);
 	}
 }

@@ -40,4 +40,9 @@
 		public const string OUT = "OUT";
 		public const string ADJUST = "ADJUST";
 	}
+	public static class DiscountType
+	{
+		public const string PERCENT = "PERCENT";
+		public const string FLAT = "FLAT";
+	}
 }
