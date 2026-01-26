@@ -59,16 +59,6 @@ namespace SmartServe.Domain.Services
 			return order.Id;
 		}
 
-		private static DateTime ToUtc(DateTime dt)
-		{
-			return dt.Kind switch
-			{
-				DateTimeKind.Utc => dt,
-				DateTimeKind.Local => dt.ToUniversalTime(),
-				DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
-				_ => dt
-			};
-		}
 		public async Task CreateOrderItemsAsync(List<OrderItem> request)
 		{
 			var orderItems = _mapper.Map<List<OrderItemEntity>>(request);
@@ -139,5 +129,24 @@ namespace SmartServe.Domain.Services
 
 		}
 
+		public async Task CreatePaymentsAsync(List<Payment> request)
+		{
+			var payments = _mapper.Map<List<PaymentEntity>>(request);
+
+			await _paymentStore.AddPaymentsAsync(payments);
+		}
+
+		#region private methods
+		private static DateTime ToUtc(DateTime dt)
+		{
+			return dt.Kind switch
+			{
+				DateTimeKind.Utc => dt,
+				DateTimeKind.Local => dt.ToUniversalTime(),
+				DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+				_ => dt
+			};
+		}
+		#endregion
 	}
 }

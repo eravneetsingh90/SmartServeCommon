@@ -5,7 +5,7 @@ using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Stores
 {
-	public class OrderItemStore : BaseStore<OrderItemEntity>,IOrderItemStore
+	public class OrderItemStore : BaseStore<OrderItemEntity>, IOrderItemStore
 	{
 		public OrderItemStore(SmartServeDbContext db) : base(db) { }
 
@@ -13,6 +13,8 @@ namespace SmartServe.Domain.Stores
 		{
 			return await Set
 				.Where(i => i.OrderId == orderId)
+				.Include(i => i.Variant)
+						.ThenInclude(v => v.Product)
 				.ToListAsync();
 		}
 		public async Task AddOrderItemsAsync(List<OrderItemEntity> items)

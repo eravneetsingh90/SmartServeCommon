@@ -10,6 +10,13 @@ namespace SmartServe.Domain.Stores
 		{
 
 		}
+
+		public async Task AddPaymentsAsync(List<PaymentEntity> items)
+		{
+			AddRange(items);
+			await SaveAsync();
+		}
+
 		public async Task<List<PaymentEntity>> GetByDateFilterAsync(DateTime fromUtc, DateTime toUtc)
 		{
 			var result = await Set

@@ -11,5 +11,6 @@ namespace SmartServe.Domain.Services
 		Task CreateOrderItemsAsync(List<OrderItem> orderItems);
 		Task UpdateOrderItemsAsync(int orderId, List<OrderItem> items);
 		Task CloseOrderAsync(int orderId, Payment payment);
+		Task CreatePaymentsAsync(List<Payment> payments);
 	}
 }
