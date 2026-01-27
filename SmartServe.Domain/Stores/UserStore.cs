@@ -15,6 +15,7 @@ namespace SmartServe.Domain.Stores
 		{
 			var result = await Set
 				.AsNoTracking()
+				.Include(u=>u.Role)
 				.FirstOrDefaultAsync(u =>
 					u.Name == username &&
 					u.IsActive == true);
