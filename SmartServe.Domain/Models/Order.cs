@@ -13,7 +13,7 @@ namespace SmartServe.Domain.Models
 		public int? TableId { get; set; }
 
 		public int? StatusId { get; set; }
-
+		public decimal? OriginalAmount { get; set; }
 		public decimal? TotalAmount { get; set; }
 
 		public string? DiscountType { get; set; }

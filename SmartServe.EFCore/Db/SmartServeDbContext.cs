@@ -133,6 +133,10 @@ public partial class SmartServeDbContext : DbContext
 				.HasColumnName("order_type");
 			entity.Property(e => e.StatusId).HasColumnName("status_id");
 			entity.Property(e => e.TableId).HasColumnName("table_id");
+			entity.Property(e => e.OriginalAmount)
+				.HasPrecision(10, 2)
+				.HasDefaultValueSql("0")
+				.HasColumnName("original_amount");
 			entity.Property(e => e.TotalAmount)
 				.HasPrecision(10, 2)
 				.HasDefaultValueSql("0")

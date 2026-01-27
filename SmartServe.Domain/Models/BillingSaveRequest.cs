@@ -7,7 +7,7 @@
 		public string TableStatusCode { get; set; }
 		public int? TableId { get; set; }
 		public decimal TotalAmount { get; set; }
-
+		public decimal OriginalAmount { get; set; }
 		public List<BillingItem> Items { get; set; } = new();
 
 		public decimal DiscountValue { get; set; }
