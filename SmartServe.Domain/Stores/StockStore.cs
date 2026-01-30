@@ -16,7 +16,6 @@ namespace SmartServe.Domain.Stores
 		public async Task<List<StockEntity>> GetStockAsync()
 		{
 			return await Set
-				.Where(x => x.IsActive == true)
 				.AsNoTracking()
 				.ToListAsync();
 		}

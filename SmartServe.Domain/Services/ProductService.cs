@@ -81,6 +81,11 @@ namespace SmartServe.Domain.Services
 			var items = await _productStore.GetByCategoryIdAsync(categoryId);
 			return _mapper.Map<List<Product>>(items);
 		}
+		public async Task<List<ProductVariant>> GetVariantAsync()
+		{
+			var items = await _variantStore.GetAllAsync();
+			return _mapper.Map<List<ProductVariant>>(items);
+		}
 		public async Task<List<ProductVariant>> GetVariantByProductIdAsync(int productId)
 		{
 			var items = await _variantStore.GetByProductIdAsync(productId);

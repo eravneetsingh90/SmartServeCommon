@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
@@ -12,10 +11,9 @@ namespace SmartServe.Domain.Services
 		#region fields
 		private readonly IUnitOfWork _uow;
 		private readonly IMapper _mapper;
-		private readonly IStockStore _stockItemStore;
+		private readonly IStockStore _stockStore;
 		private readonly IStockTransactionStore _stockTransactionStore;
 		private readonly IOrderStore _orderStore;
-		private readonly IIngredientStore _ingredientStore;
 		private readonly IProductIngredientStore _productIngredientStore;
 		#endregion
 
@@ -23,78 +21,39 @@ namespace SmartServe.Domain.Services
 		public StockService(
 			IMapper mapper,
 			IUnitOfWork uow,
-			IStockStore stockItemStore,
+			IStockStore stockStore,
 			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
-			IIngredientStore ingredientStore,
 			IProductIngredientStore productIngredientStore)
 		{
 			_uow = uow;
 			_mapper = mapper;
-			_stockItemStore = stockItemStore;
+			_stockStore = stockStore;
 			_stockTransactionStore = stockTransactionStore;
 			_orderStore = orderStore;
-			_ingredientStore = ingredientStore;
 			_productIngredientStore = productIngredientStore;
 		}
 		#endregion
 
 		#region methods
-		public async Task<List<Stock>> GetStockItemAsync(string itemType)
+		public async Task<List<Stock>> GetStockAsync()
 		{
-			return _mapper.Map<List<Stock>>(await _stockItemStore.GetStockAsync(itemType));
+			return _mapper.Map<List<Stock>>(await _stockStore.GetStockAsync());
 		}
 
-		public async Task CreateStockItemAsync(string itemType, int referenceId, string unit, decimal minStockLevel)
+		public async Task ActivateStockItemAsync(Stock stock)
 		{
-			var stockItem = new StockEntity
+			var stockEntity = _mapper.Map<StockEntity>(stock);
+			if (stockEntity.Id == 0)
 			{
-				ItemType = itemType,
-				VariantId = referenceId,
-				Unit = unit,
-				MinStockLevel = minStockLevel,
-				IsActive = true,
-				CreatedAt = DateTime.UtcNow
-			};
-
-			await _stockItemStore.AddStockAsync(stockItem);
-		}
-
-		public async Task ActivateStockItemAsync(string itemType, int referenceId)
-		{
-			var stockItem = await _stockItemStore
-				.GetStockAsync(itemType, referenceId);
-
-			if (stockItem == null)
-			{
-				await CreateStockItemAsync(itemType, referenceId, "PCS", 0);
-				return;
+				_stockStore.Add(stockEntity);
 			}
-
-			if (stockItem.IsActive == true)
-				return; // already active → no-op
-
-			stockItem.IsActive = true;
-
-			await _stockItemStore.UpdateStockAsync(stockItem);
-		}
-
-		public async Task DeactivateStockItemAsync(string itemType, int referenceId)
-		{
-			var stockItem = await _stockItemStore.GetStockAsync(itemType, referenceId);
-
-			if (stockItem == null)
-				return;
-
-			var currentQty = await _stockItemStore.GetCurrentStockQuantityAsync(stockItem.Id);
-
-			if (currentQty != 0)
-				throw new InvalidOperationException(
-					"Cannot remove from stock while quantity is not zero.");
-
-			stockItem.IsActive = false;
-
-			await _stockItemStore.UpdateStockAsync(stockItem);
+			else
+			{
+				_stockStore.Update(stockEntity);
+			}
+			
+			await _stockStore.SaveAsync();
 		}
 
 		public async Task<BaseResponse> AddStockAsync(List<AddStock> rows)
@@ -105,7 +64,7 @@ namespace SmartServe.Domain.Services
 				await _uow.BeginAsync();
 				foreach (var row in rows)
 				{
-					var stockItem = await _stockItemStore.GetStockAsync(row.ItemType.ToString(), row.VariantId);
+					var stockItem = await _stockStore.GetStockAsync(row.ItemType.ToString(), row.VariantId);
 
 					if (stockItem == null)
 						throw new Exception("Stock item not found.");
@@ -161,8 +120,8 @@ namespace SmartServe.Domain.Services
 				// -------------------------------------------------
 				// 1. Try DIRECT VARIANT stock (sealed / ready item)
 				// -------------------------------------------------
-				var variantStock = await _stockItemStore.GetStockAsync(
-					StockItem.VARIANT,
+				var variantStock = await _stockStore.GetStockAsync(
+					StockItemType.VARIANT,
 					variantId);
 
 				if (variantStock != null)
@@ -190,8 +149,8 @@ namespace SmartServe.Domain.Services
 				{
 					int ingredientVariantId = ingredient.IngredientVariantId;
 
-					var ingredientStock = await _stockItemStore.GetStockAsync(
-						StockItem.INGREDIENT,
+					var ingredientStock = await _stockStore.GetStockAsync(
+						StockItemType.INGREDIENT,
 						ingredientVariantId);
 
 					if (ingredientStock == null)
@@ -213,7 +172,7 @@ namespace SmartServe.Domain.Services
 			if (quantity <= 0)
 				return;
 
-			var currentQty = await _stockItemStore
+			var currentQty = await _stockStore
 				.GetCurrentStockQuantityAsync(stockItemId);
 
 			if (currentQty < quantity)
@@ -232,13 +191,6 @@ namespace SmartServe.Domain.Services
 			});
 			await _stockTransactionStore.SaveAsync();
 		}
-
-		public async Task<List<Ingredient>> GetIngredients()
-		{
-			var items = await _ingredientStore.GetAllAsync();
-			return _mapper.Map<List<Ingredient>>(items);
-		}
-
 		#endregion
 	}
 

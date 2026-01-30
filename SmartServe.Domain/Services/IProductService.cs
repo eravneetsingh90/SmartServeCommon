@@ -12,6 +12,7 @@ namespace SmartServe.Domain.Services
 		Task<List<ProductVariant>> GetProductVariantsAsync();
 		Task<List<ProductVariant>> GetActiveProductVariantsAsync();
 		Task<List<Product>> GetProductByCategoryIdAsync(int categoryId);
+		Task<List<ProductVariant>> GetVariantAsync();
 		Task<List<ProductVariant>> GetVariantByProductIdAsync(int productId);
 		Task<List<ProductVariant>> GetVariantsByBrandIdAsync(int brandId);
 		Task<List<Stock>> GetAllStockAsync();

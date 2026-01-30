@@ -36,6 +36,14 @@ namespace SmartServe.Domain.Stores
 		{
 			Set.AddRange(entities);
 		}
+		public virtual void Update(T entity)
+		{
+			Set.Update(entity);
+		}
+		public virtual void UpdateRange(List<T> entities)
+		{
+			Set.UpdateRange(entities);
+		}
 		public virtual void RemoveRange(List<T> entities)
 		{
 			Set.RemoveRange(entities);

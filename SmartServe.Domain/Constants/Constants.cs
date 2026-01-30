@@ -31,7 +31,7 @@
 		public const string CARD = "CARD";
 		public const string PART = "PART";
 	}
-	public static class StockItem
+	public static class StockItemType
 	{
 		public const string VARIANT = "VARIANT";
 		public const string INGREDIENT = "INGREDIENT";
@@ -46,5 +46,11 @@
 	{
 		public const string PERCENT = "PERCENT";
 		public const string FLAT = "FLAT";
+	}
+	public static class UnitType
+	{
+		public const string PCS = "PCS";
+		public const string ML = "ML";
+		public const string GM = "GM";
 	}
 }
