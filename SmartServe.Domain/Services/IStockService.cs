@@ -8,9 +8,7 @@ namespace SmartServe.Domain.Services
 		Task<List<Stock>> GetStockAsync();
 		Task ActivateStockItemAsync(Stock stock);
 		Task<BaseResponse> AddStockAsync(List<AddStock> rows);
-		Task AdjustStockAsync(int stockItemId,decimal quantity,string reason);
-		Task ApplyOrderStockAsync(int orderId);
-
+		
 	}
 
 }
