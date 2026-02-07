@@ -3,6 +3,7 @@ using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using System.Net;
 
 namespace SmartServe.Domain.Stores
 {
@@ -16,13 +17,6 @@ namespace SmartServe.Domain.Stores
 		public async Task<List<StockEntity>> GetStockAsync()
 		{
 			return await Set
-				.AsNoTracking()
-				.ToListAsync();
-		}
-		public async Task<List<StockEntity>> GetStockAsync(string itemType)
-		{
-			return await Set
-				.Where(x => x.ItemType == itemType)
 				.AsNoTracking()
 				.ToListAsync();
 		}
@@ -43,35 +37,62 @@ namespace SmartServe.Domain.Stores
 				.Where(x => x.IsActive == true)
 				.ToListAsync();
 		}
-		public async Task AddStockAsync(StockEntity stockItem)
+		public async Task<List<CurrentStock>> GetCurrentStockAsync()
 		{
-			Set.Add(stockItem);
-			await SaveAsync();
+			var result =
+				await (
+					from stock in Db.Stocks.AsNoTracking()
+					where stock.IsActive == true
+
+					join variant in Db.ProductVariants.AsNoTracking()
+						on stock.VariantId equals variant.Id
+
+					join product in Db.Products.AsNoTracking()
+						on variant.ProductId equals product.Id
+
+					join txn in Db.StockTransactions.AsNoTracking()
+						on stock.Id equals txn.StockId into transactions
+
+					let totalIn =
+						transactions
+							.Where(t => t.TransactionType == "IN")
+							.Sum(t => (decimal?)t.Quantity) ?? 0
+
+					let totalOut =
+						transactions
+							.Where(t => t.TransactionType == "OUT")
+							.Sum(t => (decimal?)t.Quantity) ?? 0
+
+					let adjust =
+						transactions
+							.Where(t => t.TransactionType == "ADJUST")
+							.Sum(t => (decimal?)t.Quantity) ?? 0
+
+					let currentStock = totalIn - totalOut + adjust
+
+					select new CurrentStock
+					{
+						Id = stock.Id,
+
+						ItemName = $"{product.Name}-{variant.VariantName}",
+						Category = stock.ItemType,
+
+						Unit = stock.Unit,
+						MinStockLevel = stock.MinStockLevel??0,
+						CurrentQuantity = currentStock,
+
+						Status =
+							currentStock <= 0
+								? "OutOfStock"
+								: currentStock <= stock.MinStockLevel
+									? "LowStock"
+									: "InStock"
+					}
+				).ToListAsync();
+
+			return result;
 		}
 
-		public async Task UpdateStockAsync(StockEntity stockItem)
-		{
-			Set.Update(stockItem);
-			await SaveAsync();
-		}
-
-		
-		public async Task<decimal> GetCurrentStockQuantityAsync(int stockItemId)
-		{
-			var qty = await Db.StockTransactions
-				.Where(x => x.Id == stockItemId)
-				.SumAsync(x =>
-					x.TransactionType == StockTxnType.IN ? x.Quantity :
-					x.TransactionType == StockTxnType.OUT ? -x.Quantity :
-					x.Quantity);
-
-			return qty;
-		}
-
-		public Task<List<CurrentStock>> GetCurrentStockAsync()
-		{
-			throw new NotImplementedException();
-		}
 	}
 
 }

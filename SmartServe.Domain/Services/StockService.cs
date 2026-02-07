@@ -3,6 +3,7 @@ using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;
+using System;
 
 namespace SmartServe.Domain.Services
 {
@@ -90,7 +91,12 @@ namespace SmartServe.Domain.Services
 			return response;
 		}
 
-		#endregion
-	}
+		public async Task<List<CurrentStock>> GetCurrentStockAsync()
+		{
+			return await _stockStore.GetCurrentStockAsync();
+		}
+
+	#endregion
+}
 
 }

@@ -8,11 +8,7 @@ namespace SmartServe.Domain.Stores
 	{
 		Task<List<StockEntity>> GetAllStockAsync();
 		Task<List<StockEntity>> GetStockAsync();
-		Task<List<StockEntity>> GetStockAsync(string itemType);
 		Task<StockEntity?> GetStockAsync(string itemType, int referenceId);
-		Task UpdateStockAsync(StockEntity stockItem);
-		Task AddStockAsync(StockEntity stockItem);
 		Task<List<CurrentStock>> GetCurrentStockAsync();
-		Task<decimal> GetCurrentStockQuantityAsync(int id);
 	}
 }
