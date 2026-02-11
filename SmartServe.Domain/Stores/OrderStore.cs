@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SmartServe.Domain.Models;
+
 namespace SmartServe.Domain.Stores
 {
 	public class OrderStore : BaseStore<OrderEntity>, IOrderStore
@@ -48,6 +50,18 @@ namespace SmartServe.Domain.Stores
 				Attach(tracked);
 			}
 			Db.Entry(tracked).CurrentValues.SetValues(order);
+		}
+
+		public async Task<List<OrderEntity>> GetUntrackedOrdersAsync(
+		int max,
+		CancellationToken ct)
+		{
+			return await Set
+				.AsNoTracking() // we will reattach when updating
+				.Where(o => !o.IsTracked)
+				.OrderBy(o => o.CreatedAt)
+				.Take(max)
+				.ToListAsync(ct);
 		}
 	}
 }

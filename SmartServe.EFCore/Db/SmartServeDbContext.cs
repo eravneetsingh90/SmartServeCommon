@@ -131,6 +131,9 @@ public partial class SmartServeDbContext : DbContext
 			entity.Property(e => e.OrderType)
 				.HasMaxLength(20)
 				.HasColumnName("order_type");
+			entity.Property(e => e.IsTracked)
+				.HasDefaultValue(false)
+				.HasColumnName("is_tracked");
 			entity.Property(e => e.StatusId).HasColumnName("status_id");
 			entity.Property(e => e.TableId).HasColumnName("table_id");
 			entity.Property(e => e.OriginalAmount)

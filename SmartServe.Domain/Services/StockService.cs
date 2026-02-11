@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
@@ -16,6 +18,8 @@ namespace SmartServe.Domain.Services
 		private readonly IStockTransactionStore _stockTransactionStore;
 		private readonly IOrderStore _orderStore;
 		private readonly IProductIngredientStore _productIngredientStore;
+		private readonly IOrderItemStore _orderItemStore;
+		//private readonly ILogger<StockService> _logger;
 		#endregion
 
 		#region constructor
@@ -25,7 +29,9 @@ namespace SmartServe.Domain.Services
 			IStockStore stockStore,
 			IStockTransactionStore stockTransactionStore,
 			IOrderStore orderStore,
-			IProductIngredientStore productIngredientStore)
+			IProductIngredientStore productIngredientStore,
+			IOrderItemStore orderItemStore)
+			//ILogger<StockService> logger)
 		{
 			_uow = uow;
 			_mapper = mapper;
@@ -33,6 +39,8 @@ namespace SmartServe.Domain.Services
 			_stockTransactionStore = stockTransactionStore;
 			_orderStore = orderStore;
 			_productIngredientStore = productIngredientStore;
+			_orderItemStore = orderItemStore;
+			//_logger = logger;
 		}
 		#endregion
 
@@ -53,7 +61,7 @@ namespace SmartServe.Domain.Services
 			{
 				_stockStore.Update(stockEntity);
 			}
-			
+
 			await _stockStore.SaveAsync();
 		}
 
@@ -95,8 +103,84 @@ namespace SmartServe.Domain.Services
 		{
 			return await _stockStore.GetCurrentStockAsync();
 		}
+		public async Task ProcessUntrackedOrdersAsync(CancellationToken ct = default)
+		{
+			var orders = await _orderStore.GetUntrackedOrdersAsync(
+				max: 10,
+				ct);
 
-	#endregion
-}
+			foreach (var order in orders)
+			{
+				await _uow.BeginAsync();
+
+				try
+				{
+					var orderItems = await _orderItemStore.GetOrderItemsAsync(order.Id);
+
+					foreach (var item in orderItems)
+					{
+						await ProcessOrderItemAsync(order, item, ct);
+					}
+
+					order.IsTracked = true;
+					_orderStore.Update(order);
+
+					await _uow.CommitAsync();
+				}
+				catch (Exception ex)
+				{
+					await _uow.RollbackAsync();
+
+					//_logger.LogError(
+					//	ex,
+					//	"Stock tracking failed for OrderId {OrderId}",
+					//	order.Id);
+				}
+			}
+		}
+		#endregion
+
+		#region Private Methods
+		private async Task ProcessOrderItemAsync(
+					OrderEntity order,
+					OrderItemEntity item,
+					CancellationToken ct)
+		{
+			// Variant-based stock only
+			var stock = await _stockStore.GetStockAsync(item.VariantId??0);
+
+			if (stock == null)
+			{
+				//_logger.LogWarning(
+				//	"No stock found for VariantId {VariantId}, OrderId {OrderId}",
+				//	item.VariantId,
+				//	order.Id);
+				return;
+			}
+
+			if (stock.ItemType != StockItemType.VARIANT)
+			{
+				//_logger.LogInformation(
+				//	"Skipping ingredient stock. StockId {StockId}",
+				//	stock.Id);
+				return;
+			}
+
+			var transaction = new StockTransactionEntity
+			{
+				StockId = stock.Id,
+				TransactionType = StockTxnType.OUT,
+				Quantity = item.Quantity,
+				Reason = "ORDER",
+				ReferenceType = "ORDER",
+				ReferenceId = order.Id
+			};
+
+			_stockTransactionStore.Add(transaction);
+		}
+
+
+		#endregion
+	}
 
 }

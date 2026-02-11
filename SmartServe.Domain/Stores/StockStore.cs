@@ -20,6 +20,12 @@ namespace SmartServe.Domain.Stores
 				.AsNoTracking()
 				.ToListAsync();
 		}
+		public async Task<StockEntity?> GetStockAsync(int referenceId)
+		{
+			return await Set
+				.FirstOrDefaultAsync(x =>
+					x.VariantId == referenceId);
+		}
 		public async Task<StockEntity?> GetStockAsync(string itemType, int referenceId)
 		{
 			return await Set
@@ -50,6 +56,9 @@ namespace SmartServe.Domain.Stores
 					join product in Db.Products.AsNoTracking()
 						on variant.ProductId equals product.Id
 
+					join category in Db.Categories.AsNoTracking()
+						on product.CategoryId equals category.Id
+
 					join txn in Db.StockTransactions.AsNoTracking()
 						on stock.Id equals txn.StockId into transactions
 
@@ -74,7 +83,7 @@ namespace SmartServe.Domain.Stores
 					{
 						Id = stock.Id,
 
-						ItemName = $"{product.Name}-{variant.VariantName}",
+						ItemName = $"({category.Name}) {product.Name}-{variant.VariantName}",
 						Category = stock.ItemType,
 
 						Unit = stock.Unit,

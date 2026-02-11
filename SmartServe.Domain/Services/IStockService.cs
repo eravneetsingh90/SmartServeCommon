@@ -9,6 +9,7 @@ namespace SmartServe.Domain.Services
 		Task ActivateStockItemAsync(Stock stock);
 		Task<BaseResponse> AddStockAsync(List<AddStock> rows);
 		Task<List<CurrentStock>> GetCurrentStockAsync();
+		Task ProcessUntrackedOrdersAsync(CancellationToken ct = default);
 	}
 
 }
