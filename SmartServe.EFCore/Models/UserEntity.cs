@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace SmartServe.EFCore.Models;
 
-public partial class UserEntity
+public partial class UserEntity 
 {
     public int Id { get; set; }
+
+    public int TenantId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -18,4 +20,6 @@ public partial class UserEntity
     public DateTime? CreatedAt { get; set; }
 
     public virtual RoleEntity? Role { get; set; }
+
+    public virtual TenantEntity Tenant { get; set; } = null!;
 }

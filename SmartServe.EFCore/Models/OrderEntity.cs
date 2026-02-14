@@ -5,37 +5,41 @@ namespace SmartServe.EFCore.Models;
 
 public partial class OrderEntity
 {
-	public int Id { get; set; }
+    public int Id { get; set; }
 
-	public string? OrderNumber { get; set; }
+    public int TenantId { get; set; }
 
-	public string? OrderType { get; set; }
+    public string OrderNumber { get; set; } = null!;
 
-	public int? TableId { get; set; }
+    public string? OrderType { get; set; }
 
-	public int? StatusId { get; set; }
+    public int? TableId { get; set; }
 
-	public decimal? TotalAmount { get; set; }
+    public int? StatusId { get; set; }
 
-	public string? DiscountType { get; set; }
+    public decimal? OriginalAmount { get; set; }
 
-	public decimal? DiscountValue { get; set; }
+    public decimal? TotalAmount { get; set; }
 
-	public string? DiscountReason { get; set; }
+    public string? DiscountType { get; set; }
 
-	public DateTime? CreatedAt { get; set; }
+    public decimal? DiscountValue { get; set; }
 
-	public DateTime? ClosedAt { get; set; }
+    public string? DiscountReason { get; set; }
 
-	public decimal? OriginalAmount { get; set; }
+    public bool? IsTracked { get; set; }
 
-	public bool IsTracked { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-	public virtual ICollection<OrderItemEntity> OrderItems { get; set; } = new List<OrderItemEntity>();
+    public DateTime? ClosedAt { get; set; }
 
-	public virtual ICollection<PaymentEntity> Payments { get; set; } = new List<PaymentEntity>();
+    public virtual ICollection<OrderItemEntity> OrderItems { get; set; } = new List<OrderItemEntity>();
 
-	public virtual TableStatusEntity? Status { get; set; }
+    public virtual ICollection<PaymentEntity> Payments { get; set; } = new List<PaymentEntity>();
 
-	public virtual RestaurantTableEntity? Table { get; set; }
+    public virtual TableStatusEntity? Status { get; set; }
+
+    public virtual RestaurantTableEntity? Table { get; set; }
+
+    public virtual TenantEntity Tenant { get; set; } = null!;
 }

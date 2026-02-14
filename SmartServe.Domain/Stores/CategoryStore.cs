@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using SmartServe.Resources.Provider;
 using System.Runtime.CompilerServices;
 
 namespace SmartServe.Domain.Stores
@@ -8,7 +9,8 @@ namespace SmartServe.Domain.Stores
 	public class CategoryStore : BaseStore<CategoryEntity>, ICategoryStore
 	{
 		private readonly IUnitOfWork _uow;
-		public CategoryStore(SmartServeDbContext db, IUnitOfWork uow) : base(db) 
+		public CategoryStore(SmartServeDbContext db, ITenantProvider tenantProvider, IUnitOfWork uow) 
+			: base(db,tenantProvider) 
 		{
 			_uow = uow;
 		}

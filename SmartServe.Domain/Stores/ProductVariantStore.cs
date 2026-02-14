@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using SmartServe.Resources.Provider;
 
 namespace SmartServe.Domain.Stores
 {
@@ -11,7 +12,8 @@ namespace SmartServe.Domain.Stores
 
 		public ProductVariantStore(
 			SmartServeDbContext db,
-			IUnitOfWork uow) : base(db)
+            ITenantProvider tenantProvider,
+            IUnitOfWork uow) : base(db, tenantProvider)
 		{
 			_uow = uow;
 		}

@@ -44,9 +44,9 @@ namespace SmartServe.API.Test.Controllers
 
 		[HttpGet]
 		[Route("get-active-user")]
-		public async Task<UserEntity> GetActiveUser(string username)
+		public async Task<UserEntity> GetActiveUser(string username,int tenantId)
 		{
-			var user = await _user.GetActiveUserByUsernameAsync(username);
+			var user = await _user.GetActiveUserAsync(username,tenantId);
 			return user;
 		}
 

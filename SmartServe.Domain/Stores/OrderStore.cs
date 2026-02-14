@@ -1,17 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
-using System.Collections.Generic;
+using SmartServe.Resources.Provider;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SmartServe.Domain.Models;
 
 namespace SmartServe.Domain.Stores
 {
 	public class OrderStore : BaseStore<OrderEntity>, IOrderStore
 	{
-		public OrderStore(SmartServeDbContext db) : base(db) { }
+		public OrderStore(SmartServeDbContext db, ITenantProvider tenantProvider) : base(db, tenantProvider) { }
 
 		public async Task<OrderEntity?> GetOrderAsync(int orderId)
 		{
@@ -58,7 +59,7 @@ namespace SmartServe.Domain.Stores
 		{
 			return await Set
 				.AsNoTracking() // we will reattach when updating
-				.Where(o => !o.IsTracked)
+				.Where(o => o.IsTracked == false)
 				.OrderBy(o => o.CreatedAt)
 				.Take(max)
 				.ToListAsync(ct);

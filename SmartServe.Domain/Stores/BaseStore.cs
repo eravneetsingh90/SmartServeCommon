@@ -1,88 +1,96 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Stores.SmartServe.Domain.Stores;
 using SmartServe.EFCore.Db;
+using SmartServe.Resources.Provider;
+using System.Linq.Expressions;
 
 namespace SmartServe.Domain.Stores
 {
-	public abstract class BaseStore<T> : IBaseStore<T> where T : class
-	{
-		protected readonly SmartServeDbContext Db;
-		protected readonly DbSet<T> Set;
+    public abstract class BaseStore<T> : IBaseStore<T> where T : class
+    {
+        protected readonly ITenantProvider TenantProvider;
 
-		protected BaseStore(SmartServeDbContext db)
-		{
-			Db = db;
-			Set = db.Set<T>();
-		}
+        protected readonly SmartServeDbContext Db;
+        protected readonly DbSet<T> Set;
 
-		// ================= READ =================
+        protected BaseStore(SmartServeDbContext db, ITenantProvider tenantProvider)
+        {
+            Db = db;
+            Set = db.Set<T>();
+            TenantProvider = tenantProvider;
+        }
 
-		public virtual async Task<List<T>> GetAllAsync()
-		{
-			return await Set.AsNoTracking().ToListAsync();
-		}
+        // ================= READ =================
 
-		public virtual async Task<T?> GetByIdAsync<TKey>(TKey id)
-		{
-			return await Set.AsNoTracking()
-				.FirstOrDefaultAsync(e =>
-					EF.Property<TKey>(e, "Id")!.Equals(id));
-		}
-		public virtual void Add(T entity)
-		{
-			Set.Add(entity);
-		}
-		public virtual void AddRange(List<T> entities)
-		{
-			Set.AddRange(entities);
-		}
-		public virtual void Update(T entity)
-		{
-			Set.Update(entity);
-		}
-		public virtual void UpdateRange(List<T> entities)
-		{
-			Set.UpdateRange(entities);
-		}
-		public virtual void RemoveRange(List<T> entities)
-		{
-			Set.RemoveRange(entities);
-		}
-		public virtual void Attach(T entity)
-		{
-			var entry = Db.Entry(entity);
-			if (entry.State == EntityState.Detached)
-			{
-				Set.Attach(entity);
-			}
-		}
+        public virtual Task<List<T>> GetAllAsync()
+        {
+            return Set.AsNoTracking()
+                .Where(e => EF.Property<int>(e, "TenantId")!.Equals(TenantProvider.TenantId))
+                .ToListAsync();
+        }
 
-		public virtual void Remove(T entity)
-		{
-			var entry = Db.Entry(entity);
+        public virtual async Task<T?> GetByIdAsync<TKey>(TKey id)
+        {
+            return await Set.AsNoTracking()
+        .FirstOrDefaultAsync(e =>
+            EF.Property<TKey>(e, "Id")!.Equals(id) &&
+            EF.Property<TKey>(e, "TenantId")!.Equals(TenantProvider.TenantId));
+        }
+        public virtual void Add(T entity)
+        {
+            Set.Add(entity);
+        }
+        public virtual void AddRange(List<T> entities)
+        {
+            Set.AddRange(entities);
+        }
+        public virtual void Update(T entity)
+        {
+            Set.Update(entity);
+        }
+        public virtual void UpdateRange(List<T> entities)
+        {
+            Set.UpdateRange(entities);
+        }
+        public virtual void RemoveRange(List<T> entities)
+        {
+            Set.RemoveRange(entities);
+        }
+        public virtual void Attach(T entity)
+        {
+            var entry = Db.Entry(entity);
+            if (entry.State == EntityState.Detached)
+            {
+                Set.Attach(entity);
+            }
+        }
 
-			if (entry.State == EntityState.Detached)
-			{
-				// Reuse tracked instance if present
-				var tracked = Db.ChangeTracker
-					.Entries<T>()
-					.FirstOrDefault(e =>
-						EF.Property<object>(e.Entity, "Id")!
-							.Equals(EF.Property<object>(entity, "Id")));
+        public virtual void Remove(T entity)
+        {
+            //var entry = Db.Entry(entity);
 
-				entity = tracked?.Entity ?? entity;
-				if (tracked == null)
-					Set.Attach(entity);
-			}
+            //if (entry.State == EntityState.Detached)
+            //{
+            //    // Reuse tracked instance if present
+            //    var tracked = Db.ChangeTracker
+            //        .Entries<T>()
+            //        .FirstOrDefault(e =>
+            //            EF.Property<object>(e.Entity, "Id")!
+            //                .Equals(EF.Property<object>(entity, "Id")));
 
-			Set.Remove(entity);
-		}
+            //    entity = tracked?.Entity ?? entity;
+            //    if (tracked == null)
+            //        Set.Attach(entity);
+            //}
 
-		// ================= COMMIT =================
+            Set.Remove(entity);
+        }
 
-		public virtual Task SaveAsync()
-		{
-			return Db.SaveChangesAsync();
-		}
-	}
+        // ================= COMMIT =================
+
+        public virtual Task SaveAsync()
+        {
+            return Db.SaveChangesAsync();
+        }
+    }
 }

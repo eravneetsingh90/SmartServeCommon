@@ -12,9 +12,10 @@ namespace SmartServe.Domain.Dependencies
 		{
 			//mapping profiles
 			services.AddAutoMapper(typeof(MappingProfile));
-			
-			//services
-			services.AddScoped<IAuthService, AuthService>();
+
+            //services.AddHttpContextAccessor();
+            //services
+            services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IStockService, StockService>();
 			services.AddSingleton<IBillingService, BillingService>();
 			services.AddScoped<IProductService, ProductService>();

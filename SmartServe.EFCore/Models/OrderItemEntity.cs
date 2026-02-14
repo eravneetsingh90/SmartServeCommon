@@ -7,6 +7,8 @@ public partial class OrderItemEntity
 {
     public int Id { get; set; }
 
+    public int TenantId { get; set; }
+
     public int? OrderId { get; set; }
 
     public int? VariantId { get; set; }
@@ -18,6 +20,8 @@ public partial class OrderItemEntity
     public decimal? DiscountAmount { get; set; }
 
     public virtual OrderEntity? Order { get; set; }
+
+    public virtual TenantEntity Tenant { get; set; } = null!;
 
     public virtual ProductVariantEntity? Variant { get; set; }
 }

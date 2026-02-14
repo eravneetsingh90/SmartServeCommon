@@ -7,6 +7,8 @@ public partial class StockEntity
 {
     public int Id { get; set; }
 
+    public int TenantId { get; set; }
+
     public string ItemType { get; set; } = null!;
 
     public int VariantId { get; set; }
@@ -20,6 +22,8 @@ public partial class StockEntity
     public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<StockTransactionEntity> StockTransactions { get; set; } = new List<StockTransactionEntity>();
+
+    public virtual TenantEntity Tenant { get; set; } = null!;
 
     public virtual ProductVariantEntity Variant { get; set; } = null!;
 }

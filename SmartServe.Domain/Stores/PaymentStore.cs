@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
+using SmartServe.Resources.Provider;
 
 namespace SmartServe.Domain.Stores
 {
 	public class PaymentStore : BaseStore<PaymentEntity>, IPaymentStore
 	{
-		public PaymentStore(SmartServeDbContext db) : base(db)
+		public PaymentStore(SmartServeDbContext db, ITenantProvider tenantProvider) : base(db, tenantProvider)
 		{
 
 		}

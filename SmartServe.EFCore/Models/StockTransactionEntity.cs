@@ -7,6 +7,8 @@ public partial class StockTransactionEntity
 {
     public int Id { get; set; }
 
+    public int TenantId { get; set; }
+
     public int StockId { get; set; }
 
     public string TransactionType { get; set; } = null!;
@@ -22,4 +24,6 @@ public partial class StockTransactionEntity
     public DateTime? CreatedAt { get; set; }
 
     public virtual StockEntity Stock { get; set; } = null!;
+
+    public virtual TenantEntity Tenant { get; set; } = null!;
 }
