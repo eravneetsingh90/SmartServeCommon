@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
-using SmartServe.Resources.Provider;
 
 namespace SmartServe.Domain.Stores
 {
 	public class UserStore : BaseStore<UserEntity>, IUserStore
 	{
-		public UserStore(SmartServeDbContext db, ITenantProvider tenantProvider)
-			: base(db, tenantProvider)
+		public UserStore(SmartServeDbContext db)
+			: base(db)
 		{
 		}
 

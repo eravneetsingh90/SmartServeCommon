@@ -5,6 +5,6 @@ namespace SmartServe.Domain.Services
 {
     public interface IAuthService
     {
-        Task<CurrentUser?> LoginAsync(string username, string pin, int tenantId, bool isOffline);
+        Task<CurrentUser?> LoginAsync(string username, string pin, string tenantCode);
     }
 }

@@ -1,22 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.EFCore.Models;
-using SmartServe.Resources.Provider;
 
 namespace SmartServe.EFCore.Db;
 
 public partial class SmartServeDbContext : DbContext
 {
-    private readonly ITenantProvider _tenantProvider;
-
     public SmartServeDbContext()
     {
     }
 
-    public SmartServeDbContext(DbContextOptions<SmartServeDbContext> options,
-        ITenantProvider tenantProvider)
+    public SmartServeDbContext(DbContextOptions<SmartServeDbContext> options)
         : base(options)
     {
-        _tenantProvider = tenantProvider;
+
     }
 
 	public virtual DbSet<BrandEntity> Brands { get; set; }
@@ -69,15 +65,6 @@ public partial class SmartServeDbContext : DbContext
             .HasPostgresExtension("extensions", "uuid-ossp")
             .HasPostgresExtension("graphql", "pg_graphql")
             .HasPostgresExtension("vault", "supabase_vault");
-
-        modelBuilder.Entity<BrandEntity>()
-            .HasQueryFilter(x => x.TenantId == _tenantProvider.TenantId);
-        
-        modelBuilder.Entity<ProductEntity>()
-            .HasQueryFilter(x => x.TenantId == _tenantProvider.TenantId);
-
-        modelBuilder.Entity<OrderEntity>()
-            .HasQueryFilter(x => x.TenantId == _tenantProvider.TenantId);
 
         modelBuilder.Entity<BrandEntity>(entity =>
         {

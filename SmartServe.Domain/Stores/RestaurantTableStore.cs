@@ -3,14 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
-using SmartServe.Resources.Provider;
 
 namespace SmartServe.Domain.Stores
 {
 	public class RestaurantTableStore : BaseStore<RestaurantTableEntity>, IRestaurantTableStore
 	{
 		private readonly IMapper _mapper;
-		public RestaurantTableStore(SmartServeDbContext db, ITenantProvider tenantProvider, IMapper mapper) : base(db, tenantProvider)
+		public RestaurantTableStore(SmartServeDbContext db, IMapper mapper) : base(db)
 		{
 			_mapper = mapper;
 		}

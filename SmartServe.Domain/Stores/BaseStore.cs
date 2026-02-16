@@ -1,40 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartServe.Domain.Stores.SmartServe.Domain.Stores;
 using SmartServe.EFCore.Db;
-using SmartServe.Resources.Provider;
-using System.Linq.Expressions;
 
 namespace SmartServe.Domain.Stores
 {
     public abstract class BaseStore<T> : IBaseStore<T> where T : class
     {
-        protected readonly ITenantProvider TenantProvider;
-
         protected readonly SmartServeDbContext Db;
         protected readonly DbSet<T> Set;
 
-        protected BaseStore(SmartServeDbContext db, ITenantProvider tenantProvider)
+        protected BaseStore(SmartServeDbContext db)
         {
             Db = db;
             Set = db.Set<T>();
-            TenantProvider = tenantProvider;
         }
 
         // ================= READ =================
 
-        public virtual Task<List<T>> GetAllAsync()
+        public virtual Task<List<T>> GetAllAsync(int tenantId = 1)
         {
             return Set.AsNoTracking()
-                .Where(e => EF.Property<int>(e, "TenantId")!.Equals(TenantProvider.TenantId))
+                .Where(e => EF.Property<int>(e, "TenantId")!.Equals(tenantId))
                 .ToListAsync();
         }
 
-        public virtual async Task<T?> GetByIdAsync<TKey>(TKey id)
+        public virtual async Task<T?> GetByIdAsync<TKey>(TKey id,int tenantId = 1)
         {
             return await Set.AsNoTracking()
         .FirstOrDefaultAsync(e =>
             EF.Property<TKey>(e, "Id")!.Equals(id) &&
-            EF.Property<TKey>(e, "TenantId")!.Equals(TenantProvider.TenantId));
+            EF.Property<TKey>(e, "TenantId")!.Equals(tenantId));
         }
         public virtual void Add(T entity)
         {

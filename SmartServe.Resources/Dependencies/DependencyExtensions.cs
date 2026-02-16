@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using SmartServe.Resources.Provider;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace SmartServe.Resources.Dependencies
 {
@@ -9,7 +7,7 @@ namespace SmartServe.Resources.Dependencies
         public static IServiceCollection UseResource(
             this IServiceCollection services)
         {
-            services.AddScoped<ITenantProvider, TenantProvider>();
+            //services.AddScoped<ITenantProvider, TenantProvider>();
 
             return services;
         }

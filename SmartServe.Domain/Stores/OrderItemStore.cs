@@ -1,14 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartServe.Domain.Models;
 using SmartServe.EFCore.Db;
 using SmartServe.EFCore.Models;
-using SmartServe.Resources.Provider;
 
 namespace SmartServe.Domain.Stores
 {
 	public class OrderItemStore : BaseStore<OrderItemEntity>, IOrderItemStore
 	{
-		public OrderItemStore(SmartServeDbContext db, ITenantProvider tenantProvider) : base(db,tenantProvider) { }
+		public OrderItemStore(SmartServeDbContext db) : base(db) { }
 
 		public async Task<List<OrderItemEntity>> GetOrderItemsAsync(int orderId)
 		{
