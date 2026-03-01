@@ -16,7 +16,13 @@
 		public const string DuplicateNotAllowed = "Duplicate Not Allowed";
 		public const string ActiveOrderExists = "Active Order Exists";
 	}
-	public static class TableStatusCodes
+
+    public static class Annotations
+    {
+        public const string ResultCode = "ResultCode";
+        public const string ResultMessage = "ResultMessages";
+    }
+    public static class TableStatusCodes
 	{
 		public const string BLANK = "BLANK";
 		public const string RUNNING = "RUNNING";
