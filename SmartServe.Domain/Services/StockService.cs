@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SmartServe.Common.Models;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;

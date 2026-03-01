@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartServe.Common.Models;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;

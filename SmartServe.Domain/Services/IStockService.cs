@@ -1,4 +1,5 @@
-﻿using SmartServe.Domain.Models;
+﻿using SmartServe.Common.Models;
+using SmartServe.Domain.Models;
 using SmartServe.EFCore.Models;
 
 namespace SmartServe.Domain.Services
