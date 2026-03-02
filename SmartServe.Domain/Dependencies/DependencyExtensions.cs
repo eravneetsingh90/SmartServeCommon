@@ -12,16 +12,15 @@ namespace SmartServe.Domain.Dependencies
 		{
 			//mapping profiles
 			services.AddAutoMapper(typeof(MappingProfile));
-			
-			//services
-			services.AddScoped<IAuthService, AuthService>();
-			services.AddScoped<IStockService, StockService>();
-			services.AddSingleton<IBillingService, BillingService>();
-			services.AddScoped<IProductService, ProductService>();
-			services.AddScoped<ICatalogService, CatalogService>();
-			services.AddScoped<IOrderReportService, OrderReportService>();
-			//stores
-			services.AddScoped<IProductStore, ProductStore>();
+            //services
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IStockService, StockService>();
+            services.AddScoped<IBillingService, BillingService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICatalogService, CatalogService>();
+            services.AddScoped<IOrderReportService, OrderReportService>();
+            //stores
+            services.AddScoped<IProductStore, ProductStore>();
 			services.AddScoped<IProductVariantStore, ProductVariantStore>();
 			services.AddScoped<IUserStore,UserStore>();
 			services.AddScoped<IRestaurantTableStore, RestaurantTableStore>();

@@ -37,4 +37,11 @@
 		public const string ML = "ML";
 		public const string GM = "GM";
 	}
+    public static class RoleType
+    {
+        public const string OWNER = "OWNER";
+        public const string MANAGER = "MANAGER";
+        public const string CASHIER = "CASHIER";
+		public const string KITCHEN = "KITCHEN";
+    }
 }
