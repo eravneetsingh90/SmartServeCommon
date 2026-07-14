@@ -1,7 +1,7 @@
 ﻿using SmartServe.Domain.Models;
 using SmartServe.EFCore.Models;
 
-namespace SmartServe.Domain.Services
+namespace SmartServe.Domain.Interfaces
 {
 	public interface IBillingService
 	{

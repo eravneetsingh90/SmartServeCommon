@@ -1,5 +1,6 @@
 ﻿using SmartServe.Common.Models;
 using SmartServe.Domain.Constants;
+using SmartServe.Domain.Interfaces;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Security;
 using SmartServe.Domain.Stores;
@@ -10,7 +11,7 @@ namespace SmartServe.Domain.Services
     public class AuthService : IAuthService
     {
         private readonly IUserStore _userStore;
-
+        
         public AuthService(IUserStore userStore)
         {
             _userStore = userStore;
@@ -33,7 +34,7 @@ namespace SmartServe.Domain.Services
                 response.Data = new LoginResponse
                 {
                     Name = chefUser.Name,
-                    Role = RoleType.CASHIER
+                    Role = RoleType.Manager
                 };
                 return response;
             }
@@ -49,6 +50,34 @@ namespace SmartServe.Domain.Services
             };
             return response;
         }
+
+        public async Task<BaseResponse<LoginResponse>> LoginAsync(LoginRequest request)
+        {
+            var response = new BaseResponse<LoginResponse>();
+
+            if (string.IsNullOrWhiteSpace(request.Username) || (string.IsNullOrWhiteSpace(request.Password) && string.IsNullOrWhiteSpace(request.Pin)))
+            {
+                return WithMappedError(response, ResultCodes.DataValidationError, ResultMessages.DataValidationError);
+            }
+            
+            var user = await _userStore.GetActiveUserByUsernameAsync(request.Username);
+            if (user == null)
+                return WithMappedError(response, ResultCodes.LoginError, ResultMessages.LoginError);
+            else if (!string.IsNullOrWhiteSpace(request.Pin) && !PinHasher.Verify(request.Pin, user.PinHash))
+                return WithMappedError(response, ResultCodes.LoginError, ResultMessages.LoginError);
+            
+            //var token = _jwtTokenGenerator.GenerateToken(user);
+
+            response.Data = new LoginResponse
+            {
+                //AccessToken = token,
+                Name = user.Name,
+                Role = user.Role.RoleName,
+                ExpiresAt = DateTime.UtcNow.AddHours(2)
+            };
+            return response;
+        }
+
 
         private BaseResponse<T> WithMappedError<T>(BaseResponse<T> response, string resultCode, string? resultMessage)
         {

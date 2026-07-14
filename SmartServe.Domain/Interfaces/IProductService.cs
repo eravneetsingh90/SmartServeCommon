@@ -1,7 +1,7 @@
 ﻿using SmartServe.Common.Models;
 using SmartServe.Domain.Models;
 
-namespace SmartServe.Domain.Services
+namespace SmartServe.Domain.Interfaces
 {
 	public interface IProductService
 	{

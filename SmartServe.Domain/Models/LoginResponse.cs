@@ -4,9 +4,13 @@ namespace SmartServe.Domain.Models
 {
     public class LoginResponse
     {
-        public string Name { get; set; }
-
         public string Role { get; set; }
+
+        public string AccessToken { get; set; } = default!;
+
+        public DateTime ExpiresAt { get; set; }
+
+        public string Name { get; set; } = default!;
 
     }
 }

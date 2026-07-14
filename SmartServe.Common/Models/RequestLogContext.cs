@@ -7,5 +7,7 @@
         public string ResultCode { get; set; }
         public string ResultMessage { get; set; }
         public List<string> Errors { get; set; } = new();
+
+        public int? UserId { get; set; }
     }
 }

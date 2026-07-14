@@ -39,9 +39,7 @@
 	}
     public static class RoleType
     {
-        public const string OWNER = "OWNER";
-        public const string MANAGER = "MANAGER";
-        public const string CASHIER = "CASHIER";
-		public const string KITCHEN = "KITCHEN";
+        public const string Admin = "ADMIN";
+        public const string Manager = "MANAGER";
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartServe.Common.Models;
 using SmartServe.Domain.Constants;
+using SmartServe.Domain.Interfaces;
 using SmartServe.Domain.Models;
 using SmartServe.Domain.Stores;
 using SmartServe.EFCore.Models;

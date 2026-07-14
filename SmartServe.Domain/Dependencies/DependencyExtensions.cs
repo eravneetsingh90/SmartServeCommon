@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SmartServe.Domain.Interfaces;
 using SmartServe.Domain.Mapping;
 using SmartServe.Domain.Services;
 using SmartServe.Domain.Stores;

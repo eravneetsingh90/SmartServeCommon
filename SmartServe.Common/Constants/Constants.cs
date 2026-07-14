@@ -8,7 +8,8 @@
         public const string Error = "R03";
 		public const string DuplicateNotAllowed = "R04";
 		public const string ActiveOrderExists = "R05";
-	}
+        public const string RecordNotFound = "R06";
+    }
 	public static class ResultMessages
 	{
 		public const string Success = "Success";
@@ -17,12 +18,15 @@
         public const string Error = "Technical Error";
 		public const string DuplicateNotAllowed = "Duplicate Not Allowed";
 		public const string ActiveOrderExists = "Active Order Exists";
-	}
+        public const string RecordNotFound = "Record Not Found";
+    }
 
     public static class Annotations
     {
         public const string ResultCode = "ResultCode";
         public const string ResultMessage = "ResultMessages";
+        public const string UserId = "UserId";
+        public const string TenantCode = "TenantCode";
     }
     
 }
