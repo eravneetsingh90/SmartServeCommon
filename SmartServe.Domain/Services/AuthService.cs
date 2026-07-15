@@ -1,4 +1,5 @@
 ﻿using SmartServe.Common.Models;
+using SmartServe.Domain.Authorization;
 using SmartServe.Domain.Constants;
 using SmartServe.Domain.Interfaces;
 using SmartServe.Domain.Models;
@@ -11,10 +12,12 @@ namespace SmartServe.Domain.Services
     public class AuthService : IAuthService
     {
         private readonly IUserStore _userStore;
-        
-        public AuthService(IUserStore userStore)
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+
+        public AuthService(IUserStore userStore, IJwtTokenGenerator jwtTokenGenerator)
         {
             _userStore = userStore;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
         public async Task<BaseResponse<LoginResponse>> LoginAsync(string username, string pin)
@@ -66,11 +69,11 @@ namespace SmartServe.Domain.Services
             else if (!string.IsNullOrWhiteSpace(request.Pin) && !PinHasher.Verify(request.Pin, user.PinHash))
                 return WithMappedError(response, ResultCodes.LoginError, ResultMessages.LoginError);
             
-            //var token = _jwtTokenGenerator.GenerateToken(user);
+            var token = _jwtTokenGenerator.GenerateToken(user);
 
             response.Data = new LoginResponse
             {
-                //AccessToken = token,
+                AccessToken = token,
                 Name = user.Name,
                 Role = user.Role.RoleName,
                 ExpiresAt = DateTime.UtcNow.AddHours(2)

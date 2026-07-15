@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SmartServe.Domain.Authorization;
 using SmartServe.Domain.Interfaces;
 using SmartServe.Domain.Mapping;
 using SmartServe.Domain.Services;
@@ -35,7 +36,8 @@ namespace SmartServe.Domain.Dependencies
 			services.AddScoped<IStockTransactionStore, StockTransactionStore>();
 			services.AddScoped<IProductIngredientStore, ProductIngredientStore>();
 			services.AddScoped <IStockStore,StockStore>();
-			return services;
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            return services;
 		}
 	}
 }
